@@ -1,0 +1,183 @@
+/* Set global styles for the entire webpage */
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;500;600&family=Open+Sans:wght@400;600&family=Playfair+Display+SC:ital,wght@0,400;0,700;1,400&family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap');
+
+:root {
+  margin: 0%; /* Set the margin  of the entire page to 0% */
+  padding: 0%; /* Set the padding of the entire page to 0% */
+  overflow: auto; /* Set the overflow property to 'auto', which enables scrolling when necessary */
+  text-decoration: none; /* Remove the text decoration of all links */
+  --primary: white; /* Define custom property for the color white */
+  --secondary: black; /*Define custom property for the color black */
+  --accent1: #f70830; /* Define custom property for an accent color */
+  --accent2: grey; /* Define custom property for another accent color */
+  -webkit-user-select: none; /* Disable text selection for webkit-based browsers */
+  font-family: 'Playfair Display', sans-serif !important;
+}
+
+button:focus {
+  outline: none;
+}
+
+/* Define styles for the 'title' class */
+.title {
+  border-bottom: 4px solid var(--accent1); /* Add a 4px solid border on the bottom using the custom accent color */
+}
+
+/* This sets the padding & Margin of the html and body elements to 0%. */
+html,
+body {
+  padding: 0%;
+  margin: 0%;
+}
+
+.invalid-field {
+  border-color: red;
+}
+
+/* This sets the object-fit property of the .card-img-top class to cover to ensure that the entire image is displayed within the container without distorting the aspect ratio. */
+.card-img-top {
+  object-fit: cover;
+  height: 100%;
+}
+
+/* Set styles for the 'cardItem' class */
+.cardItem {
+  height: 100%;
+  text-align: center;
+  background-color: #d8d8d8;
+  border: 2px solid;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+/* Set styles for the 'addCart' class */
+.addCart {
+  background-color: var(--primary);
+  color: var(--secondary);
+  padding: 1rem 0;
+  outline: none;
+  border-radius: 0.5rem;
+  font-size: larger;
+  border: none;
+  font-family: 'Lato', cursive;
+}
+
+/* Set styles for when the 'addCart' class is hovered over */
+.addCart:hover {
+  background-color: var(--accent1);
+  color: var(--primary);
+  outline: none;
+}
+
+/* Set styles for the 'itemName' class */
+.itemName {
+  font-weight: 500;
+  font-size: 1.5rem;
+  margin-top: 20px;
+  color: var(--primary);
+  margin-bottom: 5px;
+}
+
+/* Set styles for the 'card-title' class */
+.card-title {
+  font-family: 'Lato', cursive;
+}
+
+/* Set styles for the 'card-text' class */
+.card-text {
+  margin-bottom: 20px;
+  color: rgb(177, 177, 177);
+}
+
+/* Define media queries to adjust logo size and alignment at different screen sizes */
+@media (min-width: 200px) {
+  .coverLogo {
+    width: 15rem;
+    text-align: center;
+  }
+  .headLogo {
+    max-width: 10rem;
+  }
+  .navItem {
+    font-size: large;
+  }
+  .selectItem {
+    font-size: medium;
+  }
+
+  .slogan {
+    font-size: 0.8rem;
+  }
+  .img-size {
+    height: 10rem;
+  }
+}
+
+@media (min-width: 500px) {
+  .coverLogo {
+    width: 20rem;
+    text-align: center;
+  }
+  .headLogo {
+    max-width: 15rem;
+  }
+  .slogan {
+    font-size: 1.1rem;
+  }
+  .img-size {
+    height: 25rem;
+  }
+}
+
+@media (min-width: 700px) {
+  .coverLogo {
+    width: 500px;
+    text-align: center;
+  }
+  .headLogo {
+    max-width: 400px;
+  }
+  .slogan {
+    font-size: 1.5rem;
+  }
+
+  .img-size {
+    height: 40rem;
+  }
+}
+
+/* Define styles for the .coverLogo class when the element is hovered over */
+.coverLogo:hover {
+  z-index: 2;
+  box-shadow: 5px 5px 10px 0px #000000;
+  border-radius: 10px;
+  transform: scale(1.05);
+  padding: 1rem;
+}
+
+/* Define styles for the .coverImg class */
+.coverImg {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  object-position: 0%;
+}
+
+.heading {
+  color: #f8f8f8;
+  font-size: 4rem;
+  font-weight: bold;
+  text-align: center;
+  z-index: 1;
+  text-shadow: 2px 2px 4px var(--secondary);
+  font-family: 'Lato', cursive;
+}
+
+.slogan {
+  color: var(--primary);
+  text-align: center;
+  z-index: 0;
+  text-shadow: 2px 2px 4px var(--secondary);
+}
+
+/* Remove the classes that are not present in the code */

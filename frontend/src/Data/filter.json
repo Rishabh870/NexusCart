@@ -1,0 +1,28 @@
+{
+  "Categories": [
+    { "label": "Shirt" },
+    { "label": "Jeans" },
+    { "label": "Pant" },
+    { "label": "Skirt" },
+    { "label": "Bra" },
+    { "label": "Panties" }
+  ],
+  "Brand": [
+    { "label": "Raymond" },
+    { "label": "Levis" },
+    { "label": "Allen Solly" },
+    { "label": "Monte Carlo" },
+    { "label": "Zara" },
+    { "label": "Nike" },
+    { "label": "ee" },
+    { "label": "Zoro" }
+  ],
+  "Color": [
+    { "label": "Red" },
+    { "label": "Navy Blue" },
+    { "label": "Black" },
+    { "label": "White" },
+    { "label": "Pink" },
+    { "label": "Cream" }
+  ]
+}

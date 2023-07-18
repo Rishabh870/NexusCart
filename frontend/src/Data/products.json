@@ -1,0 +1,11 @@
+{
+  "id": "123456",
+  "img": ["image1.jpg", "image2.jpg"],
+  "productName": "Example Product",
+  "brandName": "Example Brand",
+  "desc": "This is an example product description.",
+  "price": "19.99",
+  "inStock": true,
+  "sizes": ["S", "M", "L"],
+  "category": ["Clothing", "Shirts"]
+}
