@@ -21,12 +21,16 @@ const orderRouter = require('./router/order_router');
 const categoryRouter = require('./router/categories_router');
 const brandRouter = require('./router/brand_router');
 const reviewRouter = require('./router/review_router');
-const { MONGODB_URL } = require('./config');
+const { MONGODB_URL, PAYPAL_CLIENT_ID } = require('./config');
 const { verifyTokenAuth } = require('./middleware/verifyToken');
 
 app.use(cors());
 app.use(express.json());
 mongoose.connect(MONGODB_URL);
+
+app.get('/api/keys/paypal', (req, res) => {
+  res.send(PAYPAL_CLIENT_ID);
+});
 
 mongoose.connection.on('connected', () => {
   console.log('DB Connected ');

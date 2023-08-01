@@ -17,7 +17,7 @@ export const getCartProduct = createAsyncThunk('getCart', async () => {
   try {
     const userId = localStorage.getItem('userId'); // Retrieve the userId from localStorage
     const response = await userRequest.get(`/cart/products/${userId}`);
-    console.log(response.data);
+    // console.log(response.data);
     return response.data.products;
   } catch (error) {
     console.log(error);
@@ -65,7 +65,7 @@ const calculateTotalPrice = (products) => {
   const total = products.reduce((total, product) => {
     return total + calculateProductPrice(product);
   }, 0);
-  console.log(total);
+  // console.log(total);
   return total;
 };
 

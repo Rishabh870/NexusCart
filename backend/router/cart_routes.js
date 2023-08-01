@@ -212,5 +212,3 @@ router.delete('/products/:userId', verifyTokenAuth, async (req, res) => {
 });
 
 module.exports = router;
-
-module.exports = router;

@@ -125,10 +125,12 @@ const CartCard = ({ data, show }) => {
         <div className='d-flex '>
           <div className='mr-3'>
             <DropTitle>Size:</DropTitle>
-            <Dropdown value={selectedSize} onChange={handleSizeChange}>
-              <option value='' disabled>
-                Select size
-              </option>
+            <Dropdown
+              value={selectedSize}
+              disabled={!show}
+              onChange={handleSizeChange}
+            >
+              <option value=''>Select size</option>
               {data?.sizes.map((size) => (
                 <option value={size} key={size}>
                   {size}
@@ -138,7 +140,11 @@ const CartCard = ({ data, show }) => {
           </div>
           <div className='mr-3'>
             <DropTitle>Qty:</DropTitle>
-            <Dropdown value={selectedQuantity} onChange={handleQuantityChange}>
+            <Dropdown
+              value={selectedQuantity}
+              disabled={!show}
+              onChange={handleQuantityChange}
+            >
               <option value='' disabled>
                 Select quantity
               </option>

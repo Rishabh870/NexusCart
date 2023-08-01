@@ -33,6 +33,14 @@ const orderSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: 'ProductModel',
           },
+          selectedSize: {
+            type: String,
+            required: true,
+          },
+          quantity: {
+            type: Number,
+            required: true,
+          },
         },
       ],
       address: {

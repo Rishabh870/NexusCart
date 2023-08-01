@@ -12,7 +12,7 @@ import { addProduct, getCartProduct } from './Redux/cartReducer';
 import LoginPage from './Pages/Login';
 import Signup from './Pages/Signup';
 import Header from './Components/Header';
-import CartPreview from './Pages/CartPreview';
+import CartPreview from './Pages/OrderScreen';
 
 function App() {
   const dispatch = useDispatch();
@@ -30,7 +30,7 @@ function App() {
         <Route path='/cart' element={<Cart />} />
         <Route path='/profile' element={<Profile />} />
         <Route path='/orders' element={<OrderHistory />} />
-        <Route path='/cartpreview' element={<CartPreview />} />
+        <Route path='/order/:id' element={<CartPreview />} />
         <Route path='/login' element={<LoginPage />} />
         <Route path='/signup' element={<Signup />} />
       </Routes>

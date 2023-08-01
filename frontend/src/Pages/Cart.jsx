@@ -152,15 +152,6 @@ const Cart = () => {
 
   const navigate = useNavigate();
 
-  const handleCheckout = () => {
-    if (selectedMethod === '') {
-      return; // Stop the checkout process if the dropdown is not selected
-    }
-
-    // Continue with the checkout process and navigate to the "/cartpreview" page
-    navigate('/cartpreview');
-  };
-
   const cartProduct = useSelector((state) => state.cart.products);
   const [deliveryData, setDeliveryData] = useState('');
   useEffect(() => {
@@ -183,6 +174,31 @@ const Cart = () => {
   const formattedTotalPrice = totalPrice.toFixed(2);
 
   const [selectedMethod, setSelectedMethod] = useState('');
+
+  const handleCheckout = async () => {
+    if (selectedMethod === '') {
+      return; // Stop the checkout process if the dropdown is not selected
+    }
+
+    try {
+      console.log(cartProduct);
+      const response = await userRequest.post(`/order/addorder/${userId}`, {
+        userId,
+        cartProduct,
+        formattedTotalPrice,
+        deliveryData,
+      });
+      // console.log(response.data.orders._id);
+      const deleteProduct = await userRequest.delete(
+        `/cart/products/${userId}`
+      );
+      window.location.href = `/order/${response.data.orders._id}`;
+    } catch (error) {
+      // Handle errors during the request
+      console.log('Error during checkout:', error);
+      // Show an error message to the user or perform other error handling logic
+    }
+  };
 
   const handleMethodSelect = (method) => {
     setSelectedMethod(method);

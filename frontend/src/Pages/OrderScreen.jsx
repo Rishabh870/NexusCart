@@ -4,11 +4,13 @@ import styled from 'styled-components';
 import Header from '../Components/Header';
 import Footer from '../Components/Footer';
 import CartCard from '../Components/CartCard';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { MdClose } from 'react-icons/md';
 import { userRequest } from '../requestMethods';
 import AddressForm from '../Components/AddressForm';
 import { FaPaypal, FaCreditCard } from 'react-icons/fa';
+import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
+import { useParams } from 'react-router-dom';
 const Row = styled.div`
   display: flex;
   align-items: stretch;
@@ -146,14 +148,17 @@ const IconWrapper = styled.span`
 
 const Orderpreview = () => {
   const [showModal, setShowModal] = useState(false);
+  const [update, setUpdate] = useState(false);
   const userId = localStorage.getItem('userId'); // Retrieve the userId from localStorage
-
-  const cartProduct = useSelector((state) => state.cart.products);
+  const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
   const [deliveryData, setDeliveryData] = useState('');
+  const params = useParams();
   useEffect(() => {
     const getUserData = async () => {
       try {
-        const response = await userRequest.get(`/delivery/address/${userId}`);
+        const response = await userRequest.get(
+          `/order/getorder/${params.id}/${userId}`
+        );
         setDeliveryData(response.data);
         // Handle the response data
       } catch (error) {
@@ -163,25 +168,62 @@ const Orderpreview = () => {
       // console.log(deliveryData);
     };
 
+    const loadPaypalScript = async () => {
+      const { data: clientId } = await userRequest.get('/api/keys/paypal');
+
+      paypalDispatch({
+        type: 'resetOptions',
+        value: {
+          'client-id': clientId,
+          currency: 'USD',
+        },
+      });
+      paypalDispatch({
+        type: 'setLoadingStatus',
+        value: 'pending',
+      });
+    };
+
+    loadPaypalScript();
     getUserData();
-  }, []);
+  }, [paypalDispatch, params, userId, update]);
 
-  const totalPrice = useSelector((state) => state.cart.totalPrice);
-  const formattedTotalPrice = totalPrice.toFixed(2);
-
-  const [selectedMethod, setSelectedMethod] = useState('');
-
-  const handleMethodSelect = (method) => {
-    setSelectedMethod(method);
-  };
-
-  const handleAddressChange = () => {
-    setShowModal(true);
-  };
+  const formattedTotalPrice = deliveryData?.total;
 
   const handleCloseModal = () => {
     setShowModal(false);
   };
+
+  const createOrder = (data, action) => {
+    return action.order
+      .create({
+        purchase_units: [
+          {
+            amount: { value: formattedTotalPrice },
+          },
+        ],
+      })
+      .then((orderId) => {
+        return orderId;
+      });
+  };
+
+  const onApprove = (data, action) => {
+    return action.order.capture().then(async (orders) => {
+      try {
+        console.log('payment done');
+        const response = await userRequest.put(
+          `/order/editorder/${params.id}/${userId}`
+        );
+        setUpdate(!update);
+      } catch (error) {}
+    });
+  };
+  const onError = (err) => {
+    console.log(err);
+  };
+
+  console.log(deliveryData);
 
   return (
     <>
@@ -189,10 +231,18 @@ const Orderpreview = () => {
       <Container className='cart text-center'>
         <DeliveryInfoWrapper className='px-4'>
           <div className=' w-100 '>
-            <DeliveryTo>Delivery to: {deliveryData.deliveryTo}</DeliveryTo>
+            <DeliveryTo>
+              Delivery to: {deliveryData.address?.deliveryTo}
+            </DeliveryTo>
             <DeliveryAddress>
-              Delivery Address: {deliveryData.deliveryAddress}
+              Delivery Address: {deliveryData.address?.deliveryAddress}
             </DeliveryAddress>
+          </div>
+          <div>
+            {/* <Status>
+              <span>Status: </span>
+              {deliveryData.de ? 'Paid' : 'Not Paid'}
+            </Status> */}
           </div>
         </DeliveryInfoWrapper>
         <Row className=' mx-0 px-0'>
@@ -200,8 +250,24 @@ const Orderpreview = () => {
             <Carts className='card'>
               <CardHeader className='card-header'>Cart</CardHeader>
               <CartBody className='card-body card-body-scroll p-2'>
-                {cartProduct.map((products, index) => {
-                  return <CartCard key={index} data={products} show={false} />;
+                {deliveryData.products?.map((products, index) => {
+                  const { selectedSize, quantity } = products;
+                  const product = products.productId;
+                  const data = {
+                    brandName: product.brandName,
+                    category: product.category,
+                    desc: product.desc,
+                    img: product.img,
+                    inStock: product.inStock,
+                    price: product.price,
+                    productName: product.productName,
+                    quantity: quantity,
+                    review: product.review,
+                    selectedSize: selectedSize,
+                    sizes: product.sizes,
+                    _id: product._id,
+                  };
+                  return <CartCard key={index} data={data} show={false} />;
                 })}
               </CartBody>
             </Carts>
@@ -228,18 +294,13 @@ const Orderpreview = () => {
                     <span>Total:</span>
                     <span className='float-end'>${formattedTotalPrice}</span>
                   </SummaryTotal>
-                  <CheckoutButtonPaypal>
-                    <IconWrapper>
-                      <FaPaypal />
-                    </IconWrapper>
-                    Checkout with PayPal
-                  </CheckoutButtonPaypal>
-                  <CheckoutButtonDebitCard>
-                    <IconWrapper>
-                      <FaCreditCard />
-                    </IconWrapper>
-                    Checkout with Debit Card
-                  </CheckoutButtonDebitCard>
+                  {deliveryData.paid === 'Yes' ? null : (
+                    <PayPalButtons
+                      createOrder={createOrder}
+                      onApprove={onApprove}
+                      onError={onError}
+                    />
+                  )}
                 </CardBody>
               </Carts>
             </Summary>
