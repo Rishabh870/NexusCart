@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 const OrderCardContainer = styled.div`
@@ -31,7 +32,9 @@ const OrderCard = ({ orderId, date, total, paid, delivery, itemDetails }) => {
       <OrderInfoItem className='col-md-1'> {total}</OrderInfoItem>
       <OrderInfoItem className='col-md-2'> {paid}</OrderInfoItem>
       <OrderInfoItem className='col-md-1'> {delivery}</OrderInfoItem>
-      <OrderInfoItem className='col-md-2'>{itemDetails}</OrderInfoItem>
+      <OrderInfoItem className='col-md-2'>
+        <Link to={`/order/${orderId}`}>Details</Link>
+      </OrderInfoItem>
     </OrderCardContainer>
   );
 };

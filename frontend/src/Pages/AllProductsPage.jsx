@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Container } from 'react-bootstrap';
+import Header from '../Components/Header';
 import Filter from '../Components/Filters';
 import ProductCard from '../Components/ProductCard';
-import Header from '../Components/Header';
 import Footer from '../Components/Footer';
 import { styled } from 'styled-components';
 import { userRequest } from '../requestMethods';

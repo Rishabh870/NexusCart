@@ -5,7 +5,6 @@ import { Container } from 'react-bootstrap';
 import { styled } from 'styled-components';
 import { FaShoppingCart } from 'react-icons/fa';
 import { BiSolidHeart } from 'react-icons/bi';
-import slideData from '../Data/slide.json';
 import { useDispatch, useSelector } from 'react-redux';
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';

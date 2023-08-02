@@ -55,6 +55,7 @@ const IconContainer = styled.div`
 `;
 
 const DropdownItem = styled(Link)`
+  text-decoration: none;
   color: black;
   font-family: 'Playfair Display', serif;
   margin: 0.3rem 0;
@@ -106,6 +107,7 @@ const SidebarItem = styled.p`
 const SidebarLink = styled(Link)`
   text-decoration: none;
   color: black;
+  text-decoration: none;
   font-family: 'Josefin Sans regular';
   font-size: 16px;
   &:visited {
@@ -153,7 +155,7 @@ const Header = () => {
     handleDropdownClose();
     // Perform logout logic and redirect here
 
-    Navigate('/');
+    navigate('/login');
   };
 
   let menus = useRef(null);
@@ -184,10 +186,8 @@ const Header = () => {
   const handleToggleSidebar = () => {
     if (side) {
       setSide(false);
-      console.log('1');
     } else {
       setSide(true);
-      console.log('2');
     }
   };
 
@@ -287,8 +287,10 @@ const Header = () => {
                 </SidebarItem>
               </div>
               <div style={{ flexGrow: 1 }}></div>
+
               <LogoutButton
                 style={{ marginTop: 'auto' }}
+                onClick={handleLogout}
                 className='w-75 btn-dark mx-3'
               >
                 Log Out
@@ -372,19 +374,35 @@ const Header = () => {
                       >
                         My Profile
                       </DropdownItem>
-                      <DropdownItem to='/orders' onClick={handleDropdownClose}>
+                      <DropdownItem
+                        to='/orders'
+                        className=' text-decoration-none'
+                        onClick={handleDropdownClose}
+                      >
                         Order History
                       </DropdownItem>
-                      <DropdownItem to={'/login'} onClick={handleLogout}>
+                      <DropdownItem
+                        to={'/login'}
+                        className=' text-decoration-none'
+                        onClick={handleLogout}
+                      >
                         Logout
                       </DropdownItem>
                     </>
                   ) : (
                     <>
-                      <DropdownItem to='/login' onClick={handleDropdownClose}>
+                      <DropdownItem
+                        to='/login'
+                        className=' text-decoration-none'
+                        onClick={handleDropdownClose}
+                      >
                         Login
                       </DropdownItem>
-                      <DropdownItem to='/signup' onClick={handleDropdownClose}>
+                      <DropdownItem
+                        to='/signup'
+                        className=' text-decoration-none'
+                        onClick={handleDropdownClose}
+                      >
                         Signup
                       </DropdownItem>
                     </>

@@ -90,7 +90,7 @@ const Login = () => {
       const firstName = fullName.split(' ')[0];
       localStorage.setItem('name', firstName);
 
-      navigate('/');
+      window.location.href = '/';
     } catch (error) {
       console.log(error);
       // Handle error cases, such as displaying an error message

@@ -13,6 +13,8 @@ import LoginPage from './Pages/Login';
 import Signup from './Pages/Signup';
 import Header from './Components/Header';
 import CartPreview from './Pages/OrderScreen';
+import Dashboard from './AdminPages/Dashboard';
+import AdminProductPage from './AdminPages/AdminProductPage';
 
 function App() {
   const dispatch = useDispatch();
@@ -33,6 +35,8 @@ function App() {
         <Route path='/order/:id' element={<CartPreview />} />
         <Route path='/login' element={<LoginPage />} />
         <Route path='/signup' element={<Signup />} />
+        <Route path='/dashboard' element={<Dashboard />} />
+        <Route path='/adminproduct' element={<AdminProductPage />} />
       </Routes>
     </Router>
   );

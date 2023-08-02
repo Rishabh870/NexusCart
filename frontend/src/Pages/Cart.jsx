@@ -126,9 +126,7 @@ const DropdownWrapper = styled.div`
 const DropdownButton = styled.select`
   width: 100%;
   padding: 0.5rem 0.9rem;
-  background-color: ${({ selected }) => (selected ? 'white' : 'inherit')};
-  color: ${({ selected }) => (selected ? 'black' : 'inherit')};
-  border: ${({ selected }) => (selected ? '1px solid black' : '1px solid red')};
+  border: '1px solid black';
   cursor: pointer;
 
   &:focus {

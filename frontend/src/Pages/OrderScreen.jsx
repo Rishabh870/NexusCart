@@ -64,18 +64,6 @@ const SummaryTotal = styled.div`
   padding-top: 1rem;
 `;
 
-const CheckoutButton = styled.button`
-  width: 100%;
-  padding: 0.5rem 0.9rem;
-  background-color: black;
-  color: white;
-  border: 1px solid black;
-  &:hover {
-    background-color: white;
-    color: black;
-  }
-`;
-
 const DeliveryInfoWrapper = styled.div`
   display: flex;
   justify-content: space-between;
@@ -90,7 +78,7 @@ const DeliveryTo = styled.p`
   margin-top: 0.5rem;
   text-align: start;
   font-weight: bold;
-  font-family: 'Playfair Display', serif;
+  font-family: 'Playfair ', serif;
 `;
 
 const DeliveryAddress = styled.p`
@@ -101,49 +89,15 @@ const DeliveryAddress = styled.p`
   color: #888;
 `;
 
-const DropdownWrapper = styled.div`
-  position: relative;
+const StatusData = styled.span`
+  color: ${({ status }) => (status === 'Yes' ? 'green' : 'red')};
+  font-family: 'Playfair ', serif;
+  font-size: small;
 `;
-
-const DropdownButton = styled.select`
-  width: 100%;
-  padding: 0.5rem 0.9rem;
-  background-color: ${({ selected }) => (selected ? 'white' : 'inherit')};
-  color: ${({ selected }) => (selected ? 'black' : 'inherit')};
-  border: 1px solid black;
-  cursor: pointer;
-
-  ::after {
-    border: 1px solid black;
-  }
-`;
-
-const DropdownItem = styled.option`
-  padding: 0.5rem 0.9rem;
-  cursor: pointer;
-`;
-
-const CheckoutButtonPaypal = styled(CheckoutButton)`
-  background-color: #0070ba;
-  color: #fff;
-  margin: 0.5rem 0;
-  &:hover {
-    color: #0070ba;
-    background-color: #fff;
-  }
-`;
-
-const CheckoutButtonDebitCard = styled(CheckoutButton)`
-  background-color: #222;
-  color: #fff;
-
-  &:hover {
-    background-color: #ffffff;
-  }
-`;
-
-const IconWrapper = styled.span`
-  margin-right: 0.5rem;
+const Status = styled.span`
+  font-family: 'Playfair ', serif;
+  color: black;
+  font-size: medium;
 `;
 
 const Orderpreview = () => {
@@ -230,7 +184,7 @@ const Orderpreview = () => {
       <Header />
       <Container className='cart text-center'>
         <DeliveryInfoWrapper className='px-4'>
-          <div className=' w-100 '>
+          <div className=' w-75 '>
             <DeliveryTo>
               Delivery to: {deliveryData.address?.deliveryTo}
             </DeliveryTo>
@@ -238,11 +192,15 @@ const Orderpreview = () => {
               Delivery Address: {deliveryData.address?.deliveryAddress}
             </DeliveryAddress>
           </div>
-          <div>
-            {/* <Status>
-              <span>Status: </span>
-              {deliveryData.de ? 'Paid' : 'Not Paid'}
-            </Status> */}
+          <div className='w-25'>
+            <Status>Status: </Status>
+            <StatusData status={deliveryData.paid}>
+              {deliveryData.paid === 'Yes' ? 'Paid' : 'Not Paid'},
+            </StatusData>
+            <StatusData status={deliveryData.delivery}>
+              {' '}
+              {deliveryData.delivery === 'Yes' ? 'Delivered' : 'Not Delivered'}
+            </StatusData>
           </div>
         </DeliveryInfoWrapper>
         <Row className=' mx-0 px-0'>
