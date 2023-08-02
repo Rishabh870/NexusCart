@@ -21,17 +21,6 @@ router.post('/addproduct', verifyTokenAdmin, (req, res) => {
     });
 });
 
-// router.get('/allproducts', (req, res) => {
-//   ProductModel.find()
-//     .then((products) => {
-//       res.status(200).json(products);
-//     })
-//     .catch((error) => {
-//       console.log(error);
-//       res.status(500).json({ error: 'Internal server error' });
-//     });
-// });
-
 router.get('/product/:id', (req, res) => {
   const productId = req.params.id;
 
@@ -49,63 +38,6 @@ router.get('/product/:id', (req, res) => {
       res.status(500).json({ error: 'Internal server error' });
     });
 });
-
-// router.get('/search', async (req, res) => {
-//   const searchQuery = req.query.searchQuery;
-//   const filters = req.query.filters;
-
-//   try {
-//     let query = {
-//       $text: { $search: `"${searchQuery}"` },
-//     };
-
-//     // Apply filters to the search query if filters are provided
-//     if (filters) {
-//       const parsedFilters = JSON.parse(filters);
-//       Object.keys(parsedFilters).forEach((filterKey) => {
-//         query[filterKey] = { $in: parsedFilters[filterKey] };
-//       });
-//     }
-
-//     // Perform the search logic based on the search query and filters
-//     const products = await ProductModel.find(query);
-
-//     res.status(200).json(products);
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).json({ error: 'Internal server error' });
-//   }
-// });
-
-// router.get('/search', async (req, res) => {
-//   const searchQuery = req.query.searchQuery;
-//   const categories = req.query.category;
-//   const brands = req.query.brand;
-
-//   console.log(searchQuery, categories, brands);
-
-//   try {
-//     let query = {};
-
-//     if (searchQuery) {
-//       query.$text = { $search: searchQuery };
-//     }
-
-//     if (brands) {
-//       query.brandName = { $in: brands.map((brand) => new RegExp(brand, 'i')) };
-//     }
-//     if (categories) {
-//       query.category = {
-//         $in: categories.map((category) => new RegExp(category, 'i')),
-//       };
-//     }
-//     const products = await ProductModel.find(query);
-//     res.status(200).json(products);
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).json({ error: 'Internal server error' });
-//   }
-// });
 
 router.get('/products', async (req, res) => {
   const searchQuery = req.query.searchQuery;
@@ -166,6 +98,28 @@ router.put('/updatereview/:id', async (req, res) => {
     } else {
       res.status(404).json({ message: 'Product not found' });
     }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Delete a product by ID
+router.delete('/products/:productId', async (req, res) => {
+  const productId = req.params.productId;
+
+  try {
+    // Find the product by its ID
+    const product = await ProductModel.findById(productId);
+
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    // Delete the product
+    await product.remove();
+
+    res.status(200).json({ message: 'Product deleted successfully' });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: 'Internal server error' });
