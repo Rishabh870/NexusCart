@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import styled from 'styled-components';
+import { AiOutlinePlus, AiOutlineMinus } from 'react-icons/ai'; // Import the required icons
+
 
 const ModalContent = styled.div`
   padding: 20px;
@@ -13,17 +15,51 @@ const AddProductModal = ({ show, onHide }) => {
   const [desc, setDesc] = useState('');
   const [price, setPrice] = useState('');
   const [inStock, setInStock] = useState(true);
+  const [imgPreviews, setImgPreviews] = useState([]); // To store image previews
   const [sizes, setSizes] = useState(['']);
   const [category, setCategory] = useState('');
-  const [images, setImages] = useState([]);
+  const [images, setImages] = useState([]); 
   const handleAddSize = () => {
     if (sizes.length < 5) {
       setSizes([...sizes, '']);
     }
   };
 
+
+useEffect(() => {
+console.log(imgPreviews);
+}, [imgPreviews])
+
+  const fileInputRef = useRef(null);
   const handleRemoveSize = (index) => {
     setSizes(sizes.filter((_, i) => i !== index));
+  };
+
+  
+  const handleImagePreviewClick = (index) => {
+    const fileInput = fileInputRef.current;
+    if (fileInput) {
+      fileInput.click();
+    }
+  };
+  // const [productName, setProductName] = useState('');
+  // ... (other states)
+
+
+  const handleAddImage = () => {
+    if (imgPreviews.length < 4) {
+      setImgPreviews([...imgPreviews, null]);
+    }
+  };
+
+  const handleRemoveImage = (index) => {
+    const updatedPreviews = [...imgPreviews];
+    updatedPreviews.splice(index, 1);
+    setImgPreviews(updatedPreviews);
+
+    const updatedImages = [...images];
+    updatedImages.splice(index, 1);
+    setImages(updatedImages);
   };
 
   const handleSubmit = () => {
@@ -41,7 +77,7 @@ const AddProductModal = ({ show, onHide }) => {
 
   const handleImageChange = (e, index) => {
     const selectedFile = e.target.files[0];
-
+setImgPreviews(e)
     if (selectedFile) {
       // Use FileReader to read the selected file and get its base64 data
       const reader = new FileReader();
@@ -61,24 +97,32 @@ const AddProductModal = ({ show, onHide }) => {
       </Modal.Header>
       <Modal.Body>
         <ModalContent>
-          <Form.Group>
-            <Form.Label>Product Images</Form.Label>
-            {images.map((imageData, index) => (
-              <div key={index}>
-                {imageData && <img src={imageData} alt={`Image ${index}`} />}
-                <Form.Control
-                  type='file'
-                  onChange={(e) => handleImageChange(e, index)}
-                  accept='image/*'
-                />
-              </div>
-            ))}
-            <button onClick={() => setImages([...images, ''])}>
-              Add Image
-            </button>
+          <Form.Group className='mb-2'>
+          <div className='d-flex'>
+              {imgPreviews.map((preview, index) => (
+                <div key={index} className='border m-1' style={{ height: '120px' }} onClick={() => handleImagePreviewClick(index)}>
+                  {preview && preview.url ? (
+                    <img src={preview.url} alt={`Image ${index}`} style={{ width: '100px', height: '150px', cursor: 'pointer' }} />
+                  ) : (
+                    <span>Click to select image</span>
+                  )}
+                </div>
+              ))}
+            </div>
+            <Form.Control
+              type='file'
+              style={{ display: 'none' }}
+              ref={fileInputRef}
+              onChange={(e) => handleImageChange(e, imgPreviews.length)}
+              accept='image/*'
+            />
+            <Button variant='primary' onClick={handleAddImage} disabled={imgPreviews.length >= 4}>
+              <AiOutlinePlus /> Add Image
+            </Button>
+         
           </Form.Group>
-          <Form.Group>
-            <Form.Label>Product Name</Form.Label>
+          <Form.Group className='mb-2'>
+           
             <Form.Control
               type='text'
               value={productName}
@@ -86,9 +130,9 @@ const AddProductModal = ({ show, onHide }) => {
               placeholder='Product Name'
             />
           </Form.Group>
-          <Form.Group>
-            <Form.Label>Brand Name</Form.Label>
-            <Form.Control
+          <Form.Group className='row w-100 mx-auto mb-2'>
+           
+            <Form.Control className='col-6'
               as='select'
               value={brandName}
               onChange={(e) => setBrandName(e.target.value)}
@@ -97,9 +141,20 @@ const AddProductModal = ({ show, onHide }) => {
               {/* Populate the options with data from backend */}
               <option value='Zoro'>Zoro</option>
             </Form.Control>
+
+            <Form.Control className='col-6'
+              as='select'
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+            >
+              <option value=''>Select Category</option>
+              {/* Populate the options with data from backend */}
+              <option value='Clothing'>Clothing</option>
+              <option value='Skirts'>Skirts</option>
+            </Form.Control>
           </Form.Group>
-          <Form.Group>
-            <Form.Label>Product Description</Form.Label>
+          <Form.Group className='mb-2'>
+            
             <Form.Control
               as='textarea'
               value={desc}
@@ -107,8 +162,8 @@ const AddProductModal = ({ show, onHide }) => {
               placeholder='Product Description'
             />
           </Form.Group>
-          <Form.Group>
-            <Form.Label>Price</Form.Label>
+          <Form.Group className='mb-2'>
+           
             <Form.Control
               type='text'
               value={price}
@@ -116,7 +171,7 @@ const AddProductModal = ({ show, onHide }) => {
               placeholder='Price'
             />
           </Form.Group>
-          <Form.Group>
+          <Form.Group className='mb-2'>
             <Form.Check
               type='checkbox'
               label='In Stock'
@@ -124,7 +179,7 @@ const AddProductModal = ({ show, onHide }) => {
               onChange={(e) => setInStock(e.target.checked)}
             />
           </Form.Group>
-          <Form.Group>
+          <Form.Group className='mb-2'>
             <Form.Label>Available Sizes</Form.Label>
             {sizes.map((size, index) => (
               <div key={index} className='d-flex align-items-center'>
@@ -150,19 +205,6 @@ const AddProductModal = ({ show, onHide }) => {
             <Button variant='secondary' onClick={handleAddSize}>
               Add Size
             </Button>
-          </Form.Group>
-          <Form.Group>
-            <Form.Label>Category</Form.Label>
-            <Form.Control
-              as='select'
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-            >
-              <option value=''>Select Category</option>
-              {/* Populate the options with data from backend */}
-              <option value='Clothing'>Clothing</option>
-              <option value='Skirts'>Skirts</option>
-            </Form.Control>
           </Form.Group>
         </ModalContent>
       </Modal.Body>
