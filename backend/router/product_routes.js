@@ -6,9 +6,23 @@ const {
   verifyTokenAuth,
 } = require('../middleware/verifyToken');
 const ProductModel = mongoose.model('ProductModel');
+const upload = require('../multer');
 
-router.post('/addproduct', verifyTokenAdmin, (req, res) => {
+router.post('/addproduct', verifyTokenAdmin, upload.array('myImages', 4), (req, res) => {
+  // Assuming your product model is imported as ProductModel
   const newProduct = new ProductModel(req.body);
+
+console.log(req.body.sizes);
+
+ 
+// If there are uploaded files, you can access them through req.files array
+if (req.files) {
+  const images = req.files.map((file) => file.destination + file.filename);
+  newProduct.img = images; // Assuming you have an "images" field in your product schema to store the image paths
+
+  // Print the image paths to check if they are complete
+  console.log(images);
+}
 
   newProduct
     .save()
@@ -109,17 +123,56 @@ router.delete('/products/:productId', async (req, res) => {
   const productId = req.params.productId;
 
   try {
-    // Find the product by its ID
+    try {
+      // Find the product by its ID and delete it
+      const deletedProduct = await ProductModel.findByIdAndDelete(productId);
+  
+      if (!deletedProduct) {
+        return res.status(404).json({ message: 'Product not found' });
+      }
+  
+      res.status(200).json({ message: 'Product deleted successfully' });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.put('/products/:productId',verifyTokenAdmin, upload.array('myImages', 4), async (req, res) => {
+  const productId = req.params.productId;
+  const { productName, brandName, desc, price, inStock, sizes, category } = req.body;
+
+  try {
+    // Find the product by its ID and update its fields
     const product = await ProductModel.findById(productId);
 
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
 
-    // Delete the product
-    await product.remove();
+    // Update product fields other than images
+    product.productName = productName;
+    product.brandName = brandName;
+    product.desc = desc;
+    product.price = price;
+    product.inStock = inStock;
+    product.sizes = sizes;
+    product.category = category;
 
-    res.status(200).json({ message: 'Product deleted successfully' });
+    // If there are uploaded files, update the images field
+    if (req.files) {
+      const images = req.files.map((file) => file.path);
+      product.img = images;
+    }
+
+    // Save the updated product
+    const updatedProduct = await product.save();
+
+    res.status(200).json({ message: 'Product updated successfully', product: updatedProduct });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: 'Internal server error' });

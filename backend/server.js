@@ -3,6 +3,7 @@ const PORT = 5000;
 const app = express();
 const cors = require('cors');
 const mongoose = require('mongoose');
+const path = require('path');
 require('./models/user_models');
 require('./models/cart_models');
 require('./models/product_models');
@@ -49,6 +50,8 @@ app.use('/order', orderRouter);
 app.use('/category', categoryRouter);
 app.use('/brand', brandRouter);
 app.use('/review', reviewRouter);
+// Set up the route to serve static files from the 'uploads' directory
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.listen(PORT, () => {
   console.log(`server Started on ${PORT}`);
