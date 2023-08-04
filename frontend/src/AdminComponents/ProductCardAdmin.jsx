@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
 import { userRequest } from '../requestMethods';
+import AddProductModal from './AddProductModal';
 
 const CardContainer = styled.div`
   display: flex;
@@ -93,10 +94,18 @@ const SizeButton = styled.div`
 `;
 
 const ProductCardAdmin = ({ product }) => {
-  const editProduct = async () => {};
+
+  const [showModal, setShowModal] = useState(false);
+  const editProduct = async () => {
+    setShowModal(true)
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
   const deleteProduct = async () => {
     try {
-      const response = await userRequest.delete(`/product/${product._id}`);
+      const response = await userRequest.delete(`/product/products/${product._id}`);
       console.log(response);
     } catch (error) {
       console.log(error);
@@ -135,9 +144,9 @@ const ProductCardAdmin = ({ product }) => {
             return (
               <div style={{ borderRadius: '30px' }}>
                 <img
-                  src={src}
+                   src={`http://localhost:5000/${src}`}
                   alt=''
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  style={{ width: '100%', height: '150px', objectFit:'cover' }}
                 />
               </div>
             );
@@ -165,6 +174,11 @@ const ProductCardAdmin = ({ product }) => {
           <FaTrash />
         </Button>
       </ButtonsContainer>
+      <AddProductModal
+          show={showModal}
+          onHide={handleCloseModal}
+          productData={product}
+        />
     </CardContainer>
   );
 };

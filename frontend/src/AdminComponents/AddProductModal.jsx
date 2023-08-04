@@ -2,124 +2,215 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import styled from 'styled-components';
 import { AiOutlinePlus, AiOutlineMinus } from 'react-icons/ai'; // Import the required icons
+import { FaTimes,FaPlus  } from 'react-icons/fa';
+import { userRequest } from '../requestMethods';
 
+const ImageContainer = styled.div`
+  position: relative;
+`;
 
+const DeleteButton = styled.button`
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+`;
 const ModalContent = styled.div`
   padding: 20px;
 `;
-
-const AddProductModal = ({ show, onHide }) => {
-  const [img, setImg] = useState([]); // To store selected image files
+const SizeInput = styled.input`
+  /* Add your own styles here */
+`;
+const AddProductModal = ({ show, onHide, productData }) => {
   const [productName, setProductName] = useState('');
   const [brandName, setBrandName] = useState('');
   const [desc, setDesc] = useState('');
   const [price, setPrice] = useState('');
-  const [inStock, setInStock] = useState(true);
-  const [imgPreviews, setImgPreviews] = useState([]); // To store image previews
-  const [sizes, setSizes] = useState(['']);
+  const [inStock, setInStock] = useState(true);  
+  const [imagePreviews, setImagePreviews] = useState([]); // Updated state initialization
   const [category, setCategory] = useState('');
-  const [images, setImages] = useState([]); 
-  const handleAddSize = () => {
-    if (sizes.length < 5) {
-      setSizes([...sizes, '']);
-    }
+  const [sizeInput, setSizeInput] = useState('');
+
+  const handleSizeInputChange = (e) => {
+    const input = e.target.value;
+    // Remove spaces from the input using regex
+    const sanitizedInput = input.replace(/\s/g, '');
+    setSizeInput(sanitizedInput);
   };
+  const [imageUrls, setImageUrls] = useState([]);
 
+  useEffect(() => {
+    const getProduct = async () => {
+      // Convert image URLs to File objects when editing a product
+      if (productData) {
+        const imageFiles = await Promise.all(
+          productData.img.map(async (url) => {
+            const response = await fetch(url);
+            const blob = await response.blob();
+            // Get the file type directly from the blob
+            const extension = url.substring(url.lastIndexOf('.') + 1);
 
-useEffect(() => {
-console.log(imgPreviews);
-}, [imgPreviews])
+            // Set the file type based on the file extension
+            const fileType = `image/${extension === 'jpg' ? 'jpeg' : extension}`;
+            return new File([blob], `image-${Date.now()}.${fileType.split('/')[1]}`, { type: fileType });
+          })
+        );
+    console.log(imageFiles);
+        // Set the image URLs and File objects in the state
+        setImageUrls(productData.img);
+        setImagePreviews(imageFiles);
+        setProductName(productData.productName);
+        setBrandName(productData.brandName);
+        setDesc(productData.desc);
+        setPrice(productData.price);
+        setInStock(productData.inStock);
+        setCategory(productData.category.join(', ')); // Convert array of categories to comma-separated string
+        setSizeInput(productData.sizes.join(', ')); // Convert array of sizes to comma-separated string
+      }
+    };
+    
+  
+    getProduct();
+  }, [productData]);
+  const handleSubmit = () => {
+try {
+  const formData = new FormData();
+// Split the sizeInput string by commas and trim spaces from each word
+const sizeArray = sizeInput.split(',').map((size) => size.trim());
 
-  const fileInputRef = useRef(null);
-  const handleRemoveSize = (index) => {
-    setSizes(sizes.filter((_, i) => i !== index));
+// Convert each word to uppercase
+const sizesArrayUppercase = sizeArray.map((size) => size.toUpperCase())
+console.log(sizesArrayUppercase); // Output: ['S', 'M', 'L', 'XL', 'XXL']
+  // Append each form field to the formData
+  formData.append('productName', productName);
+  formData.append('brandName', brandName);
+  formData.append('desc', desc);
+  formData.append('price', price);
+  formData.append('inStock', inStock);
+sizesArrayUppercase.forEach((size) => {
+  formData.append('sizes', size);
+}); // Convert array of sizes to comma-separated string
+  formData.append('category', category);
+
+  // Append each image to the formData
+  imagePreviews.forEach((file, index) => {
+    formData.append('myImages', file); // Use the correct field name 'images'
+  });
+
+  if (productData) {
+    userRequest
+    .put(`/product/products/${productData._id}`, formData)
+    .then((response) => {
+      // Handle the response if needed
+      console.log(response.data);
+    })
+    .catch((error) => {
+      // Handle errors if the request fails
+      console.error(error);
+    });
+  }
+  else {
+    
+    userRequest
+      .post('/product/addproduct', formData)
+      .then((response) => {
+        // Handle the response if needed
+        console.log(response.data);
+      })
+      .catch((error) => {
+        // Handle errors if the request fails
+        console.error(error);
+      });
+    }
+  } catch (error) {
+  console.log(error);
+  }
+  // Make a POST request to the '/addproduct' route using userRequest
+     
+  };
+  
+
+  const handleImageChange = (e) => {
+    const files = e.target.files;
+    const newPreviews = [];
+  
+    // Limit the number of selected images to 4
+    const maxAllowed = Math.min(4, files.length);
+  
+    for (let i = 0; i < maxAllowed; i++) {
+      const file = files[i];
+      newPreviews.push(file);
+    }
+  
+      // If productData is not available (creating a product), use the image URLs directly
+      setImagePreviews(newPreviews);
+    
+  };
+  
+
+  const handleDeleteImage = (index) => {
+    const newPreviews = [...imagePreviews];
+    newPreviews.splice(index, 1);
+    setImagePreviews(newPreviews);
   };
 
   
-  const handleImagePreviewClick = (index) => {
-    const fileInput = fileInputRef.current;
-    if (fileInput) {
-      fileInput.click();
-    }
-  };
-  // const [productName, setProductName] = useState('');
-  // ... (other states)
-
-
-  const handleAddImage = () => {
-    if (imgPreviews.length < 4) {
-      setImgPreviews([...imgPreviews, null]);
-    }
-  };
-
-  const handleRemoveImage = (index) => {
-    const updatedPreviews = [...imgPreviews];
-    updatedPreviews.splice(index, 1);
-    setImgPreviews(updatedPreviews);
-
-    const updatedImages = [...images];
-    updatedImages.splice(index, 1);
-    setImages(updatedImages);
-  };
-
-  const handleSubmit = () => {
-    const data = {
-      img,
-      productName,
-      brandName,
-      desc,
-      price,
-      inStock,
-      sizes,
-      category,
-    };
-  };
-
-  const handleImageChange = (e, index) => {
-    const selectedFile = e.target.files[0];
-setImgPreviews(e)
-    if (selectedFile) {
-      // Use FileReader to read the selected file and get its base64 data
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const updatedImages = [...images];
-        updatedImages[index] = reader.result;
-        setImg(updatedImages);
-      };
-      reader.readAsDataURL(selectedFile);
-    }
-  };
+const PlusIcon = styled.div`
+position: relative;
+top: 45%;
+left: 50%;
+padding-left: 45%;
+transform: translate(-50%, -50%);
+font-size: 14px;
+cursor: pointer;
+`;
+  
 
   return (
     <Modal show={show} onHide={onHide}>
       <Modal.Header closeButton>
         <Modal.Title>Add Product</Modal.Title>
       </Modal.Header>
-      <Modal.Body>
+      <Modal.Body className='pb-0'>
         <ModalContent>
           <Form.Group className='mb-2'>
-          <div className='d-flex'>
-              {imgPreviews.map((preview, index) => (
-                <div key={index} className='border m-1' style={{ height: '120px' }} onClick={() => handleImagePreviewClick(index)}>
-                  {preview && preview.url ? (
-                    <img src={preview.url} alt={`Image ${index}`} style={{ width: '100px', height: '150px', cursor: 'pointer' }} />
-                  ) : (
-                    <span>Click to select image</span>
-                  )}
-                </div>
+          <div className="d-flex">
+              {/* Check if imagePreviews is an array (editing mode) */}
+              {Array.isArray(imagePreviews) &&
+                imagePreviews.map((file, index) => (
+                <ImageContainer key={index}>
+                  <img
+                    src={typeof file === 'string' ? file : URL.createObjectURL(file)}
+                    alt=''
+                    style={{ width: '100px', height: '100px', objectFit: 'cover' }}
+                    className='mr-2'
+                  />
+                  <DeleteButton onClick={() => handleDeleteImage(index)}>
+                    <FaTimes />
+                  </DeleteButton>
+                </ImageContainer>
               ))}
+          
+          {imagePreviews.length < 4 && (
+            <div className="border" style={{ width: '100px', height: '100px' }}>
+              <label htmlFor="fileInput" style={{ width: '100%', height: '100%', cursor: 'pointer' }}>
+                <input
+                  type="file"
+                  accept="image/*"
+                  id="fileInput"
+                  style={{ display: 'none' }}
+                  multiple
+                  onChange={handleImageChange}
+                />
+                 <PlusIcon>
+                 <AiOutlinePlus />
+                </PlusIcon>
+              </label>
             </div>
-            <Form.Control
-              type='file'
-              style={{ display: 'none' }}
-              ref={fileInputRef}
-              onChange={(e) => handleImageChange(e, imgPreviews.length)}
-              accept='image/*'
-            />
-            <Button variant='primary' onClick={handleAddImage} disabled={imgPreviews.length >= 4}>
-              <AiOutlinePlus /> Add Image
-            </Button>
-         
+          )}
+        </div>
           </Form.Group>
           <Form.Group className='mb-2'>
            
@@ -172,39 +263,25 @@ setImgPreviews(e)
             />
           </Form.Group>
           <Form.Group className='mb-2'>
+          <div className="d-flex">
+          <Form.Control
+          as='input'
+          type="text"
+          placeholder="Enter Sizes separated by ','"
+          value={sizeInput}
+          onChange={handleSizeInputChange}
+        />
+         
+        </div>
+            
+          </Form.Group>
+          <Form.Group className='mb-2'>
             <Form.Check
               type='checkbox'
               label='In Stock'
               checked={inStock}
               onChange={(e) => setInStock(e.target.checked)}
             />
-          </Form.Group>
-          <Form.Group className='mb-2'>
-            <Form.Label>Available Sizes</Form.Label>
-            {sizes.map((size, index) => (
-              <div key={index} className='d-flex align-items-center'>
-                <Form.Control
-                  type='text'
-                  value={size}
-                  onChange={(e) => {
-                    const updatedSizes = [...sizes];
-                    updatedSizes[index] = e.target.value;
-                    setSizes(updatedSizes);
-                  }}
-                  placeholder={`Size ${index + 1}`}
-                />
-                <Button
-                  variant='danger'
-                  className='ml-2'
-                  onClick={() => handleRemoveSize(index)}
-                >
-                  Remove
-                </Button>
-              </div>
-            ))}
-            <Button variant='secondary' onClick={handleAddSize}>
-              Add Size
-            </Button>
           </Form.Group>
         </ModalContent>
       </Modal.Body>
@@ -219,5 +296,7 @@ setImgPreviews(e)
     </Modal>
   );
 };
+
+
 
 export default AddProductModal;
