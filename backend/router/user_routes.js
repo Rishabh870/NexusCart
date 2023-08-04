@@ -4,7 +4,7 @@ const bcryptjs = require('bcryptjs');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = require('../config');
-const { verifyTokenAuth } = require('../middleware/verifyToken');
+const { verifyTokenAuth, verifyTokenAdmin } = require('../middleware/verifyToken');
 const UserModel = mongoose.model('UserModel');
 const CartModel = mongoose.model('CartModel');
 
@@ -128,7 +128,7 @@ router.get('/:userId', verifyTokenAuth, (req, res) => {
 });
 
 // PUT route to update user data by userId
-router.put('/:userId', async (req, res) => {
+router.put('/:userId',verifyTokenAdmin, async (req, res) => {
   const { userId } = req.params;
   const { data } = req.body;
 
@@ -152,4 +152,33 @@ router.put('/:userId', async (req, res) => {
       res.status(500).json({ error: 'Internal server error' });
     });
 });
+
+// DELETE route to delete a user
+router.delete('/users/:userId', verifyTokenAdmin, (req, res) => {
+  const userId = req.params.userId;
+
+  UserModel.findByIdAndDelete(userId)
+    .then((deletedUser) => {
+      if (!deletedUser) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+      res.status(200).json({ message: 'User deleted successfully' });
+    })
+    .catch((error) => {
+      console.log(error);
+      return res.status(500).json({ error: 'Internal server error' });
+    });
+});
+
+// GET route to retrieve all users
+router.get('/users/all', verifyTokenAdmin, async (req, res) => {
+  try {
+    const users = await UserModel.find();
+    res.json(users);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 module.exports = router;

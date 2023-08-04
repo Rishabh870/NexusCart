@@ -15,6 +15,7 @@ import Header from './Components/Header';
 import CartPreview from './Pages/OrderScreen';
 import Dashboard from './AdminPages/Dashboard';
 import AdminProductPage from './AdminPages/AdminProductPage';
+import UserPanel from './AdminPages/UserPanel';
 
 function App() {
   const dispatch = useDispatch();
@@ -37,6 +38,7 @@ function App() {
         <Route path='/signup' element={<Signup />} />
         <Route path='/dashboard' element={<Dashboard />} />
         <Route path='/adminproduct' element={<AdminProductPage />} />
+        <Route path='/adminuser' element={<UserPanel />} />
       </Routes>
     </Router>
   );
