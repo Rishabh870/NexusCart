@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
-import { RxCross1 } from 'react-icons/rx';
-import { userRequest } from '../requestMethods';
-import { useDispatch } from 'react-redux';
+import React, { useState } from "react";
+import styled from "styled-components";
+import { RxCross1 } from "react-icons/rx";
+import { userRequest } from "../requestMethods";
+import { useDispatch } from "react-redux";
 import {
   deleteCartItem,
   updateCartItem,
   getCartProduct,
-} from '../Redux/cartReducer';
+} from "../Redux/cartReducer";
+import { TbTruckDelivery } from "react-icons/tb";
 
 const CardContainer = styled.div`
   border: 1px solid #dee2e6;
@@ -15,8 +16,10 @@ const CardContainer = styled.div`
 `;
 
 const Image = styled.img`
-  width: fit-content;
-  height: auto;
+  max-width: 130px;
+  width: 100%;
+  object-fit: fill;
+  height: 100%;
   max-height: 150px;
 `;
 
@@ -25,7 +28,7 @@ const Brand = styled.p`
   margin: 0;
   font-size: 0.9rem;
   color: gray;
-  font-family: 'Playfair Display', sans-serif;
+  font-family: "Playfair Display", sans-serif;
 `;
 
 const ProductName = styled.p`
@@ -37,13 +40,13 @@ const ProductName = styled.p`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-family: 'Josefin Sans Regular';
+  font-family: "Josefin Sans Regular";
 `;
 
 const DropTitle = styled.span`
   font-weight: bold;
   font-size: 1rem;
-  font-family: 'Josefin Sans', sans-serif;
+  font-family: "Josefin Sans", sans-serif;
 `;
 
 const Dropdown = styled.select`
@@ -51,7 +54,7 @@ const Dropdown = styled.select`
   font-size: 0.9rem;
   padding: 3px;
   border: none;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-weight: bold;
   &:focus {
     outline: none;
@@ -62,7 +65,7 @@ const Price = styled.p`
   margin-bottom: 0.5rem;
   text-align: start;
   font-size: 0.9rem;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-weight: bolder;
 `;
 
@@ -72,13 +75,13 @@ const FreeDelivery = styled.p`
   margin: 0;
   font-size: 1rem;
   font-weight: bold;
-  font-family: 'Josefin Sans Regular';
+  font-family: "Josefin Sans Regular";
 `;
 
 const CartCard = ({ data, show }) => {
-  const [selectedSize, setSelectedSize] = useState(data?.selectedSize || '');
+  const [selectedSize, setSelectedSize] = useState(data?.selectedSize || "");
   const [selectedQuantity, setSelectedQuantity] = useState(
-    data?.quantity || ''
+    data?.quantity || ""
   );
 
   const dispatch = useDispatch();
@@ -114,23 +117,26 @@ const CartCard = ({ data, show }) => {
 
   console.log(data);
   return (
-    <CardContainer className='row border p-2 px-0 mb-2 mx-1'>
-      <div className='col-3 px-1'>
-        <Image src={data.img[0]} alt={data.productName} />
+    <CardContainer className="row border p-2 px-0 mb-2 mx-1">
+      <div className="col-3 px-1">
+        <Image
+          src={`http://localhost:5000/${data.img[0]}`}
+          alt={data.productName}
+        />
       </div>
-      <div className='col-8 px-2 d-flex flex-column justify-content-center'>
+      <div className="col-8 px-2 d-flex flex-column justify-content-center">
         <ProductName>{data._id && data.productName}</ProductName>
 
         <Brand>{data._id && data.brandName} </Brand>
-        <div className='d-flex '>
-          <div className='mr-3'>
+        <div className="d-flex ">
+          <div className="mr-3">
             <DropTitle>Size:</DropTitle>
             <Dropdown
               value={selectedSize}
               disabled={!show}
               onChange={handleSizeChange}
             >
-              <option value=''>Select size</option>
+              <option value="">Select size</option>
               {data?.sizes.map((size) => (
                 <option value={size} key={size}>
                   {size}
@@ -138,14 +144,14 @@ const CartCard = ({ data, show }) => {
               ))}
             </Dropdown>
           </div>
-          <div className='mr-3'>
+          <div className="mr-3">
             <DropTitle>Qty:</DropTitle>
             <Dropdown
               value={selectedQuantity}
               disabled={!show}
               onChange={handleQuantityChange}
             >
-              <option value='' disabled>
+              <option value="" disabled>
                 Select quantity
               </option>
               {Array.from({ length: 10 }, (_, index) => index + 1).map(
@@ -159,9 +165,11 @@ const CartCard = ({ data, show }) => {
           </div>
         </div>
         <Price>${data._id && (data.price * data.quantity).toFixed(2)}</Price>
-        <FreeDelivery>Free Delivery</FreeDelivery>
+        <FreeDelivery>
+          Free Delivery <TbTruckDelivery size={17} color="green" />
+        </FreeDelivery>
       </div>
-      <div className={show ? '' : 'd-none'}>
+      <div className={show ? "" : "d-none"}>
         <span onClick={handleDeleteItem}>
           <RxCross1 />
         </span>

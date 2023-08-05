@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { publicRequest, userRequest } from '../requestMethods';
-import { useParams } from 'react-router-dom';
-import ReviewCard from './ReviewCard';
+import React, { useEffect, useState } from "react";
+import styled from "styled-components";
+import { publicRequest, userRequest } from "../requestMethods";
+import { useParams } from "react-router-dom";
+import ReviewCard from "./ReviewCard";
 
 const FormContainer = styled.form`
   display: flex;
@@ -23,7 +23,7 @@ const Container = styled.div``;
 const Star = styled.span`
   cursor: pointer;
   font-size: 24px;
-  color: ${({ filled }) => (filled ? '#ffcc00' : '#ccc')};
+  color: ${({ filled }) => (filled ? "#ffcc00" : "#ccc")};
 `;
 
 const Input = styled.input`
@@ -46,10 +46,10 @@ const SubmitButton = styled.button`
   cursor: pointer;
 `;
 
-const RatingForm = () => {
+const RatingForm = ({ update, setUpdate }) => {
   const { productId } = useParams(); // Get the productId from the URL params
   const [rating, setRating] = useState(0);
-  const [comment, setComment] = useState('');
+  const [comment, setComment] = useState("");
   const [submited, setSubmited] = useState(false);
   const [averageRating, setAverageRating] = useState(0.0);
   const [reviews, setReviews] = useState([]);
@@ -75,33 +75,26 @@ const RatingForm = () => {
           `/review/getreviews/${productId}`
         );
         setReviews(response.data);
-
+        console.log(reviews.length);
         // Calculate the average rating and update state
         const averageRating = calculateAverageRating(response.data);
         setAverageRating(averageRating);
         console.log(averageRating);
-        try {
-          await userRequest.put(`/product/updatereview/${productId}`, {
-            review: averageRating,
-          });
-        } catch (error) {
-          console.error(error);
-        }
       } catch (error) {
         console.error(error);
       }
     };
 
     fetchReviews();
-  }, [submited]);
+  }, [submited, productId, reviews.length]);
 
   // Function to handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (rating === 0 || comment.trim() === '') {
+    if (rating === 0 || comment.trim() === "") {
       return;
     }
-    const userId = localStorage.getItem('userId');
+    const userId = localStorage.getItem("userId");
 
     const data = {
       stars: rating,
@@ -114,6 +107,11 @@ const RatingForm = () => {
         `/review/addreview/${productId}`,
         data
       );
+      await userRequest.put(`/product/updatereview/${productId}`, {
+        total: reviews.length + 1,
+        averageRating: averageRating,
+      });
+      setUpdate(!update);
     } catch (error) {
       console.error(error);
     }
@@ -136,12 +134,12 @@ const RatingForm = () => {
           ))}
         </StarContainer>
         <Input
-          type='text'
+          type="text"
           value={comment}
           onChange={(e) => setComment(e.target.value)}
-          placeholder='Enter your comment'
+          placeholder="Enter your comment"
         />
-        <SubmitButton type='submit'>Submit</SubmitButton>
+        <SubmitButton type="submit">Submit</SubmitButton>
       </FormContainer>
       {reviews.map((review) => (
         // console.log(review),

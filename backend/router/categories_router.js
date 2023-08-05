@@ -1,12 +1,12 @@
 // routes/categoryRoutes.js
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { CategoryModel } = require('../models/category_model');
+const { CategoryModel } = require("../models/category_model");
 
-router.post('/add', async (req, res) => {
+router.post("/add", async (req, res) => {
   try {
     const categoriesToAdd = req.body; // Array of category objects
-
+    console.log(req.body);
     const addedCategories = [];
 
     for (const categoryData of categoriesToAdd) {
@@ -27,18 +27,18 @@ router.post('/add', async (req, res) => {
     res.status(201).json(addedCategories);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
 // Get all categories
-router.get('/categories', async (req, res) => {
+router.get("/categories", async (req, res) => {
   try {
     const categories = await CategoryModel.find();
     res.status(200).json(categories);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 

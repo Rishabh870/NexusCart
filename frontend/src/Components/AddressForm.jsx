@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-import { Button, Container, Form, Modal } from 'react-bootstrap';
-import styled from 'styled-components';
-import { MdClose } from 'react-icons/md';
-import { userRequest } from '../requestMethods';
+import { Button, Container, Form, Modal } from "react-bootstrap";
+import styled from "styled-components";
+import { MdClose } from "react-icons/md";
+import { userRequest } from "../requestMethods";
 
 const FormLabel = styled.label`
   font-weight: bold;
@@ -35,16 +35,23 @@ const CloseIcon = styled(MdClose)`
   line-height: 1;
 `;
 
+const StyledButton = styled(Button)`
+  background-color: black !important;
+  border-color: #000000 !important;
+  color: white;
+  border-radius: 0%;
+`;
+
 const DeliveryScreen = ({ showModal, handleCloseModal }) => {
   const [formData, setFormData] = useState({
-    fullName: '',
-    mobileNumber: '',
-    pincode: '',
-    addressLine1: '',
-    addressLine2: '',
-    landmark: '',
-    city: '',
-    state: '',
+    fullName: "",
+    mobileNumber: "",
+    pincode: "",
+    addressLine1: "",
+    addressLine2: "",
+    landmark: "",
+    city: "",
+    state: "",
   });
 
   const handleChange = (e) => {
@@ -55,7 +62,7 @@ const DeliveryScreen = ({ showModal, handleCloseModal }) => {
     }));
   };
 
-  const userId = localStorage.getItem('userId'); // Retrieve the userId from localStorage
+  const userId = localStorage.getItem("userId"); // Retrieve the userId from localStorage
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -64,25 +71,25 @@ const DeliveryScreen = ({ showModal, handleCloseModal }) => {
     const formData = new FormData(form);
 
     const addressData = {
-      fullName: formData.get('fullName'),
-      mobileNumber: formData.get('mobileNumber'),
-      pincode: formData.get('pincode'),
-      addressLine1: formData.get('addressLine1'),
-      addressLine2: formData.get('addressLine2'),
-      landmark: formData.get('landmark'),
-      city: formData.get('city'),
-      state: formData.get('state'),
+      fullName: formData.get("fullName"),
+      mobileNumber: formData.get("mobileNumber"),
+      pincode: formData.get("pincode"),
+      addressLine1: formData.get("addressLine1"),
+      addressLine2: formData.get("addressLine2"),
+      landmark: formData.get("landmark"),
+      city: formData.get("city"),
+      state: formData.get("state"),
     };
 
     // Check if any field is empty
     let isFormValid = true;
 
     for (let field of form.elements) {
-      if (field.tagName === 'INPUT' && field.value.trim() === '') {
-        field.style.borderColor = 'red';
+      if (field.tagName === "INPUT" && field.value.trim() === "") {
+        field.style.borderColor = "red";
         isFormValid = false;
       } else {
-        field.style.borderColor = '';
+        field.style.borderColor = "";
       }
     }
 
@@ -108,7 +115,7 @@ const DeliveryScreen = ({ showModal, handleCloseModal }) => {
     <Modal show={showModal} onHide={handleCloseModal}>
       <Modal.Header>
         <Modal.Title>Change Address</Modal.Title>
-        <CloseButton variant='link' onClick={handleCloseModal}>
+        <CloseButton variant="link" onClick={handleCloseModal}>
           <CloseIcon>&times;</CloseIcon>
         </CloseButton>
       </Modal.Header>
@@ -117,94 +124,92 @@ const DeliveryScreen = ({ showModal, handleCloseModal }) => {
           <Form.Group>
             <FormLabel>Full Name (First and Last Name)</FormLabel>
             <FormControl
-              type='text'
-              name='fullName'
+              type="text"
+              name="fullName"
               value={formData.fullName}
               onChange={handleChange}
-              autoComplete='name'
+              autoComplete="name"
               required
             />
           </Form.Group>
           <Form.Group>
             <FormLabel>Mobile Number</FormLabel>
             <FormControl
-              type='tel'
-              name='mobileNumber'
+              type="tel"
+              name="mobileNumber"
               value={formData.mobileNumber}
               onChange={handleChange}
-              autoComplete='tel'
+              autoComplete="tel"
               required
             />
           </Form.Group>
           <Form.Group>
             <FormLabel>Pincode</FormLabel>
             <FormControl
-              type='text'
-              name='pincode'
+              type="text"
+              name="pincode"
               value={formData.pincode}
               onChange={handleChange}
-              autoComplete='postal-code'
+              autoComplete="postal-code"
               required
             />
           </Form.Group>
           <Form.Group>
             <FormLabel>Flat, House no., Building, Company, Apartment</FormLabel>
             <FormControl
-              type='text'
-              name='addressLine1'
+              type="text"
+              name="addressLine1"
               value={formData.addressLine1}
               onChange={handleChange}
-              autoComplete='address-line1'
+              autoComplete="address-line1"
               required
             />
           </Form.Group>
           <Form.Group>
             <FormLabel>Area, Street, Sector, Village</FormLabel>
             <FormControl
-              type='text'
-              name='addressLine2'
+              type="text"
+              name="addressLine2"
               value={formData.addressLine2}
               onChange={handleChange}
-              autoComplete='address-line2'
+              autoComplete="address-line2"
               required
             />
           </Form.Group>
           <Form.Group>
             <FormLabel>Landmark</FormLabel>
             <FormControl
-              type='text'
-              name='landmark'
+              type="text"
+              name="landmark"
               value={formData.landmark}
               onChange={handleChange}
-              autoComplete='off'
+              autoComplete="off"
               required
             />
           </Form.Group>
           <Form.Group>
             <FormLabel>Town/City</FormLabel>
             <FormControl
-              type='text'
-              name='city'
+              type="text"
+              name="city"
               value={formData.city}
               onChange={handleChange}
-              autoComplete='address-level2'
+              autoComplete="address-level2"
               required
             />
           </Form.Group>
           <Form.Group>
             <FormLabel>State</FormLabel>
             <FormControl
-              type='text'
-              name='state'
+              type="text"
+              name="state"
               value={formData.state}
               onChange={handleChange}
-              autoComplete='address-level1'
+              autoComplete="address-level1"
               required
             />
           </Form.Group>
-          <FormButton variant='primary' type='submit'>
-            Save Changes
-          </FormButton>
+          <StyledButton type="submit">Save Changes</StyledButton>
         </Form>
       </Modal.Body>
     </Modal>

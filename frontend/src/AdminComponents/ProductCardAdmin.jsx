@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
-import { FaEdit, FaTrash } from 'react-icons/fa';
-import Carousel from 'react-multi-carousel';
-import 'react-multi-carousel/lib/styles.css';
-import { userRequest } from '../requestMethods';
-import AddProductModal from './AddProductModal';
+import React, { useState } from "react";
+import styled from "styled-components";
+import { FaEdit, FaTrash } from "react-icons/fa";
+import Carousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
+import { userRequest } from "../requestMethods";
+import AddProductModal from "./AddProductModal";
+import { Link } from "react-router-dom";
 
 const CardContainer = styled.div`
   display: flex;
@@ -18,6 +19,7 @@ const CardContainer = styled.div`
 
 const ProductInfo = styled.div`
   flex: 1;
+  width: 17rem;
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -26,24 +28,24 @@ const ProductInfo = styled.div`
 const ProductName = styled.h3`
   font-size: 14px;
   margin-bottom: 5px;
+  color: gray;
 `;
 
 const BrandName = styled.p`
   font-weight: bold;
   margin-bottom: 5px;
-  color: lightgray;
+  color: black;
   font-size: 16px;
 `;
 
 const Price = styled.p`
   font-size: 14px;
-  font-weight: bold;
   margin-bottom: 5px;
 `;
 
 const Category = styled.p`
   font-size: 14px;
-  color: lightgray;
+  color: gray;
   margin-bottom: 5px;
 `;
 
@@ -75,38 +77,39 @@ const CarouselContainer = styled.div`
 const SizeContainer = styled.div`
   display: flex;
   margin-top: 0.5rem;
-  justify-content: space-between;
-  width: 12rem;
 `;
 
-const SizeButton = styled.div`
+const SizeButton = styled.span`
   display: flex;
-  font-size: small;
+  margin-right: 0.5rem;
+  font-size: x-small;
   justify-content: center;
   align-items: center;
   width: 30px;
   height: 30px;
-  padding: 10px;
   border-radius: 50%;
   border: 1px solid #ccc;
   cursor: pointer;
-  color: '#000';
+  color: "#000";
 `;
 
-const ProductCardAdmin = ({ product }) => {
-
+const ProductCardAdmin = ({ product, setUpdate, update }) => {
   const [showModal, setShowModal] = useState(false);
   const editProduct = async () => {
-    setShowModal(true)
+    setShowModal(true);
   };
 
   const handleCloseModal = () => {
     setShowModal(false);
+    setUpdate(!update);
   };
   const deleteProduct = async () => {
     try {
-      const response = await userRequest.delete(`/product/products/${product._id}`);
+      const response = await userRequest.delete(
+        `/product/products/${product._id}`
+      );
       console.log(response);
+      setUpdate(!update);
     } catch (error) {
       console.log(error);
     }
@@ -123,49 +126,57 @@ const ProductCardAdmin = ({ product }) => {
     },
   };
   return (
-    <CardContainer className=''>
-      <CarouselContainer>
-        <Carousel
-          swipeable={true}
-          draggable={true}
-          responsive={responsive}
-          ssr={true} // means to render carousel on server-side.
-          infinite={true}
-          autoPlaySpeed={1000}
-          keyBoardControl={true}
-          className=''
-          transitionDuration={500}
-          containerClass='carousel-container'
-          removeArrowOnDeviceType={['Laptop', 'mobile']}
-          itemClass='carousel-item-padding-40-px'
-          showDots='true'
-        >
-          {product.img.map((src) => {
-            return (
-              <div style={{ borderRadius: '30px' }}>
-                <img
-                   src={`http://localhost:5000/${src}`}
-                  alt=''
-                  style={{ width: '100%', height: '150px', objectFit:'cover' }}
-                />
-              </div>
-            );
-          })}
-        </Carousel>
-      </CarouselContainer>
-      <ProductInfo>
-        <BrandName>{product.brandName} </BrandName>
-        <ProductName>{product.productName}</ProductName>
-        <Price>{product.price}</Price>
-        <Category>
-          {product.category[0]} {product.category[1]}{' '}
-        </Category>
-        <SizeContainer>
-          {product.sizes.map((size, index) => (
-            <SizeButton key={index}>{size}</SizeButton>
-          ))}
-        </SizeContainer>
-      </ProductInfo>
+    <CardContainer className="">
+      <Link
+        to={`/product/${product._id}`}
+        className="d-flex"
+        style={{ textDecoration: "none", color: "black" }}
+      >
+        <CarouselContainer>
+          <Carousel
+            swipeable={true}
+            draggable={true}
+            responsive={responsive}
+            ssr={true} // means to render carousel on server-side.
+            infinite={true}
+            autoPlaySpeed={1000}
+            keyBoardControl={true}
+            className=""
+            transitionDuration={500}
+            containerClass="carousel-container"
+            removeArrowOnDeviceType={["Laptop", "mobile"]}
+            itemClass="carousel-item-padding-40-px"
+            showDots="true"
+          >
+            {product.img.map((src) => {
+              return (
+                <div style={{ borderRadius: "30px" }}>
+                  <img
+                    src={`http://localhost:5000/${src}`}
+                    alt=""
+                    style={{
+                      width: "100%",
+                      height: "150px",
+                      objectFit: "cover",
+                    }}
+                  />
+                </div>
+              );
+            })}
+          </Carousel>
+        </CarouselContainer>
+        <ProductInfo>
+          <BrandName>{product.brandName} </BrandName>
+          <ProductName>{product.productName}</ProductName>
+          <Price>${product.price}</Price>
+          <Category>{product.category}</Category>
+          <SizeContainer>
+            {product.sizes.map((size, index) => (
+              <SizeButton key={index}>{size}</SizeButton>
+            ))}
+          </SizeContainer>
+        </ProductInfo>
+      </Link>
       <ButtonsContainer>
         <Button onClick={editProduct}>
           <FaEdit />
@@ -175,10 +186,10 @@ const ProductCardAdmin = ({ product }) => {
         </Button>
       </ButtonsContainer>
       <AddProductModal
-          show={showModal}
-          onHide={handleCloseModal}
-          productData={product}
-        />
+        show={showModal}
+        onHide={handleCloseModal}
+        productData={product}
+      />
     </CardContainer>
   );
 };

@@ -1,10 +1,11 @@
-import React from 'react';
-import styled from 'styled-components';
-import { Container, Row, Col } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import React from "react";
+import styled from "styled-components";
+import { Container, Row, Col } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 const FooterContainer = styled.footer`
   background-color: #f8f9fa;
+  font-family: "Josefin Sans regular";
   padding: 20px 0;
 `;
 const FooterText = styled.p`
@@ -33,59 +34,59 @@ const FooterListItem = styled.li`
 const Footer = () => {
   return (
     <>
-      <hr className='mb-0' />
-      <FooterContainer className='mt-0 mx-auto '>
-        <Container className='pt-4 pb-3'>
+      <hr className="mb-0" />
+      <FooterContainer className="mt-0 mx-auto ">
+        <Container className="pt-4 pb-3">
           <Row>
-            <Col md={6} lg={3} className='pl-5'>
+            <Col md={6} lg={3} className="pl-5">
               <FooterText>Department</FooterText>
               <FooterList>
                 <FooterListItem>
-                  <FooterLink to='/'>Fashion</FooterLink>
+                  <FooterLink to="/">Fashion</FooterLink>
                 </FooterListItem>
                 <FooterListItem>
-                  <FooterLink to='/'>Education Product</FooterLink>
+                  <FooterLink to="/">Education Product</FooterLink>
                 </FooterListItem>
                 {/* Add more list items for each department */}
               </FooterList>
             </Col>
-            <Col md={6} lg={3} className='pl-5'>
+            <Col md={6} lg={3} className="pl-5">
               <FooterText>About Us</FooterText>
               <FooterList>
                 <FooterListItem>
-                  <FooterLink to='/'>About Shopcart</FooterLink>
+                  <FooterLink to="/">About Shopcart</FooterLink>
                 </FooterListItem>
                 <FooterListItem>
-                  <FooterLink to='/'>Careers</FooterLink>
+                  <FooterLink to="/">Careers</FooterLink>
                 </FooterListItem>
                 {/* Add more list items for each about section */}
               </FooterList>
             </Col>
-            <Col md={6} lg={3} className='pl-5'>
+            <Col md={6} lg={3} className="pl-5">
               <FooterText>Service</FooterText>
               <FooterList>
                 <FooterListItem>
-                  <FooterLink to='/'>Shipping & Delivery</FooterLink>
+                  <FooterLink to="/">Shipping & Delivery</FooterLink>
                 </FooterListItem>
                 <FooterListItem>
-                  <FooterLink to='/'>Order Pickup</FooterLink>
+                  <FooterLink to="/">Order Pickup</FooterLink>
                 </FooterListItem>
                 <FooterListItem>
-                  <FooterLink to='/'>Account Signup</FooterLink>
+                  <FooterLink to="/">Account Signup</FooterLink>
                 </FooterListItem>
                 <FooterListItem>
-                  <FooterLink to='/'>Account Signin</FooterLink>
+                  <FooterLink to="/">Account Signin</FooterLink>
                 </FooterListItem>
               </FooterList>
             </Col>
-            <Col md={6} lg={3} className='pl-5'>
+            <Col md={6} lg={3} className="pl-5">
               <FooterText>Help</FooterText>
               <FooterList>
                 <FooterListItem>
-                  <FooterLink to='/'>Shopcart Help</FooterLink>
+                  <FooterLink to="/">Shopcart Help</FooterLink>
                 </FooterListItem>
                 <FooterListItem>
-                  <FooterLink to='/'>Returns</FooterLink>
+                  <FooterLink to="/">Returns</FooterLink>
                 </FooterListItem>
                 {/* Add more list items for each help section */}
               </FooterList>
@@ -93,7 +94,7 @@ const Footer = () => {
           </Row>
         </Container>
         <hr />
-        <Container className=' text-center'>
+        <Container className=" text-center">
           <FooterText>&copy; 2023 E-Commerce. All Rights Reserved.</FooterText>
         </Container>
       </FooterContainer>

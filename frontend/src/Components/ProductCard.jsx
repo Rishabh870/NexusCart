@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
-import Img1 from '../Img/Img4.webp';
-import { AiFillStar } from 'react-icons/ai';
-import { AiOutlineStar } from 'react-icons/ai';
-import { AiOutlineHeart } from 'react-icons/ai';
+import React, { useState } from "react";
+import styled from "styled-components";
+import Img1 from "../Img/Img4.webp";
+import { AiFillStar } from "react-icons/ai";
+import { AiOutlineStar } from "react-icons/ai";
+import { AiOutlineHeart } from "react-icons/ai";
 
 const CardContainer = styled.div`
   width: 100%;
@@ -32,19 +32,19 @@ const CardContent = styled.div`
 const Brand = styled.h3`
   font-size: 12px;
   margin-bottom: 0.3rem;
-  font-family: 'Playfair Display', sans-serif;
+  font-family: "Playfair Display", sans-serif;
   color: #666;
 `;
 const ProductName = styled.h4`
   font-size: 16px;
   font-weight: bold;
   margin: 8px 0;
-  font-family: 'Josefin Sans ';
+  font-family: "Josefin Sans ";
 `;
 const Price = styled.span`
   font-size: 14px;
   color: #333;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
 `;
 const RatingContainer = styled.div`
   display: flex;
@@ -96,7 +96,7 @@ const CartButton = styled.span`
   padding: 0.3rem 1.8rem;
   font-size: 0.9rem;
   font-weight: 600;
-  font-family: 'Playfair Display', serif;
+  font-family: "Playfair Display", serif;
 `;
 const CartIcon = styled(AiOutlineHeart)`
   margin-right: 0.3rem;
@@ -105,7 +105,7 @@ const CartIcon = styled(AiOutlineHeart)`
 `;
 
 const ProductCard = ({ product }) => {
-  const value = product.review;
+  const value = product.averageRating;
   const filledStars = Math.floor(value);
   const hasHalfStar = value - filledStars >= 0.5;
 
@@ -126,12 +126,12 @@ const ProductCard = ({ product }) => {
 
   return (
     <CardContainer
-      className='card mb-3'
+      className="card mb-3"
       onMouseEnter={() => setCartHovered(true)}
       onMouseLeave={() => setCartHovered(false)}
     >
-      <ProductImageSliderContainer className='card-img-top'>
-        <ProductImage src={product.img[0]} />
+      <ProductImageSliderContainer className="card-img-top">
+        <ProductImage src={`http://localhost:5000/${product.img[0]}`} />
       </ProductImageSliderContainer>
 
       {/* {isCartHovered && (
@@ -142,13 +142,13 @@ const ProductCard = ({ product }) => {
           </CartButton>
         </CartContainer>
       )} */}
-      <CardContent className='card-body pt-2 px-3'>
-        <Brand className='card-text'>{product.brandName}</Brand>
-        <ProductName className='card-title my-1'>
+      <CardContent className="card-body pt-2 px-3">
+        <Brand className="card-text">{product.brandName}</Brand>
+        <ProductName className="card-title my-1">
           {product.productName}
         </ProductName>
-        <Price className='card-text'>${product.price}</Price>
-        <RatingContainer className='mt-2'>{stars}</RatingContainer>
+        <Price className="card-text">${product.price}</Price>
+        <RatingContainer className="mt-2">{stars}</RatingContainer>
       </CardContent>
     </CardContainer>
   );

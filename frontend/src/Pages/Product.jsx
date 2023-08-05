@@ -1,23 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import Header from '../Components/Header';
-import Footer from '../Components/Footer';
-import { Container } from 'react-bootstrap';
-import { styled } from 'styled-components';
-import { FaShoppingCart } from 'react-icons/fa';
-import { BiSolidHeart } from 'react-icons/bi';
-import { useDispatch, useSelector } from 'react-redux';
-import Carousel from 'react-multi-carousel';
-import 'react-multi-carousel/lib/styles.css';
+import React, { useEffect, useState } from "react";
+import Header from "../Components/Header";
+import Footer from "../Components/Footer";
+import { Container } from "react-bootstrap";
+import { styled } from "styled-components";
+import { FaShoppingCart } from "react-icons/fa";
+import { BiSolidHeart } from "react-icons/bi";
+import { useDispatch, useSelector } from "react-redux";
+import Carousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
 import {
   addCartProduct,
   addProduct,
   getCartProduct,
-} from '../Redux/cartReducer';
-import { publicRequest, userRequest } from '../requestMethods';
-import { useParams } from 'react-router-dom';
-import ReviewCard from '../Components/ReviewCard';
-import ReviewForm from '../Components/ReviewForm';
-import { MdOutlineStar } from 'react-icons/md';
+} from "../Redux/cartReducer";
+import { publicRequest, userRequest } from "../requestMethods";
+import { useParams } from "react-router-dom";
+import ReviewCard from "../Components/ReviewCard";
+import ReviewForm from "../Components/ReviewForm";
+import { MdOutlineStar } from "react-icons/md";
 const ProductInfo = styled.span``;
 const Review = styled.div`
   margin-top: 2rem;
@@ -37,11 +37,11 @@ const SpecificationItem = styled.li`
 const SizeContainer = styled.div`
   display: flex;
   margin-top: 1rem;
-  justify-content: space-between;
   width: 17rem;
 `;
 const SizeButton = styled.div`
   display: flex;
+  margin-right: 1rem;
   justify-content: center;
   align-items: center;
   width: 40px;
@@ -50,8 +50,8 @@ const SizeButton = styled.div`
   border-radius: 50%;
   border: 1px solid #ccc;
   cursor: pointer;
-  background-color: ${(props) => (props.selected ? '#000' : '#fff')};
-  color: ${(props) => (props.selected ? '#fff' : '#000')};
+  background-color: ${(props) => (props.selected ? "#000" : "#fff")};
+  color: ${(props) => (props.selected ? "#fff" : "#000")};
 `;
 const Brand = styled.h5`
   font-weight: bold;
@@ -148,10 +148,10 @@ const StarRating = ({ rating }) => {
     <StarContainer>
       <div>
         {[...Array(filledStars)].map((_, index) => (
-          <Star key={index} size={20} color='#ffc107' />
+          <Star key={index} size={20} color="#ffc107" />
         ))}
         {[...Array(remainingStar)].map((_, index) => (
-          <Star key={index} size={20} color='#ccc' />
+          <Star key={index} size={20} color="#ccc" />
         ))}
       </div>
       <RatingText>{rating}</RatingText>
@@ -162,7 +162,7 @@ const StarRating = ({ rating }) => {
 const ProductReview = ({ review }) => {
   return (
     <StarContainer>
-      <Star size={20} color='#ffc107' />
+      <Star size={20} color="#ffc107" />
       <RatingText>{review}</RatingText>
     </StarContainer>
   );
@@ -171,6 +171,12 @@ const ProductReview = ({ review }) => {
 const Product = () => {
   const { productId } = useParams();
   const [product, setProduct] = useState(null);
+  const [cartItemCount, setCartItemCount] = useState(0);
+  const [selectedSize, setSelectedSize] = useState("S");
+
+  const [update, setUpdate] = useState(false);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -183,9 +189,7 @@ const Product = () => {
     };
 
     fetchProduct();
-  }, []);
-
-  const [cartItemCount, setCartItemCount] = useState(0);
+  }, [update, productId]);
 
   const responsive = {
     Laptop: {
@@ -197,8 +201,6 @@ const Product = () => {
       items: 1,
     },
   };
-  const [selectedSize, setSelectedSize] = useState('S');
-  const dispatch = useDispatch();
 
   const addToCart = () => {
     dispatch(
@@ -218,17 +220,18 @@ const Product = () => {
   if (!product) {
     return <div>Loading...</div>;
   }
+
   return (
     <div>
       <Header count={cartItemCount} />
       <Container>
-        <ProductInfo className='row'>
-          <div id='left' className='col'>
+        <ProductInfo className="row">
+          <div id="left" className="col">
             <div
-              className='mx-auto'
+              className="mx-auto"
               style={{
-                maxWidth: '400px',
-                height: '100%',
+                maxWidth: "400px",
+                height: "100%",
               }}
             >
               <Carousel
@@ -239,26 +242,26 @@ const Product = () => {
                 infinite={true}
                 autoPlaySpeed={1000}
                 keyBoardControl={true}
-                className=''
+                className=""
                 transitionDuration={500}
-                containerClass='carousel-container'
-                removeArrowOnDeviceType={['Laptop', 'mobile']}
-                itemClass='carousel-item-padding-40-px'
-                showDots='true'
+                containerClass="carousel-container"
+                removeArrowOnDeviceType={["Laptop", "mobile"]}
+                itemClass="carousel-item-padding-40-px"
+                showDots="true"
               >
                 {product.img.map((slide, index) => (
-                  <div key={index} style={{ borderRadius: '30px' }}>
+                  <div key={index} style={{ borderRadius: "30px" }}>
                     <img
-                      src={slide}
+                      src={`http://localhost:5000/${slide}`}
                       alt={slide}
-                      style={{ width: '100%', height: '610px' }}
+                      style={{ width: "100%", height: "610px" }}
                     />
                   </div>
                 ))}
               </Carousel>
             </div>
           </div>
-          <div id='right' className='col'>
+          <div id="right" className="col">
             <TopSection>
               <Brand>{product.brandName}</Brand>
               <ProductName>{product.productName}</ProductName>
@@ -271,7 +274,7 @@ const Product = () => {
             <hr />
             <div>
               <div>
-                <SizeHeader className='fw-bolder'>SELECT SIZE </SizeHeader>
+                <SizeHeader className="fw-bolder">SELECT SIZE </SizeHeader>
                 <SizeContainer>
                   {product.sizes.map((size, index) => (
                     <SizeButton
@@ -285,14 +288,14 @@ const Product = () => {
                 </SizeContainer>
               </div>
               <div
-                className=' d-flex justify-content-around mt-3'
+                className=" d-flex justify-content-around mt-3"
                 style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  alignItems: 'center',
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
                 }}
               >
-                {localStorage.getItem('token') ? (
+                {localStorage.getItem("token") ? (
                   <Button onClick={addToCart}>
                     <Icon>
                       <FaShoppingCart />
@@ -320,13 +323,13 @@ const Product = () => {
             <hr />
             <BottomSection>
               <ReviewDetailsHeading>Product Rating</ReviewDetailsHeading>
-              <div className='row m-0'>
+              <div className="row m-0">
                 <StarRating
-                  className=' col border-left'
-                  rating={product.review}
+                  className=" col border-left"
+                  rating={product.averageRating}
                 />
                 <Divider />
-                <ProductReview className='col' review={4} />
+                <ProductReview className="col" review={product.total} />
               </div>
               <hr />
               <ProductDetails>PRODUCT DETAILS:</ProductDetails>
@@ -335,7 +338,7 @@ const Product = () => {
           </div>
         </ProductInfo>
         <Review>
-          <ReviewForm />
+          <ReviewForm update={update} setUpdate={setUpdate} />
         </Review>
       </Container>
       <Footer />

@@ -1,12 +1,12 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const mongoose = require('mongoose');
-const { verifyTokenAuth } = require('../middleware/verifyToken');
-const OrderModel = mongoose.model('OrderModel');
-router.post('/addorder/:userId', verifyTokenAuth, (req, res) => {
+const mongoose = require("mongoose");
+const { verifyTokenAuth } = require("../middleware/verifyToken");
+const OrderModel = mongoose.model("OrderModel");
+router.post("/addorder/:userId", verifyTokenAuth, (req, res) => {
   const { userId, cartProduct, formattedTotalPrice, deliveryData } = req.body;
-  const delivery = 'No';
-  const paid = 'No';
+  const delivery = "No";
+  const paid = "No";
   const orders = [
     {
       delivery,
@@ -22,7 +22,7 @@ router.post('/addorder/:userId', verifyTokenAuth, (req, res) => {
   ];
   // Validate that userId and orders are present in the request body
   if (!userId || !orders || !Array.isArray(orders)) {
-    return res.status(400).json({ error: 'Invalid request body' });
+    return res.status(400).json({ error: "Invalid request body" });
   }
 
   OrderModel.findOne({ userId })
@@ -40,7 +40,7 @@ router.post('/addorder/:userId', verifyTokenAuth, (req, res) => {
           })
           .catch((error) => {
             console.log(error);
-            res.status(500).json({ error: 'Internal server error' });
+            res.status(500).json({ error: "Internal server error" });
           });
       } else {
         // Order doesn't exist for the user, create a new order with the provided orders
@@ -60,23 +60,23 @@ router.post('/addorder/:userId', verifyTokenAuth, (req, res) => {
           })
           .catch((error) => {
             console.log(error);
-            res.status(500).json({ error: 'Internal server error x' });
+            res.status(500).json({ error: "Internal server error x" });
           });
       }
     })
     .catch((error) => {
       console.log(error);
-      res.status(500).json({ error: 'Internal server error' });
+      res.status(500).json({ error: "Internal server error" });
     });
 });
 
-router.get('/orders/:userId', verifyTokenAuth, (req, res) => {
+router.get("/orders/:userId", verifyTokenAuth, (req, res) => {
   const userId = req.params.userId;
 
   OrderModel.findOne({ userId })
     .then((order) => {
       if (!order) {
-        return res.status(404).json({ message: 'No orders found' });
+        return res.status(404).json({ message: "No orders found" });
       }
 
       const orders = order.orders;
@@ -84,31 +84,31 @@ router.get('/orders/:userId', verifyTokenAuth, (req, res) => {
     })
     .catch((error) => {
       console.log(error);
-      res.status(500).json({ error: 'Internal server error' });
+      res.status(500).json({ error: "Internal server error" });
     });
 });
 
 // PUT /order/editorder/:orderId
-router.put('/editorder/:orderId/:userId', verifyTokenAuth, (req, res) => {
+router.put("/editorder/:orderId/:userId", verifyTokenAuth, (req, res) => {
   const orderId = req.params.orderId;
   const userId = req.params.userId;
   console.log(orderId, userId);
-  const paid = 'Yes';
+  const paid = "Yes";
 
   // Find the order with the specified orderId and update the delivery and paid fields
   // Find the main order by its userId
   OrderModel.findOne({ userId })
-    .populate('orders.products.productId')
+    .populate("orders.products.productId")
     .then((mainOrder) => {
       if (!mainOrder) {
-        return res.status(404).json({ error: 'Main order not found' });
+        return res.status(404).json({ error: "Main order not found" });
       }
 
       // Find the order with the specific orderId in the orders array
       const order = mainOrder.orders.find((o) => o._id.toString() === orderId);
       // console.log(order);
       if (!order) {
-        return res.status(404).json({ error: 'Order not found' });
+        return res.status(404).json({ error: "Order not found" });
       }
       console.log(order);
       order.paid = paid;
@@ -122,40 +122,58 @@ router.put('/editorder/:orderId/:userId', verifyTokenAuth, (req, res) => {
         })
         .catch((error) => {
           console.log(error);
-          res.status(500).json({ error: 'Internal server error' });
+          res.status(500).json({ error: "Internal server error" });
         });
     })
     .catch((error) => {
       console.log(error);
-      res.status(500).json({ error: 'Internal server error' });
+      res.status(500).json({ error: "Internal server error" });
     });
 });
 
 // Get an order by orderId
-router.get('/getorder/:orderId/:userId', verifyTokenAuth, (req, res) => {
+router.get("/getorder/:orderId/:userId", verifyTokenAuth, (req, res) => {
   const orderId = req.params.orderId;
   const userId = req.params.userId;
   // console.log(userId, orderId);
   // Find the main order by its userId
   OrderModel.findOne({ userId })
-    .populate('orders.products.productId')
+    .populate("orders.products.productId")
     .then((mainOrder) => {
       if (!mainOrder) {
-        return res.status(404).json({ error: 'Main order not found' });
+        return res.status(404).json({ error: "Main order not found" });
       }
 
       // Find the order with the specific orderId in the orders array
       const order = mainOrder.orders.find((o) => o._id.toString() === orderId);
       // console.log(order);
       if (!order) {
-        return res.status(404).json({ error: 'Order not found' });
+        return res.status(404).json({ error: "Order not found" });
       }
 
       res.status(200).json(order);
     })
     .catch((error) => {
       console.log(error);
-      res.status(500).json({ error: 'Internal server error' });
+      res.status(500).json({ error: "Internal server error" });
+    });
+});
+
+router.get("/all", verifyTokenAuth, (req, res) => {
+  OrderModel.find({})
+    .populate({ path: "orders.products.productId", model: "ProductModel" })
+    .then((orders) => {
+      // Extract the 'orders' array from each document and merge them into a single array
+      const allOrders = orders.reduce((accumulator, currentOrder) => {
+        accumulator.push(...currentOrder.orders);
+        return accumulator;
+      }, []);
+
+      res.status(200).json(allOrders);
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(500).json({ error: "Internal server error" });
     });
 });
 

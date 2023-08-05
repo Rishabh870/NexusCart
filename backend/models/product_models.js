@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const productSchema = new mongoose.Schema({
   img: {
@@ -30,21 +30,25 @@ const productSchema = new mongoose.Schema({
     required: true,
   },
   category: {
-    type: Array,
+    type: String,
     required: true,
   },
-  review: {
+  averageRating: {
     type: Number,
     default: 0,
     required: true,
+  },
+  total: {
+    type: Number,
+    default: 0,
   },
 });
 
 // Add text indexes for specific fields
 productSchema.index({
-  productName: 'text',
-  brandName: 'text',
-  category: 'text',
-  price: 'text',
+  productName: "text",
+  brandName: "text",
+  category: "text",
+  price: "text",
 });
-mongoose.model('ProductModel', productSchema);
+mongoose.model("ProductModel", productSchema);

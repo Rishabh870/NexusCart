@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { Container, Row, Col, Form } from 'react-bootstrap';
-import Header from '../Components/Header';
-import { publicRequest } from '../requestMethods';
-import { useDispatch, useSelector } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import styled from "styled-components";
+import { Container, Row, Col, Form } from "react-bootstrap";
+import Header from "../Components/Header";
+import { publicRequest } from "../requestMethods";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 
 const SignupPageContainer = styled.div`
   height: 80vh;
   display: flex;
   justify-content: center;
-  font-family: 'Playfair Display', sans-serif !important;
+  font-family: "Playfair Display", sans-serif !important;
   align-items: center;
 `;
 const Button = styled.button`
@@ -41,32 +41,33 @@ const SignupFormContainer = styled.div`
   border-radius: 5px;
   Form.Group {
     Form.Label {
-      font-family: 'Playfair Display', sans-serif !important;
+      font-family: "Playfair Display", sans-serif !important;
       font-weight: bolder;
     }
     Form.Control {
-      font-family: 'Playfair Display', sans-serif !important;
+      font-family: "Playfair Display", sans-serif !important;
     }
   }
 `;
 
 const Signup = () => {
   const [showAlert, setShowAlert] = useState(false);
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
     // Check if the user is already logged in (e.g., by checking the token in local storage)
-    const isLoggedIn = localStorage.getItem('token');
+    const isLoggedIn = localStorage.getItem("token");
 
-    // if (isLoggedIn) {
-    //   // User is logged in, redirect to "/home"
-    //   navigate('/');
-    // }
+    if (isLoggedIn) {
+      // User is logged in, redirect to "/home"
+      navigate("/");
+    }
   }, []);
   const handleSignup = async (e) => {
     e.preventDefault();
-
+    setLoading(true);
     const fullName = e.target.formFullName.value;
     const email = e.target.formEmail.value;
     const mobileNumber = e.target.formMobileNumber.value;
@@ -78,24 +79,24 @@ const Signup = () => {
     if (!fullName || !email || !mobileNumber || !password) {
       // Highlight empty fields in red
       if (!fullName) {
-        e.target.formFullName.classList.add('invalid-field');
+        e.target.formFullName.classList.add("invalid-field");
       } else {
-        e.target.formFullName.classList.remove('invalid-field');
+        e.target.formFullName.classList.remove("invalid-field");
       }
       if (!email) {
-        e.target.formEmail.classList.add('invalid-field');
+        e.target.formEmail.classList.add("invalid-field");
       } else {
-        e.target.formEmail.classList.remove('invalid-field');
+        e.target.formEmail.classList.remove("invalid-field");
       }
       if (!mobileNumber) {
-        e.target.formMobileNumber.classList.add('invalid-field');
+        e.target.formMobileNumber.classList.add("invalid-field");
       } else {
-        e.target.formMobileNumber.classList.remove('invalid-field');
+        e.target.formMobileNumber.classList.remove("invalid-field");
       }
       if (!password) {
-        e.target.formPassword.classList.add('invalid-field');
+        e.target.formPassword.classList.add("invalid-field");
       } else {
-        e.target.formPassword.classList.remove('invalid-field');
+        e.target.formPassword.classList.remove("invalid-field");
       }
       return; // Stop form submission if any field is empty
     }
@@ -103,11 +104,11 @@ const Signup = () => {
     // Clear any previous invalid field styling
     const formFields = e.target.elements;
     for (let i = 0; i < formFields.length; i++) {
-      formFields[i].classList.remove('invalid-field');
+      formFields[i].classList.remove("invalid-field");
     }
 
     try {
-      const response = await publicRequest.post('/user/signup', {
+      const response = await publicRequest.post("/user/signup", {
         fullName,
         email,
         mobileNumber,
@@ -118,16 +119,16 @@ const Signup = () => {
       const { _id, token, name } = response.data;
 
       // Store the userId and token in local storage
-      localStorage.setItem('userId', _id);
-      localStorage.setItem('token', token);
-      const firstName = name.split(' ')[0];
-      localStorage.setItem('name', firstName);
+      localStorage.setItem("userId", _id);
+      localStorage.setItem("token", token);
+      const firstName = name.split(" ")[0];
+      localStorage.setItem("name", firstName);
 
-      navigate('/');
+      navigate("/");
     } catch (error) {
       if (error.response && error.response.status === 409) {
         // User already exists, display a prompt
-        alert('User already exists. Please log in instead.');
+        alert("User already exists. Please log in instead.");
       } else {
         console.log(error);
         // Handle other error cases, such as displaying an error message
@@ -140,46 +141,50 @@ const Signup = () => {
       <Header />
       <SignupPageContainer>
         <Container>
-          <Row className='justify-content-center'>
+          <Row className="justify-content-center">
             <Col>
-              <SignupFormContainer className='mx-auto'>
+              <SignupFormContainer className="mx-auto">
                 <div>
-                  <Title className='text-center fw-bolder mx-auto'>
+                  <Title className="text-center fw-bolder mx-auto">
                     Sign Up
                   </Title>
                 </div>
                 <Form onSubmit={handleSignup}>
-                  <Form.Group className='mt-3' controlId='formFullName'>
+                  <Form.Group className="mt-3" controlId="formFullName">
                     <Form.Label>Full Name:</Form.Label>
-                    <Form.Control type='text' placeholder='Enter full name' />
+                    <Form.Control type="text" placeholder="Enter full name" />
                   </Form.Group>
 
-                  <Form.Group className='mt-3' controlId='formEmail'>
+                  <Form.Group className="mt-3" controlId="formEmail">
                     <Form.Label>Email Address:</Form.Label>
-                    <Form.Control type='email' placeholder='Enter email' />
+                    <Form.Control type="email" placeholder="Enter email" />
                   </Form.Group>
 
-                  <Form.Group className='mt-3' controlId='formMobileNumber'>
+                  <Form.Group className="mt-3" controlId="formMobileNumber">
                     <Form.Label>Mobile Number:</Form.Label>
                     <Form.Control
-                      type='number'
-                      placeholder='Enter mobile number'
+                      type="number"
+                      placeholder="Enter mobile number"
                     />
                   </Form.Group>
 
-                  <Form.Group className='mt-3' controlId='formPassword'>
+                  <Form.Group className="mt-3" controlId="formPassword">
                     <Form.Label>Password:</Form.Label>
                     <Form.Control
-                      type='password'
-                      placeholder='Enter password'
+                      type="password"
+                      placeholder="Enter password"
                     />
                   </Form.Group>
 
-                  <Button type='submit'>Sign Up</Button>
+                  {loading ? (
+                    <Button>Loading</Button>
+                  ) : (
+                    <Button type="submit">Sign Up</Button>
+                  )}
 
-                  <div className='mt-3 text-center'>
-                    <p className='mb-0'>
-                      Already have an account? <Link to='/login'>Login</Link>
+                  <div className="mt-3 text-center">
+                    <p className="mb-0">
+                      Already have an account? <Link to="/login">Login</Link>
                     </p>
                   </div>
                 </Form>
