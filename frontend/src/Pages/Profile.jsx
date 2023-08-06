@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { Container } from 'react-bootstrap';
-import Header from '../Components/Header';
-import Footer from '../Components/Footer';
-import { styled } from 'styled-components';
-import { userRequest } from '../requestMethods';
+import React, { useEffect, useState } from "react";
+import { Container } from "react-bootstrap";
+import Header from "../Components/Header";
+import Footer from "../Components/Footer";
+import { styled } from "styled-components";
+import { userRequest } from "../requestMethods";
 
 const ProfileContainer = styled.div`
   max-width: 400px;
@@ -29,23 +29,22 @@ const ProfileField = styled.div`
 `;
 
 const Button = styled.button`
-  background-color: #007bff;
+  background-color: black;
   color: #fff;
   border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
+  padding: 0.5rem 1.3rem;
   cursor: pointer;
 `;
 
 const Profile = () => {
-  const userId = localStorage.getItem('userId'); // Retrieve the userId from localStorage
+  const userId = localStorage.getItem("userId"); // Retrieve the userId from localStorage
 
   const [userData, setUserData] = useState({
-    fullName: '',
-    mobileNumber: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
+    fullName: "",
+    mobileNumber: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
   });
 
   const [isEditMode, setIsEditMode] = useState(false);
@@ -66,7 +65,7 @@ const Profile = () => {
     // Add the password field to the data object if it's present
     if (password) {
       if (password !== confirmPassword) {
-        console.log('Password and Confirm Password do not match.');
+        console.log("Password and Confirm Password do not match.");
         return;
       }
       data.password = password;
@@ -95,8 +94,8 @@ const Profile = () => {
           fullName: data.user.fullName,
           mobileNumber: data.user.mobileNumber,
           email: data.user.email,
-          password: '', // Clear password field on fetch
-          confirmPassword: '', // Clear confirm password field on fetch
+          password: "", // Clear password field on fetch
+          confirmPassword: "", // Clear confirm password field on fetch
         });
         // setAlternateMobile(data.user.alternateMobile);
       } catch (error) {
@@ -110,17 +109,17 @@ const Profile = () => {
   return (
     <>
       <Header />
-      <Container style={{ minHeight: '55vh' }}>
+      <Container style={{ minHeight: "55vh" }}>
         <ProfileContainer>
-          <h2 className=' text-center text-decoration-underline'>
+          <h2 className=" text-center text-decoration-underline">
             Profile Details
           </h2>
-          <div className='mt-4'>
+          <div className="mt-4">
             <ProfileField>
               <label>Full Name</label>
               {isEditMode ? (
                 <input
-                  type='text'
+                  type="text"
                   value={userData.fullName}
                   onChange={(e) =>
                     setUserData({ ...userData, fullName: e.target.value })
@@ -134,7 +133,7 @@ const Profile = () => {
               <label>Mobile Number</label>
               {isEditMode ? (
                 <input
-                  type='text'
+                  type="text"
                   value={userData.mobileNumber}
                   onChange={(e) =>
                     setUserData({ ...userData, mobileNumber: e.target.value })
@@ -148,7 +147,7 @@ const Profile = () => {
               <label>Email ID</label>
               {isEditMode ? (
                 <input
-                  type='text'
+                  type="text"
                   value={userData.email}
                   onChange={(e) =>
                     setUserData({ ...userData, email: e.target.value })
@@ -162,7 +161,7 @@ const Profile = () => {
               <label>Password</label>
               {isEditMode ? (
                 <input
-                  type='text'
+                  type="text"
                   onChange={(e) =>
                     setUserData({ ...userData, password: e.target.value })
                   }
@@ -175,7 +174,7 @@ const Profile = () => {
               <label>Confirm Password</label>
               {isEditMode ? (
                 <input
-                  type='text'
+                  type="text"
                   onChange={(e) =>
                     setUserData({
                       ...userData,
@@ -189,7 +188,7 @@ const Profile = () => {
             </ProfileField>
 
             {isEditMode ? (
-              <Button type='submit' onClick={(e) => handleSubmit(e)}>
+              <Button type="submit" onClick={(e) => handleSubmit(e)}>
                 Save
               </Button>
             ) : (

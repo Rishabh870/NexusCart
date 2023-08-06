@@ -154,21 +154,28 @@ const Dashboard = () => {
   console.log(pieChartDataBrand, pieChartDataCategory);
 
   // Generate random unique colors for both pie charts
-  const uniqueColors = new Set();
-  while (
-    uniqueColors.size <
-    pieChartDataCategory.length + pieChartDataBrand.length
-  ) {
+  const uniqueColorsCategory = new Set();
+  const uniqueColorsBrand = new Set();
+
+  while (uniqueColorsCategory.size < pieChartDataCategory.length) {
     const randomColor = `#${Math.floor(Math.random() * 16777215)
       .toString(16)
       .padStart(6, "0")}`;
-    uniqueColors.add(randomColor);
+    uniqueColorsCategory.add(randomColor);
   }
 
-  // Convert the Set of unique colors back to an array
-  const COLORS = Array.from(uniqueColors);
+  while (uniqueColorsBrand.size < pieChartDataBrand.length) {
+    const randomColor = `#${Math.floor(Math.random() * 16777215)
+      .toString(16)
+      .padStart(6, "0")}`;
+    if (!uniqueColorsCategory.has(randomColor)) {
+      uniqueColorsBrand.add(randomColor);
+    }
+  }
 
-  console.log(Orders);
+  // Convert the Sets of unique colors back to arrays
+  const COLORS_CATEGORY = Array.from(uniqueColorsCategory);
+  const COLORS_BRAND = Array.from(uniqueColorsBrand);
 
   useEffect(() => {
     const getData = async () => {
@@ -177,7 +184,6 @@ const Dashboard = () => {
         const orders = await userRequest.get("/order/all");
         setUser(user.data);
         setOrders(orders.data);
-        console.log(user.data, orders.data);
       } catch (error) {}
     };
     getData();
@@ -199,12 +205,15 @@ const Dashboard = () => {
               <Data>{User ? User.length : 0}</Data>
             </Box>
           </Link>
-          <NavLink className="col-4 m-0 p-0 text-decoration-none text-dark d-flex justify-content-around w-100">
+          <Link
+            to="/admin/history"
+            className="col-4 m-0 p-0 text-decoration-none text-dark d-flex justify-content-around w-100"
+          >
             <Box className="text-center">
               <Heading>Order</Heading>
               <Data>{Orders ? Orders.length : 0}</Data>
             </Box>
-          </NavLink>
+          </Link>
           <NavLink className="col-4 m-0 p-0 text-decoration-none text-dark d-flex justify-content-around w-100">
             <Box className="text-center">
               <Heading>Sales</Heading>
@@ -219,7 +228,7 @@ const Dashboard = () => {
             className=" pt-4 pr-5 me-5 me-md-0"
             width={850}
             height={400}
-            data={liveChartData}
+            data={liveChartData ? liveChartData : 0}
           >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="month" />
@@ -248,7 +257,7 @@ const Dashboard = () => {
                 {pieChartDataCategory.map((entry, index) => (
                   <Cell
                     key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
+                    fill={COLORS_CATEGORY[index % COLORS_CATEGORY.length]}
                   />
                 ))}
               </Pie>
@@ -266,7 +275,7 @@ const Dashboard = () => {
                 {pieChartDataBrand.map((entry, index) => (
                   <Cell
                     key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
+                    fill={COLORS_BRAND[index % COLORS_BRAND.length]}
                   />
                 ))}
               </Pie>

@@ -4,8 +4,9 @@ import { FaEdit, FaTrash } from "react-icons/fa";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import { userRequest } from "../requestMethods";
-import AddProductModal from "./AddProductModal";
 import { Link } from "react-router-dom";
+import EditProductModal from "./EditProductModal";
+import { BASE_URL } from "../requestMethods";
 
 const CardContainer = styled.div`
   display: flex;
@@ -152,7 +153,7 @@ const ProductCardAdmin = ({ product, setUpdate, update }) => {
               return (
                 <div style={{ borderRadius: "30px" }}>
                   <img
-                    src={`http://localhost:5000/${src}`}
+                    src={`${BASE_URL}/` + src}
                     alt=""
                     style={{
                       width: "100%",
@@ -185,7 +186,7 @@ const ProductCardAdmin = ({ product, setUpdate, update }) => {
           <FaTrash />
         </Button>
       </ButtonsContainer>
-      <AddProductModal
+      <EditProductModal
         show={showModal}
         onHide={handleCloseModal}
         productData={product}

@@ -18,6 +18,8 @@ import { useParams } from "react-router-dom";
 import ReviewCard from "../Components/ReviewCard";
 import ReviewForm from "../Components/ReviewForm";
 import { MdOutlineStar } from "react-icons/md";
+import { BASE_URL } from "../requestMethods";
+
 const ProductInfo = styled.span``;
 const Review = styled.div`
   margin-top: 2rem;
@@ -252,7 +254,7 @@ const Product = () => {
                 {product.img.map((slide, index) => (
                   <div key={index} style={{ borderRadius: "30px" }}>
                     <img
-                      src={`http://localhost:5000/${slide}`}
+                      src={`${BASE_URL}/` + slide}
                       alt={slide}
                       style={{ width: "100%", height: "610px" }}
                     />

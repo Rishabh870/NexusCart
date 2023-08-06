@@ -16,6 +16,7 @@ import CartPreview from "./Pages/OrderScreen";
 import Dashboard from "./AdminPages/Dashboard";
 import AdminProductPage from "./AdminPages/AdminProductPage";
 import UserPanel from "./AdminPages/UserPanel";
+import OrderHistoryAdmin from "./AdminPages/OrderHistory";
 
 function App() {
   const dispatch = useDispatch();
@@ -39,6 +40,7 @@ function App() {
         <Route path="/admin/dashboard" element={<Dashboard />} />
         <Route path="/admin/products" element={<AdminProductPage />} />
         <Route path="/admin/users" element={<UserPanel />} />
+        <Route path="/admin/history" element={<OrderHistoryAdmin />} />
       </Routes>
     </Router>
   );

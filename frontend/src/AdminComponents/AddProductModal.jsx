@@ -87,7 +87,6 @@ const AddProductModal = ({ show, onHide, productData }) => {
             );
           })
         );
-        console.log(imageFiles);
         setImagePreviews(imageFiles);
         setProductName(productData.productName);
         setBrandName(productData.brandName);
@@ -118,7 +117,6 @@ const AddProductModal = ({ show, onHide, productData }) => {
 
       // Convert each word to uppercase
       const sizesArrayUppercase = sizeArray.map((size) => size.toUpperCase());
-      console.log(sizesArrayUppercase); // Output: ['S', 'M', 'L', 'XL', 'XXL']
       // Append each form field to the formData
       formData.append("productName", productName);
       formData.append("brandName", brandName);
@@ -140,7 +138,7 @@ const AddProductModal = ({ show, onHide, productData }) => {
           .put(`/product/products/${productData._id}`, formData)
           .then((response) => {
             // Handle the response if needed
-            console.log(response.data);
+            // console.log(response.data);
           })
           .catch((error) => {
             // Handle errors if the request fails
@@ -151,7 +149,7 @@ const AddProductModal = ({ show, onHide, productData }) => {
           .post("/product/addproduct", formData)
           .then((response) => {
             // Handle the response if needed
-            console.log(response.data);
+            // console.log(response.data);
           })
           .catch((error) => {
             // Handle errors if the request fails
@@ -271,16 +269,11 @@ const AddProductModal = ({ show, onHide, productData }) => {
                 onChange={(e) => setBrandName(e.target.value)}
               >
                 <option value="">Select Brand</option>
-                {dropBrands.map(
-                  (brand, index) => (
-                    console.log(brand.name, productData?.brandName),
-                    (
-                      <option key={index} value={brand.name}>
-                        {brand?.name}
-                      </option>
-                    )
-                  )
-                )}
+                {dropBrands.map((brand, index) => (
+                  <option key={index} value={brand.name}>
+                    {brand?.name}
+                  </option>
+                ))}
               </Form.Control>
             </div>
             <div className="col-6 p-0 pl-1">
@@ -290,16 +283,11 @@ const AddProductModal = ({ show, onHide, productData }) => {
                 onChange={(e) => setCategory(e.target.value)}
               >
                 <option value="">Select Category</option>
-                {dropCategories.map(
-                  (category, index) => (
-                    console.log(category),
-                    (
-                      <option key={index} value={category.name}>
-                        {category.name}
-                      </option>
-                    )
-                  )
-                )}
+                {dropCategories.map((category, index) => (
+                  <option key={index} value={category.name}>
+                    {category.name}
+                  </option>
+                ))}
               </Form.Control>
             </div>
           </Form.Group>

@@ -4,10 +4,11 @@ import Img1 from "../Img/Img4.webp";
 import { AiFillStar } from "react-icons/ai";
 import { AiOutlineStar } from "react-icons/ai";
 import { AiOutlineHeart } from "react-icons/ai";
+import { BASE_URL } from "../requestMethods";
 
 const CardContainer = styled.div`
   width: 100%;
-  max-width: 220px;
+  max-width: 210px;
   max-height: 400px;
   background-color: #fff;
   border-radius: 8px;
@@ -131,7 +132,7 @@ const ProductCard = ({ product }) => {
       onMouseLeave={() => setCartHovered(false)}
     >
       <ProductImageSliderContainer className="card-img-top">
-        <ProductImage src={`http://localhost:5000/${product.img[0]}`} />
+        <ProductImage src={`${BASE_URL}/` + product.img[0]} />
       </ProductImageSliderContainer>
 
       {/* {isCartHovered && (

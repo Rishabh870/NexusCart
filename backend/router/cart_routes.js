@@ -1,16 +1,16 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const bcryptjs = require('bcryptjs');
-const mongoose = require('mongoose');
+const bcryptjs = require("bcryptjs");
+const mongoose = require("mongoose");
 const {
   verifyToken,
   verifyTokenAndAdmin,
   verifyTokenAuth,
-} = require('../middleware/verifyToken');
-const CartModel = mongoose.model('CartModel');
-const ProductModel = mongoose.model('ProductModel');
+} = require("../middleware/verifyToken");
+const CartModel = mongoose.model("CartModel");
+const ProductModel = mongoose.model("ProductModel");
 
-router.post('/addcart/:userId', verifyTokenAuth, async (req, res) => {
+router.post("/addcart/:userId", verifyTokenAuth, async (req, res) => {
   const { products } = req.body;
   const userId = req.user.userId;
   CartModel.findOne({ userId })
@@ -30,12 +30,12 @@ router.post('/addcart/:userId', verifyTokenAuth, async (req, res) => {
               })
               .catch((err) => {
                 console.log(err);
-                res.status(500).json({ error: 'Internal Server Error z' });
+                res.status(500).json({ error: "Internal Server Error z" });
               });
           })
           .catch((err) => {
             console.log(err);
-            res.status(500).json({ error: 'Internal Server Error z' });
+            res.status(500).json({ error: "Internal Server Error z" });
           });
       } else {
         // Cart exists for the user, push the new product to the products array
@@ -56,29 +56,29 @@ router.post('/addcart/:userId', verifyTokenAuth, async (req, res) => {
               })
               .catch((error) => {
                 console.log(error);
-                res.status(500).json({ error: 'Internal server error' });
+                res.status(500).json({ error: "Internal server error" });
               });
           })
           .catch((err) => {
             console.log(err);
-            res.status(500).json({ error: 'Internal Server Error y' });
+            res.status(500).json({ error: "Internal Server Error y" });
           });
       }
     })
     .catch((err) => {
       console.log(err);
-      res.status(500).json({ error: 'Internal Server Error x' });
+      res.status(500).json({ error: "Internal Server Error x" });
     });
 });
 
-router.get('/products/:userId', verifyTokenAuth, async (req, res) => {
+router.get("/products/:userId", verifyTokenAuth, async (req, res) => {
   const userId = req.user.userId;
   try {
     const cart = await CartModel.findOne({ userId });
     console.log(userId);
     if (!cart) {
       // Cart does not exist for the user
-      return res.status(404).json({ message: 'Cart not found' });
+      return res.status(404).json({ message: "Cart not found" });
     }
 
     const cartProducts = cart.products;
@@ -109,12 +109,12 @@ router.get('/products/:userId', verifyTokenAuth, async (req, res) => {
     res.status(200).json({ products: productDetails, totalPrice });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
 router.put(
-  '/products/:userId/:productId',
+  "/products/:userId/:productId",
   verifyTokenAuth,
   async (req, res) => {
     const { productId } = req.params;
@@ -126,7 +126,7 @@ router.put(
       const cart = await CartModel.findOne({ userId });
 
       if (!cart) {
-        return res.status(404).json({ message: 'Cart not found' });
+        return res.status(404).json({ message: "Cart not found" });
       }
 
       const product = cart.products.find(
@@ -134,7 +134,7 @@ router.put(
       );
 
       if (!product) {
-        return res.status(404).json({ message: 'Product not found in cart' });
+        return res.status(404).json({ message: "Product not found in cart" });
       }
 
       product.quantity = quantity;
@@ -144,14 +144,14 @@ router.put(
 
       res
         .status(200)
-        .json({ message: 'Cart item updated successfully', product });
+        .json({ message: "Cart item updated successfully", product });
     } catch (error) {
       console.log(error);
-      res.status(500).json({ error: 'Internal Server Error' });
+      res.status(500).json({ error: "Internal Server Error" });
     }
   }
 );
-router.delete('/products/:userId/:id', verifyTokenAuth, async (req, res) => {
+router.delete("/products/:userId/:id", verifyTokenAuth, async (req, res) => {
   const { id, userId } = req.params; // Get the cart item ID and user ID from the request parameters
 
   try {
@@ -159,7 +159,7 @@ router.delete('/products/:userId/:id', verifyTokenAuth, async (req, res) => {
 
     if (!cart) {
       // Cart does not exist for the user
-      return res.status(404).json({ message: 'Cart not found' });
+      return res.status(404).json({ message: "Cart not found" });
     }
 
     const cartProducts = cart.products;
@@ -171,7 +171,7 @@ router.delete('/products/:userId/:id', verifyTokenAuth, async (req, res) => {
 
     if (itemIndex === -1) {
       // Cart item with the provided ID does not exist
-      return res.status(404).json({ message: 'Cart item not found' });
+      return res.status(404).json({ message: "Cart item not found" });
     }
 
     // Remove the cart item from the cart products array
@@ -180,14 +180,14 @@ router.delete('/products/:userId/:id', verifyTokenAuth, async (req, res) => {
     // Save the updated cart
     await cart.save();
 
-    res.status(200).json({ message: 'Cart item deleted successfully' });
+    res.status(200).json({ message: "Cart item deleted successfully" });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
-router.delete('/products/:userId', verifyTokenAuth, async (req, res) => {
+router.delete("/products/:userId", verifyTokenAuth, async (req, res) => {
   const userId = req.user.userId; // Get the user ID from the authenticated user
 
   try {
@@ -195,7 +195,7 @@ router.delete('/products/:userId', verifyTokenAuth, async (req, res) => {
 
     if (!cart) {
       // Cart does not exist for the user
-      return res.status(404).json({ message: 'Cart not found' });
+      return res.status(404).json({ message: "Cart not found" });
     }
 
     // Clear the products array in the cart
@@ -204,10 +204,10 @@ router.delete('/products/:userId', verifyTokenAuth, async (req, res) => {
     // Save the updated cart
     await cart.save();
 
-    res.status(200).json({ message: 'All products deleted from cart' });
+    res.status(200).json({ message: "All products deleted from cart" });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 

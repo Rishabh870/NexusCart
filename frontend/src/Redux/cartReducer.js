@@ -1,9 +1,9 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { BASE_URL, userRequest } from '../requestMethods';
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { BASE_URL, userRequest } from "../requestMethods";
 
-export const addCartProduct = createAsyncThunk('addCart', async (data) => {
+export const addCartProduct = createAsyncThunk("addCart", async (data) => {
   try {
-    const userId = localStorage.getItem('userId'); // Retrieve the userId from localStorage
+    const userId = localStorage.getItem("userId"); // Retrieve the userId from localStorage
     console.log(userId);
     const response = await userRequest.post(`/cart/addcart/${userId}`, data);
     console.log(response.data);
@@ -13,9 +13,9 @@ export const addCartProduct = createAsyncThunk('addCart', async (data) => {
   }
 });
 
-export const getCartProduct = createAsyncThunk('getCart', async () => {
+export const getCartProduct = createAsyncThunk("getCart", async () => {
   try {
-    const userId = localStorage.getItem('userId'); // Retrieve the userId from localStorage
+    const userId = localStorage.getItem("userId"); // Retrieve the userId from localStorage
     const response = await userRequest.get(`/cart/products/${userId}`);
     // console.log(response.data);
     return response.data.products;
@@ -26,11 +26,11 @@ export const getCartProduct = createAsyncThunk('getCart', async () => {
 });
 
 export const updateCartItem = createAsyncThunk(
-  'updateCartItem',
+  "updateCartItem",
   async (data) => {
     console.log(data);
     try {
-      const userId = localStorage.getItem('userId'); // Retrieve the userId from localStorage
+      const userId = localStorage.getItem("userId"); // Retrieve the userId from localStorage
       const response = await userRequest.put(
         `/cart/products/${userId}/${data?.id}`,
         data
@@ -45,10 +45,10 @@ export const updateCartItem = createAsyncThunk(
 );
 
 export const deleteCartItem = createAsyncThunk(
-  'deleteCartItem',
+  "deleteCartItem",
   async (itemId) => {
     try {
-      const userId = localStorage.getItem('userId'); // Retrieve the userId from localStorage
+      const userId = localStorage.getItem("userId"); // Retrieve the userId from localStorage
       const response = await userRequest.delete(
         `/cart/products/${userId}/${itemId}`
       );
@@ -71,11 +71,11 @@ const calculateTotalPrice = (products) => {
 
 // Helper function to calculate the price of a single product
 const calculateProductPrice = (product) => {
-  return product.price * product.quantity;
+  return product?.price * product.quantity;
 };
 
 const cardSlice = createSlice({
-  name: 'cart',
+  name: "cart",
   initialState: {
     products: [],
     quantity: 0,

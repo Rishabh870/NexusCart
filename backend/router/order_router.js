@@ -1,7 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
-const { verifyTokenAuth } = require("../middleware/verifyToken");
+const {
+  verifyTokenAuth,
+  verifyTokenAdmin,
+} = require("../middleware/verifyToken");
 const OrderModel = mongoose.model("OrderModel");
 router.post("/addorder/:userId", verifyTokenAuth, (req, res) => {
   const { userId, cartProduct, formattedTotalPrice, deliveryData } = req.body;
@@ -175,6 +178,57 @@ router.get("/all", verifyTokenAuth, (req, res) => {
       console.log(error);
       res.status(500).json({ error: "Internal server error" });
     });
+});
+
+router.delete("/delete/:orderId/:userId", verifyTokenAuth, async (req, res) => {
+  const { orderId, userId } = req.params; // Get the order ID and user ID from the request parameters
+
+  try {
+    // Find the user's order using the userId
+    const order = await OrderModel.findOne({ userId });
+
+    if (!order) {
+      // Order does not exist for the user
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    // Find the index of the order with the provided ID in the "orders" array
+    const orderIndex = order.orders.findIndex((orderItem) => {
+      return orderItem._id.toString() === orderId;
+    });
+
+    if (orderIndex === -1) {
+      // Order with the provided ID does not exist
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    // Remove the order from the "orders" array
+    order.orders.splice(orderIndex, 1);
+
+    // Save the updated order
+    await order.save();
+
+    res.status(200).json({ message: "Order deleted successfully" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+router.get("/orders", verifyTokenAuth, async (req, res) => {
+  try {
+    // Fetch all orders from the "orders" collection
+    const orders = await OrderModel.find().populate("userId");
+
+    if (orders.length === 0) {
+      return res.status(404).json({ message: "No orders found" });
+    }
+
+    res.status(200).json(orders);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 });
 
 module.exports = router;

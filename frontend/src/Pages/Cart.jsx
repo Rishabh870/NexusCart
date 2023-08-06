@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { Button, Container, Form, Modal } from 'react-bootstrap';
-import styled from 'styled-components';
-import Header from '../Components/Header';
-import Footer from '../Components/Footer';
-import CartCard from '../Components/CartCard';
-import { useSelector } from 'react-redux';
-import { MdClose } from 'react-icons/md';
-import { userRequest } from '../requestMethods';
-import AddressForm from '../Components/AddressForm';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { Button, Container, Form, Modal } from "react-bootstrap";
+import styled from "styled-components";
+import Header from "../Components/Header";
+import Footer from "../Components/Footer";
+import CartCard from "../Components/CartCard";
+import { useSelector } from "react-redux";
+import { MdClose } from "react-icons/md";
+import { userRequest } from "../requestMethods";
+import AddressForm from "../Components/AddressForm";
+import { useNavigate } from "react-router-dom";
 const { vibrate } = navigator;
 
 const Row = styled.div`
@@ -38,7 +38,7 @@ const Carts = styled.div`
 
 const CardHeader = styled.h1`
   font-size: 1.5rem;
-  font-family: 'Playfair ', serif;
+  font-family: "Playfair ", serif;
   font-weight: bolder;
 `;
 
@@ -95,14 +95,14 @@ const DeliveryTo = styled.p`
   margin-top: 0.5rem;
   text-align: start;
   font-weight: bold;
-  font-family: 'Playfair Display', serif;
+  font-family: "Playfair Display", serif;
 `;
 
 const DeliveryAddress = styled.p`
   margin-top: 0.5rem;
   font-size: 0.9rem;
   text-align: start;
-  font-family: 'Josefin Sans', sans-serif;
+  font-family: "Josefin Sans", sans-serif;
   color: #888;
 `;
 
@@ -121,12 +121,13 @@ const ChangeAddressButton = styled.button`
 
 const DropdownWrapper = styled.div`
   position: relative;
+  /* border: 1px solid black; */
 `;
 
 const DropdownButton = styled.select`
   width: 100%;
   padding: 0.5rem 0.9rem;
-  border: '1px solid black';
+  border: 1px solid black;
   cursor: pointer;
 
   &:focus {
@@ -135,7 +136,7 @@ const DropdownButton = styled.select`
 
   ::after {
     border: ${({ selected }) =>
-      selected ? '1px solid black' : '1px solid red'};
+      selected ? "1px solid black" : "1px solid red"};
   }
 `;
 
@@ -146,12 +147,12 @@ const DropdownItem = styled.option`
 
 const Cart = () => {
   const [showModal, setShowModal] = useState(false);
-  const userId = localStorage.getItem('userId'); // Retrieve the userId from localStorage
+  const userId = localStorage.getItem("userId"); // Retrieve the userId from localStorage
 
   const navigate = useNavigate();
 
   const cartProduct = useSelector((state) => state.cart.products);
-  const [deliveryData, setDeliveryData] = useState('');
+  const [deliveryData, setDeliveryData] = useState("");
   useEffect(() => {
     const getUserData = async () => {
       try {
@@ -171,10 +172,10 @@ const Cart = () => {
   const totalPrice = useSelector((state) => state.cart.totalPrice);
   const formattedTotalPrice = totalPrice.toFixed(2);
 
-  const [selectedMethod, setSelectedMethod] = useState('');
+  const [selectedMethod, setSelectedMethod] = useState("");
 
   const handleCheckout = async () => {
-    if (selectedMethod === '') {
+    if (selectedMethod === "") {
       return; // Stop the checkout process if the dropdown is not selected
     }
 
@@ -193,7 +194,7 @@ const Cart = () => {
       window.location.href = `/order/${response.data.orders._id}`;
     } catch (error) {
       // Handle errors during the request
-      console.log('Error during checkout:', error);
+      console.log("Error during checkout:", error);
       // Show an error message to the user or perform other error handling logic
     }
   };
@@ -213,9 +214,9 @@ const Cart = () => {
   return (
     <>
       <Header />
-      <Container className='cart text-center'>
-        <DeliveryInfoWrapper className='px-4'>
-          <div className=' w-100 '>
+      <Container className="cart text-center">
+        <DeliveryInfoWrapper className="px-4">
+          <div className=" w-100 ">
             <DeliveryTo>Delivery to: {deliveryData.deliveryTo}</DeliveryTo>
             <DeliveryAddress>
               Delivery Address: {deliveryData.deliveryAddress}
@@ -225,11 +226,11 @@ const Cart = () => {
             Change Address
           </ChangeAddressButton>
         </DeliveryInfoWrapper>
-        <Row className=' mx-0 px-0'>
-          <ItemCart className='col-sm-8 px-0 pr-2 col-12 m-lg-0'>
-            <Carts className='card'>
-              <CardHeader className='card-header'>Cart</CardHeader>
-              <CartBody className='card-body card-body-scroll p-2'>
+        <Row className=" mx-0 row px-0">
+          <ItemCart className="col-md-8 px-0 pr-2 col-12 m-lg-0">
+            <Carts className="card">
+              <CardHeader className="card-header">Cart</CardHeader>
+              <CartBody className="card-body card-body-scroll p-2">
                 {cartProduct.map((products, index) => {
                   return <CartCard key={index} data={products} show={true} />;
                 })}
@@ -237,48 +238,48 @@ const Cart = () => {
             </Carts>
           </ItemCart>
 
-          <div className='col-sm-4 p-0'>
-            <Payment className='d-flex px-0 pl-2 col-12 flex-column m-lg-0 '>
-              <Carts className='border'>
-                <CardHeader className='card-header'>Payment Method</CardHeader>
-                <CardBody className='card-body'>
+          <div className="col-sm-4 p-0">
+            <Payment className="d-flex px-0 pl-2 col-12 flex-column m-lg-0 ">
+              <Carts className="border">
+                <CardHeader className="card-header">Payment Method</CardHeader>
+                <CardBody className="card-body">
                   <DropdownWrapper>
                     <DropdownButton
-                      selected={selectedMethod !== ''}
+                      selected={selectedMethod !== ""}
                       onChange={handleMethodSelect}
                       value={selectedMethod}
                     >
-                      <option value='' disabled>
+                      <option value="" disabled>
                         Select Payment Method
                       </option>
-                      <DropdownItem value='Paypal'>Paypal</DropdownItem>
+                      <DropdownItem value="Paypal">Paypal</DropdownItem>
                     </DropdownButton>
                   </DropdownWrapper>
                 </CardBody>
               </Carts>
             </Payment>
-            <Summary className='d-flex px-0 pl-2 col-12  flex-column m-lg-0 '>
-              <Carts className='border'>
-                <CardHeader className='card-header'>Summary</CardHeader>
-                <CardBody className='card-body'>
-                  <SummaryDetails className='mb-3'>
+            <Summary className="d-flex px-0 pl-2 col-12  flex-column m-lg-0 ">
+              <Carts className="border">
+                <CardHeader className="card-header">Summary</CardHeader>
+                <CardBody className="card-body">
+                  <SummaryDetails className="mb-3">
                     <span>Product price:</span>
-                    <span className='float-end'> ${formattedTotalPrice}</span>
+                    <span className="float-end"> ${formattedTotalPrice}</span>
                   </SummaryDetails>
-                  <SummaryDetails className='mb-3'>
+                  <SummaryDetails className="mb-3">
                     <span>Shipping:</span>
-                    <span className='float-end'>$5</span>
+                    <span className="float-end">$5</span>
                   </SummaryDetails>
-                  <SummaryDetails className='mb-3'>
+                  <SummaryDetails className="mb-3">
                     <span>Discount:</span>
-                    <span className='float-end'>-$5</span>
+                    <span className="float-end">-$5</span>
                   </SummaryDetails>
-                  <SummaryTotal className='mb-3'>
+                  <SummaryTotal className="mb-3">
                     <span>Total:</span>
-                    <span className='float-end'>${formattedTotalPrice}</span>
+                    <span className="float-end">${formattedTotalPrice}</span>
                   </SummaryTotal>
                   <CheckoutButton
-                    className='submitBtn btn-block'
+                    className="submitBtn btn-block"
                     onClick={handleCheckout}
                   >
                     Checkout

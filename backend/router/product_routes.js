@@ -35,6 +35,19 @@ router.post(
   }
 );
 
+router.post("/imagesupload", upload.array("myImages", 4), (req, res) => {
+  // Check if files were uploaded and saved successfully
+  if (!req.files || req.files.length === 0) {
+    return res.status(400).json({ error: "No image files uploaded" });
+  }
+
+  // The 'req.files' is an array of uploaded files
+  const imagePaths = req.files.map((file) => file.path);
+
+  // Send the array of image paths and file names as a response
+  res.status(200).json({ imagePaths });
+});
+
 router.get("/product/:id", (req, res) => {
   const productId = req.params.id;
 
@@ -146,11 +159,20 @@ router.delete("/products/:productId", async (req, res) => {
 router.put(
   "/products/:productId",
   verifyTokenAdmin,
-  upload.array("myImages", 4),
+
   async (req, res) => {
     const productId = req.params.productId;
-    const { productName, brandName, desc, price, inStock, sizes, category } =
-      req.body;
+    console.log(req.body);
+    const {
+      productName,
+      brandName,
+      img,
+      desc,
+      price,
+      inStock,
+      sizes,
+      category,
+    } = req.body;
 
     try {
       // Find the product by its ID and update its fields
@@ -165,6 +187,7 @@ router.put(
       product.brandName = brandName;
       product.desc = desc;
       product.price = price;
+      product.img = img;
       product.inStock = inStock;
       product.sizes = sizes;
       product.category = category;

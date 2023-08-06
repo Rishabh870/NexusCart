@@ -1,16 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { Container } from 'react-bootstrap';
-import Header from '../Components/Header';
-import Filter from '../Components/Filters';
-import ProductCard from '../Components/ProductCard';
-import Footer from '../Components/Footer';
-import { styled } from 'styled-components';
-import { userRequest } from '../requestMethods';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
-import ReactPaginate from 'react-paginate';
+import React, { useEffect, useState } from "react";
+import { Container } from "react-bootstrap";
+import Header from "../Components/Header";
+import Filter from "../Components/Filters";
+import ProductCard from "../Components/ProductCard";
+import Footer from "../Components/Footer";
+import { styled } from "styled-components";
+import { userRequest } from "../requestMethods";
+import { Link, Navigate, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import ReactPaginate from "react-paginate";
 
-const Product = styled.div``;
+const Product = styled.div`
+  min-height: 300px;
+`;
+const ProductContainer = styled.div`
+  min-height: 300px;
+`;
 
 const PaginationContainer = styled.div`
   display: flex;
@@ -47,7 +52,7 @@ const PaginationContainer = styled.div`
 
 const AllProducts = () => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState('Sort By');
+  const [selectedOption, setSelectedOption] = useState("Sort By");
   const location = useLocation();
 
   const [currentPage, setCurrentPage] = useState(0);
@@ -56,9 +61,9 @@ const AllProducts = () => {
   const urlSearch = new URLSearchParams(window.location.search);
   const [products, setProducts] = useState([]);
   const [isChecked, setIsChecked] = useState(false);
-  const searchQuery = urlSearch.get('searchQuery');
-  const category = urlSearch.get('category');
-  const brand = urlSearch.get('brand');
+  const searchQuery = urlSearch.get("searchQuery");
+  const category = urlSearch.get("category");
+  const brand = urlSearch.get("brand");
 
   useEffect(() => {
     console.log(brand);
@@ -72,19 +77,19 @@ const AllProducts = () => {
         }
 
         if (category) {
-          params.category = category.split(',');
+          params.category = category.split(",");
         }
 
         if (brand) {
-          params.brand = brand.split(',');
+          params.brand = brand.split(",");
         }
 
         if (searchQuery) {
-          response = await userRequest.get('/product/products', {
+          response = await userRequest.get("/product/products", {
             params,
           });
         } else {
-          response = await userRequest.get('/product/products', {
+          response = await userRequest.get("/product/products", {
             params,
           });
           console.log(params);
@@ -124,22 +129,22 @@ const AllProducts = () => {
     <>
       <Header />
       <Container>
-        <div className='row'>
-          <div id='left' className='col-3 pr-4'>
+        <ProductContainer className="row">
+          <div id="left" className="col-3 pr-4">
             <Filter setIsChecked={setIsChecked} isChecked={isChecked} />
           </div>
-          <div id='right' className='col-9 pl-4 '>
-            <Product className='row mt-5'>
+          <div id="right" className="col-9 pl-4 ">
+            <Product className="row mt-5">
               {currentProducts.map((product, index) => {
                 console.log(product);
                 return (
                   <div
-                    className='col-lg-4 col-sm-6 col-xl-3 p-0 px-xl-1 px-md-3'
+                    className="col-lg-4 col-sm-6 col-xl-3 p-0 px-xl-1 px-md-3"
                     key={index}
                   >
                     <Link
                       to={`/product/${product._id}`}
-                      style={{ textDecoration: 'none', color: 'black' }}
+                      style={{ textDecoration: "none", color: "black" }}
                     >
                       <ProductCard product={product} />
                     </Link>
@@ -149,19 +154,19 @@ const AllProducts = () => {
             </Product>
             <PaginationContainer>
               <ReactPaginate
-                previousLabel={'Previous'}
-                nextLabel={'Next'}
+                previousLabel={"Previous"}
+                nextLabel={"Next"}
                 pageCount={pageCount}
                 onPageChange={handlePageClick}
-                containerClassName={'pagination'}
-                previousLinkClassName={'page-link'}
-                nextLinkClassName={'page-link'}
-                disabledClassName={'disabled'}
-                activeClassName={'active'}
+                containerClassName={"pagination"}
+                previousLinkClassName={"page-link"}
+                nextLinkClassName={"page-link"}
+                disabledClassName={"disabled"}
+                activeClassName={"active"}
               />
             </PaginationContainer>
           </div>
-        </div>
+        </ProductContainer>
       </Container>
       <Footer />
     </>

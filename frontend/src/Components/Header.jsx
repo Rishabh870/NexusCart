@@ -3,6 +3,7 @@ import { Link, Navigate, useNavigate } from "react-router-dom";
 import { AiOutlineSearch, AiOutlineShoppingCart } from "react-icons/ai";
 import { HiOutlineUser } from "react-icons/hi2";
 import { HiOutlineMenuAlt1 } from "react-icons/hi";
+import { MdOutlineAdminPanelSettings } from "react-icons/md";
 import DealAnnouncement from "./DealAnnouncement";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
@@ -132,9 +133,15 @@ const Header = () => {
   const navigate = useNavigate();
   const quantity = useSelector((state) => state.cart.quantity);
   const [isOpen, setIsOpen] = useState(false);
+  const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [name, setName] = useState("Guest");
   const [MenuBrands, setMenuBrands] = useState([]);
   const [MenuCategories, setMenuCategories] = useState([]);
+
+  const isLoggedIn = localStorage.getItem("token");
+  const isAdmin = localStorage.getItem("isAdmin");
+  let menus = useRef(null);
+
   const handleDropdownToggle = () => {
     setIsOpen(!isOpen);
   };
@@ -147,21 +154,19 @@ const Header = () => {
     );
   };
 
-  const handleDropdownClose = () => {
-    setIsOpen(false);
+  const handleAdminDropdownToggle = () => {
+    setIsAdminOpen(!isAdminOpen);
   };
-  const isLoggedIn = localStorage.getItem("token");
 
   const handleLogout = () => {
     localStorage.clear();
     // Then redirect to the login page
-    handleDropdownClose();
+    setIsAdminOpen(false);
+    setIsOpen(false);
     // Perform logout logic and redirect here
 
-    navigate("/login");
+    window.location.href = "/login";
   };
-
-  let menus = useRef(null);
 
   useEffect(() => {
     const getCategorysAndBrands = async () => {
@@ -336,7 +341,6 @@ const Header = () => {
                   style={{
                     width: "fit-content",
                     position: "relative",
-                    paddingRight: "10px",
                   }}
                 >
                   <HiOutlineUser />
@@ -356,14 +360,14 @@ const Header = () => {
                       <DropdownItem
                         className=" text-decoration-none"
                         to="/profile"
-                        onClick={handleDropdownClose}
+                        onClick={handleDropdownToggle}
                       >
                         My Profile
                       </DropdownItem>
                       <DropdownItem
                         to="/orders"
                         className=" text-decoration-none"
-                        onClick={handleDropdownClose}
+                        onClick={handleDropdownToggle}
                       >
                         Order History
                       </DropdownItem>
@@ -380,14 +384,14 @@ const Header = () => {
                       <DropdownItem
                         to="/login"
                         className=" text-decoration-none"
-                        onClick={handleDropdownClose}
+                        onClick={handleDropdownToggle}
                       >
                         Login
                       </DropdownItem>
                       <DropdownItem
                         to="/signup"
                         className=" text-decoration-none"
-                        onClick={handleDropdownClose}
+                        onClick={handleDropdownToggle}
                       >
                         Signup
                       </DropdownItem>
@@ -395,6 +399,70 @@ const Header = () => {
                   )}
                 </div>
               </IconContainer>
+              {isAdmin === "true" ? (
+                <IconContainer
+                  id="Admin"
+                  className="col-md-3 px-2 align-self-center"
+                >
+                  <div
+                    className="dropdown-icon "
+                    onClick={handleAdminDropdownToggle}
+                    style={{
+                      width: "fit-content",
+                      position: "relative",
+                      fontSize: "1.3rem",
+                      paddingRight: "10px",
+                    }}
+                  >
+                    <MdOutlineAdminPanelSettings />
+                  </div>
+                  <div
+                    className={`dropdown-menu ${
+                      isAdminOpen ? "d-flex" : "d-none"
+                    } px-3 mt-3`}
+                    style={{
+                      flexDirection: "column",
+                      position: "absolute",
+                      left: "-7rem",
+                    }}
+                  >
+                    <DropdownItem
+                      className=" text-decoration-none"
+                      to="/admin/dashboard"
+                      onClick={handleAdminDropdownToggle}
+                    >
+                      Dashboard
+                    </DropdownItem>
+                    <DropdownItem
+                      className=" text-decoration-none"
+                      to="/admin/users"
+                      onClick={handleAdminDropdownToggle}
+                    >
+                      Users
+                    </DropdownItem>
+                    <DropdownItem
+                      className=" text-decoration-none"
+                      to="/admin/products"
+                      onClick={handleAdminDropdownToggle}
+                    >
+                      Products
+                    </DropdownItem>
+                    <DropdownItem
+                      to="/admin/history"
+                      className=" text-decoration-none"
+                      onClick={handleAdminDropdownToggle}
+                    >
+                      Order History
+                    </DropdownItem>
+                    <DropdownItem
+                      className=" text-decoration-none"
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </DropdownItem>
+                  </div>
+                </IconContainer>
+              ) : null}
             </div>
           </Container>
         </Sections>

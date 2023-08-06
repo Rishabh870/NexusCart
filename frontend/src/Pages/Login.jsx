@@ -57,9 +57,7 @@ const LogoContainer = styled.div`
 `;
 
 const Login = () => {
-  const [showAlert, setShowAlert] = useState(false);
   const [loading, setLoading] = useState(false);
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -83,11 +81,12 @@ const Login = () => {
         email,
         password,
       });
-      const { _id, token, fullName } = response.data;
+      const { _id, token, fullName, isAdmin } = response.data;
 
       // Store the userId and token in local storage
       localStorage.setItem("userId", _id);
       localStorage.setItem("token", token);
+      localStorage.setItem("isAdmin", isAdmin);
       const firstName = fullName.split(" ")[0];
       localStorage.setItem("name", firstName);
 

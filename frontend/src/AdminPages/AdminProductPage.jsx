@@ -109,6 +109,7 @@ const AdminProductPage = () => {
     setCategories("");
     setShowModal(false);
   };
+
   const handleShowModal = (product) => {
     setShowModal(true);
   };
