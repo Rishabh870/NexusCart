@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const bcryptjs = require("bcryptjs");
+const nodemailer = require("nodemailer");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../config");
@@ -112,6 +113,87 @@ router.post("/login", (req, res) => {
     });
 });
 
+// Define the update method
+const updatePasswordByEmail = async (email, newPassword) => {
+  try {
+    const hashedPassword = await bcryptjs.hash(newPassword, 16);
+    const updatedUser = await UserModel.findOneAndUpdate(
+      { email }, // Find the user by email
+      { password: hashedPassword }, // Update the password
+      { new: true } // Return the updated user
+    );
+    return updatedUser;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error updating password");
+  }
+};
+
+// Use the updatePasswordByEmail method in your router
+router.put("/updatePassword", async (req, res) => {
+  console.log(req.body);
+  const { email, password } = req.body;
+
+  try {
+    const updatedUser = await updatePasswordByEmail(email, password);
+    if (updatedUser) {
+      res.status(200).json("user pass reseted");
+    } else {
+      res.status(404).json({ message: "User not found" });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// verification
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: "testworking760@gmail.com",
+    pass: "kmnmhwjcarusalyk",
+  },
+});
+
+function generateOTP() {
+  return Math.floor(100000 + Math.random() * 900000);
+}
+
+const verificationCode = {};
+
+router.post("/send-verification-code", async (req, res) => {
+  const { email } = req.body;
+  const code = generateOTP();
+  verificationCode[email] = code;
+  const mailOption = {
+    from: "moses87@ethereal.email",
+    to: email,
+    subject: "Email Verification Code",
+    text: `Your verification code is: ${code}`,
+  };
+
+  transporter.sendMail(mailOption, (error, info) => {
+    if (error) {
+      console.log(error);
+      res.status(500).json({ error: "Internal server error" });
+    } else {
+      console.log("Email sent: " + info.response);
+      res.status(200).json({ message: "Email sent" });
+    }
+  });
+});
+
+router.post("/verify-otp", async (req, res) => {
+  const { email, otp } = req.body;
+  console.log(email, otp, verificationCode[email]);
+  if (verificationCode[email] === parseInt(otp)) {
+    res.status(200).json({ message: "OTP verified" });
+  } else {
+    res.status(401).json({ error: "Invalid OTP" });
+  }
+});
+
 // GET route to retrieve user data by userId
 router.get("/:userId", verifyTokenAuth, (req, res) => {
   const { userId } = req.params;
@@ -134,7 +216,6 @@ router.get("/:userId", verifyTokenAuth, (req, res) => {
 router.put("/:userId", verifyTokenAdmin, async (req, res) => {
   const { userId } = req.params;
   const { fullName, email, mobileNumber, password, isAdmin } = req.body;
-
   // Create an object to store the fields that need to be updated
   const updatedFields = {};
 

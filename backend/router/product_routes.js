@@ -71,8 +71,6 @@ router.get("/products", async (req, res) => {
   const categories = req.query.category;
   const brands = req.query.brand;
 
-  console.log(searchQuery, categories, brands);
-
   try {
     let query = {};
 

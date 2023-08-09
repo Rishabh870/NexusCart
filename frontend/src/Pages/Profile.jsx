@@ -4,6 +4,7 @@ import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import { styled } from "styled-components";
 import { userRequest } from "../requestMethods";
+import { toast } from "react-toastify";
 
 const ProfileContainer = styled.div`
   max-width: 400px;
@@ -38,6 +39,7 @@ const Button = styled.button`
 
 const Profile = () => {
   const userId = localStorage.getItem("userId"); // Retrieve the userId from localStorage
+  const [loading, setLoading] = useState(false);
 
   const [userData, setUserData] = useState({
     fullName: "",
@@ -65,30 +67,26 @@ const Profile = () => {
     // Add the password field to the data object if it's present
     if (password) {
       if (password !== confirmPassword) {
-        console.log("Password and Confirm Password do not match.");
+        toast.error("Password and Confirm Password do not match.");
         return;
       }
       data.password = password;
     }
-
-    console.log(data.fullName);
-
     try {
-      const response = await userRequest.put(`/user/${userId}`, {
-        data,
-      });
-      console.log(response.data); // Handle the response if needed
+      const response = await userRequest.put(`/user/${userId}`, data);
+      toast.success("Profile Updated!");
     } catch (error) {
-      console.error(error);
+      toast.error(error.response.data.message);
     }
   };
 
   useEffect(() => {
+    setLoading(true);
+
     const fetchProfileData = async () => {
       try {
         const response = await userRequest.get(`/user/${userId}`);
         const data = response.data;
-        console.log(data);
         // Update state with received data
         setUserData({
           fullName: data.user.fullName,
@@ -98,8 +96,10 @@ const Profile = () => {
           confirmPassword: "", // Clear confirm password field on fetch
         });
         // setAlternateMobile(data.user.alternateMobile);
+        setLoading(false);
       } catch (error) {
         console.error(error);
+        setLoading(false);
       }
     };
 
@@ -109,94 +109,105 @@ const Profile = () => {
   return (
     <>
       <Header />
-      <Container style={{ minHeight: "55vh" }}>
-        <ProfileContainer>
-          <h2 className=" text-center text-decoration-underline">
-            Profile Details
-          </h2>
-          <div className="mt-4">
-            <ProfileField>
-              <label>Full Name</label>
-              {isEditMode ? (
-                <input
-                  type="text"
-                  value={userData.fullName}
-                  onChange={(e) =>
-                    setUserData({ ...userData, fullName: e.target.value })
-                  }
-                />
-              ) : (
-                <span>{userData.fullName}</span>
-              )}
-            </ProfileField>
-            <ProfileField>
-              <label>Mobile Number</label>
-              {isEditMode ? (
-                <input
-                  type="text"
-                  value={userData.mobileNumber}
-                  onChange={(e) =>
-                    setUserData({ ...userData, mobileNumber: e.target.value })
-                  }
-                />
-              ) : (
-                <span>{userData.mobileNumber}</span>
-              )}
-            </ProfileField>
-            <ProfileField>
-              <label>Email ID</label>
-              {isEditMode ? (
-                <input
-                  type="text"
-                  value={userData.email}
-                  onChange={(e) =>
-                    setUserData({ ...userData, email: e.target.value })
-                  }
-                />
-              ) : (
-                <span>{userData.email}</span>
-              )}
-            </ProfileField>
-            <ProfileField>
-              <label>Password</label>
-              {isEditMode ? (
-                <input
-                  type="text"
-                  onChange={(e) =>
-                    setUserData({ ...userData, password: e.target.value })
-                  }
-                />
-              ) : (
-                <span>Enter New Password</span>
-              )}
-            </ProfileField>
-            <ProfileField>
-              <label>Confirm Password</label>
-              {isEditMode ? (
-                <input
-                  type="text"
-                  onChange={(e) =>
-                    setUserData({
-                      ...userData,
-                      confirmPassword: e.target.value,
-                    })
-                  }
-                />
-              ) : (
-                <span>Repeat New Password</span>
-              )}
-            </ProfileField>
-
-            {isEditMode ? (
-              <Button type="submit" onClick={(e) => handleSubmit(e)}>
-                Save
-              </Button>
-            ) : (
-              <Button onClick={handleEdit}>Edit</Button>
-            )}
+      {loading ? (
+        <div
+          style={{ height: "80vh" }}
+          className="w-100 d-flex justify-content-center align-items-center"
+        >
+          <div className=" spinner-border" role="status">
+            <span className="sr-only">Loading...</span>
           </div>
-        </ProfileContainer>
-      </Container>
+        </div>
+      ) : (
+        <Container style={{ minHeight: "80vh" }}>
+          <ProfileContainer>
+            <h2 className=" text-center text-decoration-underline">
+              Profile Details
+            </h2>
+            <div className="mt-4">
+              <ProfileField>
+                <label>Full Name</label>
+                {isEditMode ? (
+                  <input
+                    type="text"
+                    value={userData.fullName}
+                    onChange={(e) =>
+                      setUserData({ ...userData, fullName: e.target.value })
+                    }
+                  />
+                ) : (
+                  <span>{userData.fullName}</span>
+                )}
+              </ProfileField>
+              <ProfileField>
+                <label>Mobile Number</label>
+                {isEditMode ? (
+                  <input
+                    type="text"
+                    value={userData.mobileNumber}
+                    onChange={(e) =>
+                      setUserData({ ...userData, mobileNumber: e.target.value })
+                    }
+                  />
+                ) : (
+                  <span>{userData.mobileNumber}</span>
+                )}
+              </ProfileField>
+              <ProfileField>
+                <label>Email ID</label>
+                {isEditMode ? (
+                  <input
+                    type="text"
+                    value={userData.email}
+                    onChange={(e) =>
+                      setUserData({ ...userData, email: e.target.value })
+                    }
+                  />
+                ) : (
+                  <span>{userData.email}</span>
+                )}
+              </ProfileField>
+              <ProfileField>
+                <label>Password</label>
+                {isEditMode ? (
+                  <input
+                    type="text"
+                    onChange={(e) =>
+                      setUserData({ ...userData, password: e.target.value })
+                    }
+                  />
+                ) : (
+                  <span>Enter New Password</span>
+                )}
+              </ProfileField>
+              <ProfileField>
+                <label>Confirm Password</label>
+                {isEditMode ? (
+                  <input
+                    type="text"
+                    onChange={(e) =>
+                      setUserData({
+                        ...userData,
+                        confirmPassword: e.target.value,
+                      })
+                    }
+                  />
+                ) : (
+                  <span>Repeat New Password</span>
+                )}
+              </ProfileField>
+
+              {isEditMode ? (
+                <Button type="submit" onClick={(e) => handleSubmit(e)}>
+                  Save
+                </Button>
+              ) : (
+                <Button onClick={handleEdit}>Edit</Button>
+              )}
+            </div>
+          </ProfileContainer>
+        </Container>
+      )}
       <Footer />
     </>
   );

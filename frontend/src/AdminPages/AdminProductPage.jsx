@@ -8,21 +8,21 @@ import AddProductModal from "../AdminComponents/AddProductModal";
 import { styled } from "styled-components";
 import { Button, Modal, Form } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const FormContainer = styled.div`
   display: flex;
+  font-family: "Playfair Display", serif;
+
   flex-direction: column;
 `;
-
 const FormLabel = styled.label`
   margin-bottom: 0.5rem;
 `;
-
 const FormInput = styled.input`
   padding: 0.5rem;
   margin-bottom: 1rem;
 `;
-
 const StyledButton = styled(Button)`
   background-color: black !important;
   border-color: #000000 !important;
@@ -42,7 +42,6 @@ const HeadingWrapper = styled.div`
   font-weight: bold;
   margin-left: 20px;
 `;
-
 const ProductBtn = styled.button`
   padding: 0.3rem 1rem;
   border: 1.5px solid black;
@@ -70,6 +69,7 @@ const AddBtn = styled.button`
     color: white;
   }
 `;
+
 const AdminProductPage = () => {
   const [products, setProducts] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -77,13 +77,15 @@ const AdminProductPage = () => {
   const [update, setUpdate] = useState(false);
   const [categories, setCategories] = useState("");
   const [brands, setBrands] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
 
     if (categories === "" && brands === "") {
-      return alert("Please write at least one category and brand");
+      return toast.error("Category and Brand are required");
     }
+
     const categoriesArray = categories
       .split(",")
       .map((category) => ({ name: category.trim() }));
@@ -91,14 +93,15 @@ const AdminProductPage = () => {
     const brandsArray = brands
       .split(",")
       .map((brand) => ({ name: brand.trim() }));
-    console.log(categoriesArray, brandsArray);
+
     if (categoriesArray.length > 0) {
       const response = userRequest.post("/category/add", categoriesArray);
-      console.log(response.data);
+      toast.success("Category added successfully");
     }
+
     if (brandsArray.length > 0) {
       const response = userRequest.post("/brand/add", brandsArray);
-      console.log(response.data);
+      toast.success("Brand added successfully");
     }
 
     handleCloseModal();
@@ -115,52 +118,79 @@ const AdminProductPage = () => {
   };
 
   useEffect(() => {
+    setLoading(true);
     const fetchAllProducts = async () => {
       try {
         const params = {};
         const response = await userRequest.get("/product/products", {
           params,
         });
-        console.log(params);
+        setLoading(false);
 
         setProducts(response.data);
       } catch (error) {
-        console.log(error);
+        toast.error(error.response.data.message);
+        setLoading(false);
       }
     };
 
     fetchAllProducts();
   }, [showModal, update]);
+
   return (
-    <div>
+    <div
+      style={{
+        fontFamily: "Playfair Display, serif",
+      }}
+    >
       <Header />
-      <Container fluid className="px-5 mx-auto" style={{ minHeight: "40vh" }}>
-        <div className="d-flex justify-content-between mb-4">
-          <HeadingWrapper>Products</HeadingWrapper>
-          <AddBtn
-            onClick={() => {
-              setShow(true);
-            }}
-          >
-            Add Categories And Brands
-          </AddBtn>
-          <ProductBtn onClick={handleShowModal}>Add Product</ProductBtn>
+      {loading ? (
+        <div
+          style={{ height: "100vh" }}
+          className="w-100 d-flex justify-content-center align-items-center"
+        >
+          <div className=" spinner-border" role="status">
+            <span className="sr-only">Loading...</span>
+          </div>
         </div>
-        <div className="row" style={{ width: "100%" }}>
-          {products.map((product) => (
-            <div className="col-6 col-xl-4 mb-3">
-              <ProductCardAdmin
-                key={product.id}
-                product={product}
-                update={update}
-                setUpdate={setUpdate}
-              />
-            </div>
-          ))}
-        </div>
-      </Container>
+      ) : (
+        <Container
+          fluid
+          className=" px-5 mx-auto"
+          style={{ minHeight: "90vh" }}
+        >
+          <div className="d-flex justify-content-between mb-4">
+            <HeadingWrapper>Products</HeadingWrapper>
+            <AddBtn
+              onClick={() => {
+                setShow(true);
+              }}
+            >
+              Add Categories And Brands
+            </AddBtn>
+            <ProductBtn onClick={handleShowModal}>Add Product</ProductBtn>
+          </div>
+          <div className="row" style={{ width: "100%" }}>
+            {products.map((product) => (
+              <div className="col-6 col-xl-4 mb-3">
+                <ProductCardAdmin
+                  key={product.id}
+                  product={product}
+                  update={update}
+                  setUpdate={setUpdate}
+                />
+              </div>
+            ))}
+          </div>
+        </Container>
+      )}
       <Footer />
-      <AddProductModal show={showModal} onHide={handleCloseModal} />
+      <AddProductModal
+        show={showModal}
+        setUpdate={setUpdate}
+        update={update}
+        onHide={handleCloseModal}
+      />
       <Modal show={show} onHide={() => setShow(false)}>
         <Modal.Header>
           <Modal.Title>Add Categories and Brands</Modal.Title>

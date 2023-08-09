@@ -7,11 +7,13 @@ import { userRequest } from "../requestMethods";
 import { Link } from "react-router-dom";
 import EditProductModal from "./EditProductModal";
 import { BASE_URL } from "../requestMethods";
+import { toast } from "react-toastify";
 
 const CardContainer = styled.div`
   display: flex;
   position: relative;
   max-width: 420px;
+  font-family: "Josefin Sans, serif !important";
   min-width: 250px;
   padding: 10px;
   border: 1px solid #ccc;
@@ -104,15 +106,16 @@ const ProductCardAdmin = ({ product, setUpdate, update }) => {
     setShowModal(false);
     setUpdate(!update);
   };
+
   const deleteProduct = async () => {
     try {
       const response = await userRequest.delete(
         `/product/products/${product._id}`
       );
-      console.log(response);
+      toast.success("Product Deleted");
       setUpdate(!update);
     } catch (error) {
-      console.log(error);
+      toast.error(error.response.data.message);
     }
   };
 
@@ -126,6 +129,7 @@ const ProductCardAdmin = ({ product, setUpdate, update }) => {
       items: 1,
     },
   };
+
   return (
     <CardContainer className="">
       <Link

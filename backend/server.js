@@ -16,6 +16,7 @@ require("./models/category_model");
 require("./models/brand_model");
 require("./models/review_model");
 const userRouter = require("./router/user_routes");
+const bodyParser = require("body-parser");
 const productRouter = require("./router/product_routes");
 const cartRouter = require("./router/cart_routes");
 const dealsRouter = require("./router/deals_routers");
@@ -31,6 +32,8 @@ app.use(cors());
 app.use(express.json());
 mongoose.connect(MONGODB_URL);
 
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 app.get("/api/keys/paypal", (req, res) => {
   res.send(PAYPAL_CLIENT_ID);
 });

@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { userRequest } from "../requestMethods";
+import { toast } from "react-toastify";
 
 const OrderCardContainer = styled.div`
   border-bottom: 1px solid #ccc;
@@ -65,6 +66,7 @@ const OrderHistoryAdminCard = ({
         `/order/delete/${orderId}/${userId._id}`
       );
       setUpdate(!update);
+      toast.success("Deleted Successfully");
     } catch (error) {
       console.log(error);
     }

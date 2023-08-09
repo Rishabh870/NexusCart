@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { styled } from 'styled-components';
-import ProductCard from './ProductCard';
-import { publicRequest } from '../requestMethods';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { styled } from "styled-components";
+import ProductCard from "./ProductCard";
+import { publicRequest } from "../requestMethods";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 const Section = styled.div`
   /* Add your styles here */
   @media (max-width: 768px) {
@@ -29,7 +29,7 @@ const Section = styled.div`
 `;
 
 const Title = styled.h2`
-  font-family: 'Josefin Sans regular';
+  font-family: "Josefin Sans regular";
 `;
 
 const DealsSection = ({ filter }) => {
@@ -38,15 +38,13 @@ const DealsSection = ({ filter }) => {
   useEffect(() => {
     const params = {};
     params.category = [filter];
-    console.log(params);
     const getProducts = async () => {
       try {
-        const response = await publicRequest.get('/product/products', {
+        const response = await publicRequest.get("/product/products", {
           params,
         });
 
         setProducts(response.data);
-        console.log(products);
       } catch (error) {
         console.log(error);
       }
@@ -59,18 +57,18 @@ const DealsSection = ({ filter }) => {
   const limitedProducts = products.slice(-4);
   return (
     <>
-      <Section className='mt-4 mb-3'>
+      <Section className="mt-4 mb-3">
         <Title>{filter}</Title>
-        <div className='row my-4'>
+        <div className="row my-4">
           {limitedProducts.map((product, index) => (
             <div
-              className='col-md-4 col-lg-3'
+              className="col-md-4 col-lg-3"
               key={index}
-              style={{ borderRadius: '30px' }}
+              style={{ borderRadius: "30px" }}
             >
               <Link
                 to={`/product/${product._id}`}
-                style={{ textDecoration: 'none', color: 'black' }}
+                style={{ textDecoration: "none", color: "black" }}
               >
                 <ProductCard product={product} />
               </Link>

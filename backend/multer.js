@@ -1,23 +1,26 @@
-const multer = require('multer');
+const multer = require("multer");
 
 // Define the storage for uploaded files
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/'); // Uploads directory where files will be saved
+    cb(null, "uploads/"); // Uploads directory where files will be saved
   },
   filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    const originalExtension = file.originalname.split('.').pop();
-    cb(null, file.fieldname + '-' + uniqueSuffix+'.' + originalExtension);
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    const originalExtension = file.originalname.split(".").pop();
+    cb(null, file.fieldname + "-" + uniqueSuffix + "." + originalExtension);
   },
 });
 
 // Define the file filter to accept only image files
 const fileFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith('image/')) {
+  if (file.mimetype.startsWith("image/")) {
     cb(null, true);
   } else {
-    cb(new Error('Only image files are allowed!'), false);
+    cb(
+      new Error("Only image files .jpg, .jpeg, and .png files are allowed !"),
+      false
+    );
   }
 };
 

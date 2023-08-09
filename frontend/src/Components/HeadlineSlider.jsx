@@ -1,7 +1,6 @@
-import React from 'react';
-import styled from 'styled-components'; // Import the CSS file if needed
-import slideData from '../Data/slide.json';
-import Bg from '../Img/Background.jpg';
+import React from "react";
+import styled from "styled-components";
+import Bg from "../Img/Background.jpg";
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -23,7 +22,7 @@ const CoverSection = styled.div`
   background-size: cover;
   background-position: 0%;
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
@@ -59,11 +58,11 @@ const Slogan = styled.p`
   text-align: center;
   z-index: 1;
   text-shadow: 2px 2px 4px black;
-  font-family: 'Lato', cursive;
+  font-family: "Lato", cursive;
 `;
 
 const Title = styled.h3`
-  font-family: 'Playfair Display SC';
+  font-family: "Playfair Display SC";
   text-shadow: 2px 2px 4px black;
   color: white;
   font-size: 3rem;

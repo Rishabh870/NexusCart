@@ -2,9 +2,12 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { userRequest } from "../requestMethods";
 import { Modal, Button, Form } from "react-bootstrap";
+import { toast } from "react-toastify";
+
 const CardContainer = styled.div`
   text-align: center;
   padding: 10px 20px;
+  font-family: "Josefin Sans", sans-serif;
   border: 1px solid #e0e0e0;
   margin-bottom: 10px;
 `;
@@ -18,8 +21,24 @@ const ActionButton = styled.button`
   color: ${(props) => (props.edit ? "black" : "white")};
   border: 2px solid black;
   cursor: pointer;
+  font-size: small;
   padding: 3px 12px;
   margin-right: 5px;
+`;
+
+const StyledButton = styled(Button)`
+  background-color: black !important;
+  border-color: #000000 !important;
+  color: white;
+  border-radius: 0%;
+`;
+
+const CloseButton = styled(Button)`
+  background-color: white !important;
+  border-color: black !important;
+  color: black !important;
+  margin-right: 5px;
+  border-radius: 0%;
 `;
 
 const UserCard = ({
@@ -56,11 +75,11 @@ const UserCard = ({
         fullName,
         mobileNumber,
       };
-      console.log(data);
       const response = await userRequest.put(`/user/${userId}`, data);
-      console.log(response.data);
+      setUpdate(!update);
+      toast.success("User Updated");
     } catch (error) {
-      console.log(error);
+      toast.error(error.response.data.message);
     }
     handleCloseModal(); // Close the modal after submitting the form
   };
@@ -68,9 +87,10 @@ const UserCard = ({
   const handleDelete = async () => {
     try {
       const response = await userRequest.delete(`/user/users/${userId}`);
-      console.log(response.data);
+      setUpdate(!update);
+      toast.success("User Deleted");
     } catch (error) {
-      console.log(error);
+      toast.error(error.response.data.message);
     }
   };
 
@@ -79,28 +99,29 @@ const UserCard = ({
     setEmail(email);
     setIsAdmin(isAdmin);
     setMobileNumber(mobile);
-  }, [showModal]);
+  }, [showModal, isAdmin, mobile, name]);
 
   return (
     <CardContainer className="row">
       <UserInfo className="col-3 my-auto">{userId}</UserInfo>
       <UserInfo className="col-2 my-auto">{name}</UserInfo>
-      <UserInfo className="col-2 my-auto">{email}</UserInfo>
-      <UserInfo className="col-2 my-auto">{isAdmin ? "Yes" : "No"}</UserInfo>
-      <UserInfo className="col-3 my-auto">
+      <UserInfo className="col-3 my-auto">{editEmail}</UserInfo>
+      <UserInfo className="col-2 my-auto">
+        {editIsAdmin ? "Yes" : "No"}
+      </UserInfo>
+      <UserInfo className="col-2 my-auto p-0">
         <ActionButton onClick={handleShowModal} edit>
           Edit
         </ActionButton>
         <ActionButton onClick={handleDelete}>Delete</ActionButton>
       </UserInfo>
       <Modal show={showModal} onHide={handleCloseModal}>
-        <Modal.Header closeButton>
+        <Modal.Header>
           <Modal.Title>Add User</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleSubmit}>
-            <Form.Group controlId="fullName">
-              <Form.Label>Full Name</Form.Label>
+            <Form.Group className="mb-2" controlId="fullName">
               <Form.Control
                 type="text"
                 value={fullName}
@@ -109,18 +130,16 @@ const UserCard = ({
               />
             </Form.Group>
 
-            <Form.Group controlId="email">
-              <Form.Label>Email</Form.Label>
+            <Form.Group className="mb-2" controlId="email">
               <Form.Control
                 type="email"
-                value={email}
+                value={editEmail}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter Email"
               />
             </Form.Group>
 
-            <Form.Group controlId="mobileNumber">
-              <Form.Label>Mobile Number</Form.Label>
+            <Form.Group className="mb-2" controlId="mobileNumber">
               <Form.Control
                 type="text"
                 value={mobileNumber}
@@ -128,8 +147,8 @@ const UserCard = ({
                 placeholder="Enter Mobile Number"
               />
             </Form.Group>
-            <Form.Group controlId="mobileNumber">
-              <Form.Label>Password</Form.Label>
+
+            <Form.Group className="mb-2" controlId="mobileNumber">
               <Form.Control
                 type="text"
                 value={password}
@@ -138,18 +157,24 @@ const UserCard = ({
               />
             </Form.Group>
 
-            <Form.Group controlId="isAdmin">
+            <Form.Group className="mb-3" controlId="isAdmin">
               <Form.Check
                 type="checkbox"
                 label="Is Admin"
-                checked={isAdmin}
-                onChange={(e) => setIsAdmin(e.target.checked)}
+                checked={editIsAdmin}
+                onChange={(e) => {
+                  setIsAdmin(e.target.checked);
+                }}
               />
             </Form.Group>
 
-            <Button variant="primary" type="submit">
-              Submit
-            </Button>
+            <div className="d-flex  justify-content-between">
+              <div></div>
+              <div style={{ width: "fit-content" }}>
+                <CloseButton onClick={handleCloseModal}>Close</CloseButton>
+                <StyledButton type="submit">Submit</StyledButton>
+              </div>
+            </div>
           </Form>
         </Modal.Body>
       </Modal>

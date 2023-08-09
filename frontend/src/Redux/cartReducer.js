@@ -71,7 +71,7 @@ const calculateTotalPrice = (products) => {
 
 // Helper function to calculate the price of a single product
 const calculateProductPrice = (product) => {
-  return product?.price * product.quantity;
+  return product?.price * product?.quantity;
 };
 
 const cardSlice = createSlice({

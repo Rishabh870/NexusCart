@@ -50,12 +50,6 @@ const LoginFormContainer = styled.div`
   }
 `;
 
-const LogoContainer = styled.div`
-  width: 10rem;
-  display: flex;
-  align-content: center;
-`;
-
 const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -63,7 +57,6 @@ const Login = () => {
   useEffect(() => {
     // Check if the user is already logged in (e.g., by checking the token in local storage)
     const isLoggedIn = localStorage.getItem("token");
-
     if (isLoggedIn) {
       // User is logged in, redirect to "/home"
       navigate("/");
@@ -127,6 +120,12 @@ const Login = () => {
                   ) : (
                     <Button type="submit">Login</Button>
                   )}
+
+                  <div className="mt-3 text-right">
+                    <p className="mb-0">
+                      <Link to="/reset">Forgot Password</Link>
+                    </p>
+                  </div>
 
                   <div className="mt-3 text-center">
                     <p className="mb-0">

@@ -1,10 +1,9 @@
-// routes/brandRoutes.js
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { BrandModel } = require('../models/brand_model');
+const { BrandModel } = require("../models/brand_model");
 
 // Add multiple brands
-router.post('/add', async (req, res) => {
+router.post("/add", async (req, res) => {
   try {
     const brandsToAdd = req.body; // Array of brand objects
 
@@ -23,18 +22,18 @@ router.post('/add', async (req, res) => {
     res.status(201).json(addedBrands);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
 // Get all brands
-router.get('/brands', async (req, res) => {
+router.get("/brands", async (req, res) => {
   try {
     const brands = await BrandModel.find();
     res.status(200).json(brands);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 

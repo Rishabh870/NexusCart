@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-
 import { Button, Container, Form, Modal } from "react-bootstrap";
 import styled from "styled-components";
 import { MdClose } from "react-icons/md";
 import { userRequest } from "../requestMethods";
+import { toast } from "react-toastify";
 
 const FormLabel = styled.label`
   font-weight: bold;
@@ -15,10 +15,6 @@ const FormControl = styled.input`
   border: 1px solid #ced4da;
   border-radius: 4px;
   margin-bottom: 1rem;
-`;
-
-const FormButton = styled(Button)`
-  margin-right: 0.5rem;
 `;
 
 const CloseButton = styled(Button)`
@@ -42,7 +38,7 @@ const StyledButton = styled(Button)`
   border-radius: 0%;
 `;
 
-const DeliveryScreen = ({ showModal, handleCloseModal }) => {
+const DeliveryScreen = ({ showModal, handleCloseModal, setUpdate, update }) => {
   const [formData, setFormData] = useState({
     fullName: "",
     mobileNumber: "",
@@ -102,12 +98,14 @@ const DeliveryScreen = ({ showModal, handleCloseModal }) => {
         `/delivery/addaddress/${userId}`,
         addressData
       );
-      window.location.reload();
-      console.log(response.data);
       // Handle the response data
+      toast.success("Address added successfully");
+      setUpdate(!update);
+      handleCloseModal();
     } catch (error) {
       console.error(error);
       // Handle the error
+      toast.error(error.response.data.message);
     }
   };
 

@@ -5,7 +5,7 @@ import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai"; // Import the re
 import { FaTimes, FaPlus } from "react-icons/fa";
 import { userRequest } from "../requestMethods";
 import { BASE_URL } from "../requestMethods";
-
+import { toast } from "react-toastify";
 const ImageContainer = styled.div`
   position: relative;
 `;
@@ -78,10 +78,13 @@ const EditProductModal = ({ show, onHide, productData }) => {
           sizeInput: productData.sizes.join(", "),
         };
         setFormData(mergedFormData);
-      } catch (error) {}
+      } catch (error) {
+        toast.error(error.response.data.message);
+      }
     };
     getCategorysAndBrands();
   }, [productData]);
+
   const handleSubmit = async () => {
     const form = new FormData();
     // Split the sizeInput string by commas and trim spaces from each word
@@ -106,6 +109,7 @@ const EditProductModal = ({ show, onHide, productData }) => {
     }
     try {
       if (image) {
+        console.log("inside");
         const response = await userRequest.post("/product/imagesupload", form, {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -131,7 +135,7 @@ const EditProductModal = ({ show, onHide, productData }) => {
 
       const sizes = sizeArray.map((size) => size.toUpperCase());
 
-      userRequest
+      await userRequest
         .put(`/product/products/${productData._id}`, {
           productName: formData.productName,
           brandName: formData.brandName,
@@ -144,15 +148,17 @@ const EditProductModal = ({ show, onHide, productData }) => {
         })
         .then((response) => {
           // Handle the response if needed
+          toast.success("Product Updated");
         })
         .catch((error) => {
           // Handle errors if the request fails
           console.error(error);
+          toast.error(error.response.data.message);
         });
 
       onHide();
     } catch (error) {
-      console.log(error);
+      toast.error(error.response.data.message);
     }
     // Make a POST request to the '/addproduct' route using userRequest
   };

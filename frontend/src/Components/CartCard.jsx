@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { RxCross1 } from "react-icons/rx";
-import { userRequest } from "../requestMethods";
 import { useDispatch } from "react-redux";
 import {
   deleteCartItem,
@@ -10,6 +9,7 @@ import {
 } from "../Redux/cartReducer";
 import { TbTruckDelivery } from "react-icons/tb";
 import { BASE_URL } from "../requestMethods";
+import { toast } from "react-toastify";
 
 const CardContainer = styled.div`
   border: 1px solid #dee2e6;
@@ -89,7 +89,6 @@ const CartCard = ({ data, show }) => {
 
   const handleSizeChange = (event) => {
     const newSize = event.target.value;
-    console.log(data._id);
     setSelectedSize(newSize);
     Dispatch(data.cartId, selectedQuantity, newSize);
   };
@@ -97,7 +96,6 @@ const CartCard = ({ data, show }) => {
   const handleQuantityChange = (event) => {
     const newQuantity = event.target.value;
     setSelectedQuantity(newQuantity);
-
     Dispatch(data.cartId, newQuantity, selectedSize);
   };
 
@@ -112,7 +110,7 @@ const CartCard = ({ data, show }) => {
 
   const handleDeleteItem = () => {
     // Perform the delete request using userRequest
-    console.log(data.cartId);
+    toast.success("Item deleted");
     dispatch(deleteCartItem(data.cartId));
   };
 

@@ -17,6 +17,9 @@ import Dashboard from "./AdminPages/Dashboard";
 import AdminProductPage from "./AdminPages/AdminProductPage";
 import UserPanel from "./AdminPages/UserPanel";
 import OrderHistoryAdmin from "./AdminPages/OrderHistory";
+import PassReset from "./Pages/PassReset";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const dispatch = useDispatch();
@@ -41,7 +44,9 @@ function App() {
         <Route path="/admin/products" element={<AdminProductPage />} />
         <Route path="/admin/users" element={<UserPanel />} />
         <Route path="/admin/history" element={<OrderHistoryAdmin />} />
+        <Route path="/reset" element={<PassReset />} />
       </Routes>
+      <ToastContainer />
     </Router>
   );
 }

@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai"; // Import the required icons
 import { FaTimes, FaPlus } from "react-icons/fa";
 import { userRequest } from "../requestMethods";
+import { toast } from "react-toastify";
 
 const ImageContainer = styled.div`
   position: relative;
@@ -20,9 +21,7 @@ const DeleteButton = styled.button`
 const ModalContent = styled.div`
   padding: 20px;
 `;
-const SizeInput = styled.input`
-  /* Add your own styles here */
-`;
+
 const PlusIcon = styled.div`
   position: relative;
   top: 45%;
@@ -46,7 +45,7 @@ const CloseButton = styled(Button)`
   border-radius: 0%;
 `;
 
-const AddProductModal = ({ show, onHide, productData }) => {
+const AddProductModal = ({ show, onHide, update, setUpdate }) => {
   const [productName, setProductName] = useState("");
   const [brandName, setBrandName] = useState("");
   const [desc, setDesc] = useState("");
@@ -66,38 +65,6 @@ const AddProductModal = ({ show, onHide, productData }) => {
   };
 
   useEffect(() => {
-    const getProduct = async () => {
-      // Convert image URLs to File objects when editing a product
-      if (productData) {
-        const imageFiles = await Promise.all(
-          productData.img.map(async (url) => {
-            const response = await fetch(url);
-            const blob = await response.blob();
-            // Get the file type directly from the blob
-            const extension = url.substring(url.lastIndexOf(".") + 1);
-
-            // Set the file type based on the file extension
-            const fileType = `image/${
-              extension === "jpg" ? "jpeg" : extension
-            }`;
-            return new File(
-              [blob],
-              `image-${Date.now()}.${fileType.split("/")[1]}`,
-              { type: fileType }
-            );
-          })
-        );
-        setImagePreviews(imageFiles);
-        setProductName(productData.productName);
-        setBrandName(productData.brandName);
-        setDesc(productData.desc);
-        setPrice(productData.price);
-        setInStock(productData.inStock);
-        setCategory(productData.category); // Convert array of categories to comma-separated string
-        setSizeInput(productData.sizes.join(", ")); // Convert array of sizes to comma-separated string
-      }
-    };
-
     const getCategorysAndBrands = async () => {
       try {
         const categories = await userRequest.get("/category/categories");
@@ -107,8 +74,8 @@ const AddProductModal = ({ show, onHide, productData }) => {
       } catch (error) {}
     };
     getCategorysAndBrands();
-    getProduct();
-  }, [productData]);
+  }, []);
+
   const handleSubmit = () => {
     try {
       const formData = new FormData();
@@ -133,30 +100,20 @@ const AddProductModal = ({ show, onHide, productData }) => {
         formData.append("myImages", file); // Use the correct field name 'images'
       });
 
-      if (productData) {
-        userRequest
-          .put(`/product/products/${productData._id}`, formData)
-          .then((response) => {
-            // Handle the response if needed
-            // console.log(response.data);
-          })
-          .catch((error) => {
-            // Handle errors if the request fails
-            console.error(error);
-          });
-      } else {
-        userRequest
-          .post("/product/addproduct", formData)
-          .then((response) => {
-            // Handle the response if needed
-            // console.log(response.data);
-          })
-          .catch((error) => {
-            // Handle errors if the request fails
-            console.error(error);
-          });
-      }
-      onHide();
+      userRequest
+        .post("/product/addproduct", formData)
+        .then((response) => {
+          // Handle the response if needed
+          toast.success("Product added successfully!");
+          setUpdate(!update);
+        })
+        .catch((error) => {
+          // Handle errors if the request fails
+          console.error(error);
+          toast.error(error.response.data.message);
+        });
+
+      setUpdate(!update);
       setBrandName("");
       setCategory("");
       setSizeInput("");
@@ -165,8 +122,10 @@ const AddProductModal = ({ show, onHide, productData }) => {
       setPrice("");
       setInStock(true);
       setImagePreviews([]);
+      onHide();
     } catch (error) {
       console.log(error);
+      toast.error(error.response.data.message);
     }
     // Make a POST request to the '/addproduct' route using userRequest
   };
@@ -196,9 +155,7 @@ const AddProductModal = ({ show, onHide, productData }) => {
   return (
     <Modal show={show} onHide={onHide}>
       <Modal.Header>
-        <Modal.Title>
-          {productData ? "Edit Product" : "Add Product"}
-        </Modal.Title>
+        <Modal.Title>Add Product</Modal.Title>
       </Modal.Header>
       <Modal.Body className="pb-0">
         <ModalContent>

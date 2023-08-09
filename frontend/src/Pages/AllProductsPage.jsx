@@ -11,10 +11,10 @@ import { useLocation } from "react-router-dom";
 import ReactPaginate from "react-paginate";
 
 const Product = styled.div`
-  min-height: 300px;
+  min-height: 70vh;
 `;
 const ProductContainer = styled.div`
-  min-height: 300px;
+  min-height: 70vh;
 `;
 
 const PaginationContainer = styled.div`
@@ -53,7 +53,7 @@ const PaginationContainer = styled.div`
 const AllProducts = () => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState("Sort By");
-  const location = useLocation();
+  const [loading, setLoading] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(0);
   const productsPerPage = 16; // Set the number of products to display per page
@@ -67,6 +67,7 @@ const AllProducts = () => {
 
   useEffect(() => {
     console.log(brand);
+    setLoading(true);
     const fetchAllProducts = async () => {
       try {
         const params = {};
@@ -96,6 +97,7 @@ const AllProducts = () => {
         }
 
         setProducts(response.data);
+        setLoading(false);
       } catch (error) {
         console.log(error);
       }
@@ -128,46 +130,57 @@ const AllProducts = () => {
   return (
     <>
       <Header />
-      <Container>
-        <ProductContainer className="row">
-          <div id="left" className="col-3 pr-4">
-            <Filter setIsChecked={setIsChecked} isChecked={isChecked} />
+      {loading ? (
+        <div
+          style={{ height: "80vh" }}
+          className="w-100 d-flex justify-content-center align-items-center"
+        >
+          <div className=" spinner-border" role="status">
+            <span className="sr-only">Loading...</span>
           </div>
-          <div id="right" className="col-9 pl-4 ">
-            <Product className="row mt-5">
-              {currentProducts.map((product, index) => {
-                console.log(product);
-                return (
-                  <div
-                    className="col-lg-4 col-sm-6 col-xl-3 p-0 px-xl-1 px-md-3"
-                    key={index}
-                  >
-                    <Link
-                      to={`/product/${product._id}`}
-                      style={{ textDecoration: "none", color: "black" }}
+        </div>
+      ) : (
+        <Container>
+          <ProductContainer className="row">
+            <div id="left" className="col-3 pr-4">
+              <Filter setIsChecked={setIsChecked} isChecked={isChecked} />
+            </div>
+            <div id="right" className="col-9 pl-4 ">
+              <Product className="row mt-5">
+                {currentProducts.map((product, index) => {
+                  console.log(product);
+                  return (
+                    <div
+                      className="col-lg-4 col-sm-6 col-xl-3 p-0 px-xl-1 px-md-3"
+                      key={index}
                     >
-                      <ProductCard product={product} />
-                    </Link>
-                  </div>
-                );
-              })}
-            </Product>
-            <PaginationContainer>
-              <ReactPaginate
-                previousLabel={"Previous"}
-                nextLabel={"Next"}
-                pageCount={pageCount}
-                onPageChange={handlePageClick}
-                containerClassName={"pagination"}
-                previousLinkClassName={"page-link"}
-                nextLinkClassName={"page-link"}
-                disabledClassName={"disabled"}
-                activeClassName={"active"}
-              />
-            </PaginationContainer>
-          </div>
-        </ProductContainer>
-      </Container>
+                      <Link
+                        to={`/product/${product._id}`}
+                        style={{ textDecoration: "none", color: "black" }}
+                      >
+                        <ProductCard product={product} />
+                      </Link>
+                    </div>
+                  );
+                })}
+              </Product>
+              <PaginationContainer>
+                <ReactPaginate
+                  previousLabel={"Previous"}
+                  nextLabel={"Next"}
+                  pageCount={pageCount}
+                  onPageChange={handlePageClick}
+                  containerClassName={"pagination"}
+                  previousLinkClassName={"page-link"}
+                  nextLinkClassName={"page-link"}
+                  disabledClassName={"disabled"}
+                  activeClassName={"active"}
+                />
+              </PaginationContainer>
+            </div>
+          </ProductContainer>
+        </Container>
+      )}
       <Footer />
     </>
   );

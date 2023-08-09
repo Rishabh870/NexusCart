@@ -1,78 +1,95 @@
-const express = require('express');
+// Import necessary modules and dependencies
+const express = require("express");
 const router = express.Router();
-const { verifyTokenAuth } = require('../middleware/verifyToken');
-const AddressModel = require('../models/address_model');
+const { verifyTokenAuth } = require("../middleware/verifyToken");
+const AddressModel = require("../models/address_model");
 
-// Add or update address
-router.post('/addaddress/:userId', verifyTokenAuth, (req, res) => {
-  const {
-    fullName,
-    mobileNumber,
-    pincode,
-    addressLine1,
-    addressLine2,
-    landmark,
-    city,
-    state,
-  } = req.body;
+// Route to add or update a user's address
+router.post("/addaddress/:userId", verifyTokenAuth, async (req, res) => {
+  try {
+    // Destructure address information from the request body
+    const {
+      fullName,
+      mobileNumber,
+      pincode,
+      addressLine1,
+      addressLine2,
+      landmark,
+      city,
+      state,
+    } = req.body;
 
-  const newAddress = {
-    fullName,
-    mobileNumber,
-    pincode,
-    addressLine1,
-    addressLine2,
-    landmark,
-    city,
-    state,
-  };
+    // Get the user ID from the authenticated user's request
+    const userId = req.user.userId;
+    console.log(userId); // Log the user ID
 
-  const userId = req.user.id;
+    // Check if the address already exists for the user
+    const existingAddress = await AddressModel.findOne({ userId });
 
-  AddressModel.findOne({ userId })
-    .then((address) => {
-      if (address) {
-        // Address exists for the user, update the address
-        address.set(newAddress);
+    if (existingAddress) {
+      // Update the existing address
+      const updatedAddress = await AddressModel.findByIdAndUpdate(
+        existingAddress._id,
+        {
+          fullName,
+          mobileNumber,
+          pincode,
+          addressLine1,
+          addressLine2,
+          landmark,
+          city,
+          state,
+        },
+        { new: true } // Return the updated document
+      );
 
-        address
-          .save()
-          .then(() => {
-            res.status(200).json({ result: 'Address updated successfully' });
-          })
-          .catch((error) => {
-            console.log(error);
-            res.status(500).json({ error: 'Internal server error' });
-          });
-      } else {
-        // Address doesn't exist for the user, create a new address
-        newAddress.userId = userId;
+      // Send response for address update
+      res.json({
+        message: "Address updated successfully",
+        address: updatedAddress,
+      });
+    } else {
+      // Create a new address if it doesn't exist
+      const newAddress = new AddressModel({
+        userId: userId,
+        fullName,
+        mobileNumber,
+        pincode,
+        addressLine1,
+        addressLine2,
+        landmark,
+        city,
+        state,
+      });
 
-        AddressModel.create(newAddress)
-          .then(() => {
-            res.status(201).json({ result: 'Address added successfully' });
-          })
-          .catch((error) => {
-            console.log(error);
-            res.status(500).json({ error: 'Internal server error' });
-          });
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-      res.status(500).json({ error: 'Internal server error' });
-    });
+      // Save the new address to the database
+      const savedAddress = await newAddress.save();
+
+      // Send response for new address creation
+      res.json({
+        message: "Address added successfully",
+        address: savedAddress,
+      });
+    }
+  } catch (error) {
+    console.error(error); // Log any errors
+    res.status(500).json({ error: "Internal Server Error" }); // Send an error response
+  }
 });
 
-// Get address
-router.get('/address/:userId', verifyTokenAuth, (req, res) => {
-  const userId = req.user.id;
+// Route to get address details for a user
+router.get("/address/:userId", verifyTokenAuth, (req, res) => {
+  // Extract the user ID from the authenticated request
+  const userId = req.user.userId;
 
+  // Find the address associated with the user ID
   AddressModel.findOne({ userId })
     .then((address) => {
+      // If address not found, return a 404 response
       if (!address) {
-        res.status(404).json({ message: 'Address not found' });
+        res.status(404).json({ message: "Address not found" });
       } else {
+        // Extract address details
         const {
           addressLine1,
           addressLine2,
@@ -84,9 +101,11 @@ router.get('/address/:userId', verifyTokenAuth, (req, res) => {
           state,
         } = address;
 
+        // Create formatted strings for delivery information
         const deliveryTo = `${fullName}, ${mobileNumber}`;
-        const deliveryAddress = `${addressLine1}, ${addressLine2}, ${landmark}, ${city},${state}, ${pincode}`;
+        const deliveryAddress = `${addressLine1}, ${addressLine2}, ${landmark}, ${city}, ${state}, ${pincode}`;
 
+        // Return delivery details in a JSON response
         res.status(200).json({
           deliveryTo,
           deliveryAddress,
@@ -95,8 +114,10 @@ router.get('/address/:userId', verifyTokenAuth, (req, res) => {
     })
     .catch((error) => {
       console.log(error);
-      res.status(500).json({ error: 'Internal server error' });
+      // Handle server error with a 500 response
+      res.status(500).json({ error: "Internal server error" });
     });
 });
 
+// Export the router for use in other parts of the application
 module.exports = router;

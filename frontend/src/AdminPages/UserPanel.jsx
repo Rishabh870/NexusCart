@@ -11,6 +11,7 @@ const RowContainer = styled.div`
   padding: 10px 20px;
   background-color: #f8f9fa;
   font-weight: bold;
+  font-family: "Playfair Display", sans-serif !important;
 `;
 
 const HeaderCell = styled.div`
@@ -21,13 +22,16 @@ const HeaderCell = styled.div`
 const UserPanel = () => {
   const [users, setUsers] = useState([]);
   const [update, setUpdate] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const getUser = async () => {
+      setLoading(true);
       try {
         const response = await userRequest.get("/user/users/all");
         console.log(response.data); // Access the data inside the resolved Promise
         setUsers(response.data);
+        setLoading(false);
       } catch (error) {
         console.log(error);
       }
@@ -38,31 +42,42 @@ const UserPanel = () => {
   return (
     <div>
       <Header />
-      <Container style={{ minHeight: "40rem" }}>
-        <RowContainer className="row">
-          <HeaderCell className="col-3">User ID</HeaderCell>
-          <HeaderCell className="col-2">Name</HeaderCell>
-          <HeaderCell className="col-2">Email</HeaderCell>
-          <HeaderCell className="col-2">isAdmin</HeaderCell>
-          <HeaderCell className="col-3">Action</HeaderCell>
-        </RowContainer>
+      {loading ? (
+        <div
+          style={{ height: "80vh" }}
+          className="w-100 d-flex justify-content-center align-items-center"
+        >
+          <div className=" spinner-border" role="status">
+            <span className="sr-only">Loading...</span>
+          </div>
+        </div>
+      ) : (
+        <Container style={{ minHeight: "50rem" }}>
+          <RowContainer className="row">
+            <HeaderCell className="col-3">User ID</HeaderCell>
+            <HeaderCell className="col-2">Name</HeaderCell>
+            <HeaderCell className="col-3">Email</HeaderCell>
+            <HeaderCell className="col-2">isAdmin</HeaderCell>
+            <HeaderCell className="col-2 my-auto p-0">Action</HeaderCell>
+          </RowContainer>
 
-        {users.map((user, index) => {
-          return (
-            <div>
-              <UserCard
-                userId={user._id}
-                name={user.fullName}
-                email={user.email}
-                isAdmin={user.isAdmin}
-                mobile={user.mobileNumber}
-                update={update}
-                setUpdate={setUpdate}
-              />
-            </div>
-          );
-        })}
-      </Container>
+          {users.map((user, index) => {
+            return (
+              <div>
+                <UserCard
+                  userId={user._id}
+                  name={user.fullName}
+                  email={user.email}
+                  isAdmin={user.isAdmin}
+                  mobile={user.mobileNumber}
+                  update={update}
+                  setUpdate={setUpdate}
+                />
+              </div>
+            );
+          })}
+        </Container>
+      )}
       <Footer />
     </div>
   );

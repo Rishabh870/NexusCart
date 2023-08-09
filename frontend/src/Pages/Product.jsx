@@ -19,8 +19,9 @@ import ReviewCard from "../Components/ReviewCard";
 import ReviewForm from "../Components/ReviewForm";
 import { MdOutlineStar } from "react-icons/md";
 import { BASE_URL } from "../requestMethods";
+import { toast } from "react-toastify";
 
-const ProductInfo = styled.span``;
+const ProductInfo = styled.div``;
 const Review = styled.div`
   margin-top: 2rem;
 `;
@@ -172,6 +173,7 @@ const ProductReview = ({ review }) => {
 
 const Product = () => {
   const { productId } = useParams();
+  const [loading, setLoading] = useState(false);
   const [product, setProduct] = useState(null);
   const [cartItemCount, setCartItemCount] = useState(0);
   const [selectedSize, setSelectedSize] = useState("S");
@@ -181,12 +183,16 @@ const Product = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    setLoading(true);
+
     const fetchProduct = async () => {
       try {
         const response = await userRequest.get(`/product/product/${productId}`);
         setProduct(response.data);
+        setLoading(false);
       } catch (error) {
-        console.log(error);
+        toast.error(error.response.data.message);
+        setLoading(false);
       }
     };
 
@@ -212,7 +218,7 @@ const Product = () => {
         ],
       })
     );
-    console.log(product);
+    toast.success("Product added to cart");
   };
 
   const handleSizeSelection = (size) => {
@@ -226,123 +232,134 @@ const Product = () => {
   return (
     <div>
       <Header count={cartItemCount} />
-      <Container>
-        <ProductInfo className="row">
-          <div id="left" className="col">
-            <div
-              className="mx-auto"
-              style={{
-                maxWidth: "400px",
-                height: "100%",
-              }}
-            >
-              <Carousel
-                swipeable={true}
-                draggable={true}
-                responsive={responsive}
-                ssr={true} // means to render carousel on server-side.
-                infinite={true}
-                autoPlaySpeed={1000}
-                keyBoardControl={true}
-                className=""
-                transitionDuration={500}
-                containerClass="carousel-container"
-                removeArrowOnDeviceType={["Laptop", "mobile"]}
-                itemClass="carousel-item-padding-40-px"
-                showDots="true"
-              >
-                {product.img.map((slide, index) => (
-                  <div key={index} style={{ borderRadius: "30px" }}>
-                    <img
-                      src={`${BASE_URL}/` + slide}
-                      alt={slide}
-                      style={{ width: "100%", height: "610px" }}
-                    />
-                  </div>
-                ))}
-              </Carousel>
-            </div>
+      {loading ? (
+        <div
+          style={{ height: "80vh" }}
+          className="w-100 d-flex justify-content-center align-items-center"
+        >
+          <div className=" spinner-border" role="status">
+            <span className="sr-only">Loading...</span>
           </div>
-          <div id="right" className="col">
-            <TopSection>
-              <Brand>{product.brandName}</Brand>
-              <ProductName>{product.productName}</ProductName>
-              <Price>
-                <span>$</span>
-                {product.price}
-              </Price>
-              <p>(Incl. of all taxes)</p>
-            </TopSection>
-            <hr />
-            <div>
-              <div>
-                <SizeHeader className="fw-bolder">SELECT SIZE </SizeHeader>
-                <SizeContainer>
-                  {product.sizes.map((size, index) => (
-                    <SizeButton
-                      key={index}
-                      selected={selectedSize === size}
-                      onClick={() => handleSizeSelection(size)}
-                    >
-                      {size}
-                    </SizeButton>
-                  ))}
-                </SizeContainer>
-              </div>
+        </div>
+      ) : (
+        <Container>
+          <ProductInfo className="row">
+            <div id="left" className="col-5">
               <div
-                className=" d-flex justify-content-around mt-3"
+                className="mx-auto"
                 style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
+                  maxWidth: "400px",
+                  height: "100%",
                 }}
               >
-                {localStorage.getItem("token") ? (
-                  <Button onClick={addToCart}>
-                    <Icon>
-                      <FaShoppingCart />
-                    </Icon>
-                    Add to Cart
-                  </Button>
-                ) : (
-                  <>
-                    <Button>
+                <Carousel
+                  swipeable={true}
+                  draggable={true}
+                  responsive={responsive}
+                  ssr={true} // means to render carousel on server-side.
+                  infinite={true}
+                  autoPlaySpeed={1000}
+                  keyBoardControl={true}
+                  className=""
+                  transitionDuration={500}
+                  containerClass="carousel-container"
+                  removeArrowOnDeviceType={["Laptop", "mobile"]}
+                  itemClass="carousel-item-padding-40-px"
+                  showDots="true"
+                >
+                  {product.img.map((slide, index) => (
+                    <div key={index} style={{ borderRadius: "30px" }}>
+                      <img
+                        src={`${BASE_URL}/` + slide}
+                        alt={slide}
+                        style={{ width: "100%", height: "610px" }}
+                      />
+                    </div>
+                  ))}
+                </Carousel>
+              </div>
+            </div>
+            <div id="right" className="col-7">
+              <TopSection>
+                <Brand>{product.brandName}</Brand>
+                <ProductName>{product.productName}</ProductName>
+                <Price>
+                  <span>$</span>
+                  {product.price}
+                </Price>
+                <p>(Incl. of all taxes)</p>
+              </TopSection>
+              <hr />
+              <div>
+                <div>
+                  <SizeHeader className="fw-bolder">SELECT SIZE </SizeHeader>
+                  <SizeContainer>
+                    {product.sizes.map((size, index) => (
+                      <SizeButton
+                        key={index}
+                        selected={selectedSize === size}
+                        onClick={() => handleSizeSelection(size)}
+                      >
+                        {size}
+                      </SizeButton>
+                    ))}
+                  </SizeContainer>
+                </div>
+                <div
+                  className=" d-flex justify-content-around mt-3"
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  {localStorage.getItem("token") ? (
+                    <Button onClick={addToCart}>
                       <Icon>
                         <FaShoppingCart />
                       </Icon>
-                      Login
+                      Add to Cart
                     </Button>
-                    <SignupBtn>
-                      <WishIcon>
-                        <BiSolidHeart />
-                      </WishIcon>
-                      Sign Up
-                    </SignupBtn>
-                  </>
-                )}
-              </div>
-            </div>
-            <hr />
-            <BottomSection>
-              <ReviewDetailsHeading>Product Rating</ReviewDetailsHeading>
-              <div className="row m-0">
-                <StarRating
-                  className=" col border-left"
-                  rating={product.averageRating}
-                />
-                <Divider />
-                <ProductReview className="col" review={product.total} />
+                  ) : (
+                    <>
+                      <Button>
+                        <Icon>
+                          <FaShoppingCart />
+                        </Icon>
+                        Login
+                      </Button>
+                      <SignupBtn>
+                        <WishIcon>
+                          <BiSolidHeart />
+                        </WishIcon>
+                        Sign Up
+                      </SignupBtn>
+                    </>
+                  )}
+                </div>
               </div>
               <hr />
-              <ProductDetails>PRODUCT DETAILS:</ProductDetails>
-              <ProductDetailsText>{product.desc}</ProductDetailsText>
-            </BottomSection>
-          </div>
-        </ProductInfo>
-        <Review>
-          <ReviewForm update={update} setUpdate={setUpdate} />
-        </Review>
-      </Container>
+              <BottomSection>
+                <ReviewDetailsHeading>Product Rating</ReviewDetailsHeading>
+                <div className="row m-0">
+                  <StarRating
+                    className=" col border-left"
+                    rating={product.averageRating}
+                  />
+                  <Divider />
+                  <ProductReview className="col" review={product.total} />
+                </div>
+                <hr />
+                <ProductDetails>PRODUCT DETAILS:</ProductDetails>
+                <ProductDetailsText>{product.desc}</ProductDetailsText>
+              </BottomSection>
+            </div>
+          </ProductInfo>
+          <Review>
+            <ReviewForm update={update} setUpdate={setUpdate} />
+          </Review>
+        </Container>
+      )}
       <Footer />
     </div>
   );

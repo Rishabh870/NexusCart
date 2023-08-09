@@ -4,8 +4,6 @@ import Footer from "../Components/Footer";
 import HeroSection from "../Components/HeadlineSlider";
 import { Container } from "react-bootstrap";
 import Sections from "../Components/Sections";
-import dealData from "../Data/home.json";
-import BrandSection from "../Components/BrandSection";
 import { useDispatch } from "react-redux";
 import { getCartProduct } from "../Redux/cartReducer";
 import { useLocation } from "react-router-dom";
@@ -13,6 +11,7 @@ import { userRequest } from "../requestMethods";
 
 const Home = () => {
   const [section, setSection] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
   const location = useLocation();
@@ -21,6 +20,7 @@ const Home = () => {
     dispatch(getCartProduct());
   }
   useEffect(() => {
+    setLoading(true);
     const getCategorys = async () => {
       try {
         const categories = await userRequest.get("/category/categories");
@@ -28,6 +28,7 @@ const Home = () => {
           .slice(-3)
           .map((category) => category.name);
         setSection(latestCategories);
+        setLoading(false);
       } catch (error) {
         console.error(error);
       }
@@ -38,12 +39,23 @@ const Home = () => {
   return (
     <div>
       <Header />
-      <Container className="mb-2">
-        <HeroSection />
-        {section.map((section) => (
-          <Sections filter={section} />
-        ))}
-      </Container>
+      {loading ? (
+        <div
+          style={{ height: "80vh" }}
+          className="w-100 d-flex justify-content-center align-items-center"
+        >
+          <div className=" spinner-border" role="status">
+            <span className="sr-only">Loading...</span>
+          </div>
+        </div>
+      ) : (
+        <Container className="mb-2">
+          <HeroSection />
+          {section.map((section) => (
+            <Sections filter={section} />
+          ))}
+        </Container>
+      )}
       <Footer />
     </div>
   );

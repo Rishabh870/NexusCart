@@ -22,11 +22,7 @@ const CardContainer = styled.div`
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
 `;
-const CardImage = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-`;
+
 const CardContent = styled.div`
   padding: 16px;
 `;
@@ -135,14 +131,6 @@ const ProductCard = ({ product }) => {
         <ProductImage src={`${BASE_URL}/` + product.img[0]} />
       </ProductImageSliderContainer>
 
-      {/* {isCartHovered && (
-        <CartContainer>
-          <CartButton>
-            <CartIcon />
-            Add To Cart
-          </CartButton>
-        </CartContainer>
-      )} */}
       <CardContent className="card-body pt-2 px-3">
         <Brand className="card-text">{product.brandName}</Brand>
         <ProductName className="card-title my-1">

@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { publicRequest, userRequest } from "../requestMethods";
 import { useParams } from "react-router-dom";
 import ReviewCard from "./ReviewCard";
+import { toast } from "react-toastify";
 
 const FormContainer = styled.form`
   display: flex;
@@ -59,34 +60,23 @@ const RatingForm = ({ update, setUpdate }) => {
   };
 
   // Function to calculate the average rating
-  const calculateAverageRating = (reviews) => {
-    if (reviews.length === 0) return 0;
-
-    const totalStars = reviews.reduce((acc, review) => acc + review.stars, 0);
-    const averageRating = totalStars / reviews.length;
-    return averageRating.toFixed(1);
-  };
 
   useEffect(() => {
     // Function to fetch reviews and update average rating
+
     const fetchReviews = async () => {
       try {
         const response = await publicRequest.get(
           `/review/getreviews/${productId}`
         );
         setReviews(response.data);
-        console.log(reviews.length);
-        // Calculate the average rating and update state
-        const averageRating = calculateAverageRating(response.data);
-        setAverageRating(averageRating);
-        console.log(averageRating);
       } catch (error) {
         console.error(error);
       }
     };
 
     fetchReviews();
-  }, [submited, productId, reviews.length]);
+  }, [submited, productId, update, averageRating, reviews.length]);
 
   // Function to handle form submission
   const handleSubmit = async (e) => {
@@ -107,13 +97,10 @@ const RatingForm = ({ update, setUpdate }) => {
         `/review/addreview/${productId}`,
         data
       );
-      await userRequest.put(`/product/updatereview/${productId}`, {
-        total: reviews.length + 1,
-        averageRating: averageRating,
-      });
       setUpdate(!update);
+      toast.success("Review Added");
     } catch (error) {
-      console.error(error);
+      toast.error(error.response.data.message);
     }
 
     setSubmited(!submited);
@@ -142,10 +129,9 @@ const RatingForm = ({ update, setUpdate }) => {
         <SubmitButton type="submit">Submit</SubmitButton>
       </FormContainer>
       {reviews.map((review) => (
-        // console.log(review),
         <ReviewCard
           key={review.id}
-          userName={review.userId.fullName}
+          userName={review.userId?.fullName}
           reviewText={review.review}
           stars={review.stars}
         />

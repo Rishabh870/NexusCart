@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
-import { Container } from 'react-bootstrap';
-import OrderCard from '../Components/OrderHistoryCard';
-import Header from '../Components/Header';
-import Footer from '../Components/Footer';
-import { userRequest } from '../requestMethods';
+import React, { useEffect, useState } from "react";
+import styled from "styled-components";
+import { Container } from "react-bootstrap";
+import OrderCard from "../Components/OrderHistoryCard";
+import Header from "../Components/Header";
+import Footer from "../Components/Footer";
+import { userRequest } from "../requestMethods";
+import { toast } from "react-toastify";
+
 const OrderHistoryTitle = styled.h2`
-  font-family: 'Playfair Display', sans-serif !important;
+  font-family: "Playfair Display", sans-serif !important;
   text-decoration: underline;
   font-size: 29px;
   margin-bottom: 10px;
@@ -19,7 +21,7 @@ const Heading = styled.div`
 `;
 const OrderDetailsContainer = styled.div`
   display: flex;
-  font-family: 'Playfair ', serif;
+  font-family: "Playfair ", serif;
   justify-content: space-between;
   font-weight: bold;
   margin-top: 2.5rem;
@@ -40,7 +42,8 @@ const ScrollableContainer = styled.div`
 
 const OrderHistory = () => {
   const [orders, setOrders] = useState([]);
-  const userId = localStorage.getItem('userId'); // Retrieve the userId from localStorage
+  const userId = localStorage.getItem("userId"); // Retrieve the userId from localStorage
+  const [loading, setLoading] = useState(false);
 
   const getUserOrders = async () => {
     try {
@@ -48,46 +51,61 @@ const OrderHistory = () => {
       const ordersData = response.data;
       console.log(ordersData);
       setOrders(ordersData);
+      setLoading(false);
     } catch (error) {
-      console.log(error);
+      toast.error(error.response.data.message);
+      setLoading(false);
       // Handle the error
     }
   };
 
   useEffect(() => {
+    setLoading(true);
+
     getUserOrders();
   }, []);
 
   return (
     <>
       <Header />
-      <Container>
-        <OrderHistoryTitle>Order History</OrderHistoryTitle>
-        <OrderDetailsContainer className='row'>
-          <Heading className='col-md-4'>Order ID</Heading>
-          <Heading className='col-md-2'>Date</Heading>
-          <Heading className='col-md-1'>Total</Heading>
-          <Heading className='col-md-2'>Paid</Heading>
-          <Heading className='col-md-1'>Delivery</Heading>
-          <Heading className='col-md-2'>Item Details</Heading>
-        </OrderDetailsContainer>
-        <hr className='mb-2' />
-        <ScrollableContainer>
-          {orders.map((order) => (
-            <div>
-              <OrderCard
-                key={order._id}
-                orderId={order._id}
-                date={order.date}
-                total={order.total}
-                paid={order.paid}
-                delivery={order.delivery}
-                itemDetails={'click'}
-              />
-            </div>
-          ))}
-        </ScrollableContainer>
-      </Container>
+      {loading ? (
+        <div
+          style={{ height: "80vh" }}
+          className="w-100 d-flex justify-content-center align-items-center"
+        >
+          <div className=" spinner-border" role="status">
+            <span className="sr-only">Loading...</span>
+          </div>
+        </div>
+      ) : (
+        <Container>
+          <OrderHistoryTitle>Order History</OrderHistoryTitle>
+          <OrderDetailsContainer className="row">
+            <Heading className="col-md-4">Order ID</Heading>
+            <Heading className="col-md-2">Date</Heading>
+            <Heading className="col-md-1">Total</Heading>
+            <Heading className="col-md-2">Paid</Heading>
+            <Heading className="col-md-1">Delivery</Heading>
+            <Heading className="col-md-2">Item Details</Heading>
+          </OrderDetailsContainer>
+          <hr className="mb-2" />
+          <ScrollableContainer>
+            {orders.map((order) => (
+              <div>
+                <OrderCard
+                  key={order._id}
+                  orderId={order._id}
+                  date={order.date}
+                  total={order.total}
+                  paid={order.paid}
+                  delivery={order.delivery}
+                  itemDetails={"click"}
+                />
+              </div>
+            ))}
+          </ScrollableContainer>
+        </Container>
+      )}
       <Footer />
     </>
   );

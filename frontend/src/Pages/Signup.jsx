@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Container, Row, Col, Form } from "react-bootstrap";
 import Header from "../Components/Header";
-import { publicRequest } from "../requestMethods";
+import { publicRequest, userRequest } from "../requestMethods";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -51,8 +51,9 @@ const SignupFormContainer = styled.div`
 `;
 
 const Signup = () => {
-  const [showAlert, setShowAlert] = useState(false);
+  const [showOtpField, setShowOtpField] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [emailValue, setEmailValue] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -65,18 +66,35 @@ const Signup = () => {
       navigate("/");
     }
   }, []);
+
+  const handleVerifyEmailClick = async () => {
+    setShowOtpField(true);
+    try {
+      const response = await userRequest.post("/user/send-verification-code", {
+        email: emailValue,
+      });
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const handleSignup = async (e) => {
     e.preventDefault();
+    if (!showOtpField) {
+      return alert("Please verify your email");
+    }
     setLoading(true);
     const fullName = e.target.formFullName.value;
     const email = e.target.formEmail.value;
     const mobileNumber = e.target.formMobileNumber.value;
     const password = e.target.formPassword.value;
+    const otp = e.target.formOTP.value;
 
     console.log(fullName);
 
     // Check if any field is empty
-    if (!fullName || !email || !mobileNumber || !password) {
+    if (!fullName || !email || !mobileNumber || !password || !otp) {
       // Highlight empty fields in red
       if (!fullName) {
         e.target.formFullName.classList.add("invalid-field");
@@ -94,9 +112,14 @@ const Signup = () => {
         e.target.formMobileNumber.classList.remove("invalid-field");
       }
       if (!password) {
-        e.target.formPassword.classList.add("invalid-field");
+        e.target.form.classList.add("invalid-field");
       } else {
         e.target.formPassword.classList.remove("invalid-field");
+      }
+      if (!otp) {
+        e.target.formOTP.classList.add("invalid-field");
+      } else {
+        e.target.formOTP.classList.remove("invalid-field");
       }
       return; // Stop form submission if any field is empty
     }
@@ -106,36 +129,48 @@ const Signup = () => {
     for (let i = 0; i < formFields.length; i++) {
       formFields[i].classList.remove("invalid-field");
     }
-
     try {
-      const response = await publicRequest.post("/user/signup", {
-        fullName,
-        email,
-        mobileNumber,
-        password,
+      const verify = await userRequest.post("/user/verify-otp", {
+        email: email,
+        otp: otp,
       });
+      console.log(verify);
 
-      console.log(response.data);
-      const { _id, token, name } = response.data;
+      if (verify.status === 200) {
+        const response = await publicRequest.post("/user/signup", {
+          fullName,
+          email,
+          mobileNumber,
+          password,
+        });
+        console.log(response.data);
+        const { _id, token, name } = response.data;
 
-      // Store the userId and token in local storage
-      localStorage.setItem("userId", _id);
-      localStorage.setItem("token", token);
-      const firstName = name.split(" ")[0];
-      localStorage.setItem("name", firstName);
-
-      navigate("/");
+        // Store the userId and token in local storage
+        localStorage.setItem("userId", _id);
+        localStorage.setItem("token", token);
+        const firstName = name.split(" ")[0];
+        localStorage.setItem("name", firstName);
+        navigate("/");
+      } else {
+        alert(verify.data.message);
+      }
     } catch (error) {
       if (error.response && error.response.status === 409) {
         // User already exists, display a prompt
         alert("User already exists. Please log in instead.");
       } else {
         console.log(error);
+
         // Handle other error cases, such as displaying an error message
       }
+      setLoading(false);
     }
   };
 
+  const handleEmailChange = (e) => {
+    setEmailValue(e.target.value);
+  };
   return (
     <>
       <Header />
@@ -157,13 +192,46 @@ const Signup = () => {
 
                   <Form.Group className="mt-3" controlId="formEmail">
                     <Form.Label>Email Address:</Form.Label>
-                    <Form.Control type="email" placeholder="Enter email" />
+                    <div className="d-flex">
+                      <Form.Control
+                        type="email"
+                        placeholder="Enter email"
+                        value={emailValue}
+                        onChange={handleEmailChange}
+                      />
+                      {showOtpField ? null : (
+                        <span
+                          className="text-success ml-2 d-block mt-2 cursor-pointer"
+                          onClick={handleVerifyEmailClick}
+                        >
+                          Verify
+                        </span>
+                      )}
+                    </div>
+                    {showOtpField ? (
+                      <Form.Text className="text-success">
+                        OTP sent to your email. Please enter it below.
+                      </Form.Text>
+                    ) : null}
                   </Form.Group>
+
+                  {showOtpField && (
+                    <Form.Group className="mt-3" controlId="formOTP">
+                      <Form.Label>Enter OTP:</Form.Label>
+                      <Form.Control
+                        type="number"
+                        maxLength="6"
+                        pattern="[0-9]{6}"
+                        placeholder="Enter OTP"
+                      />
+                    </Form.Group>
+                  )}
 
                   <Form.Group className="mt-3" controlId="formMobileNumber">
                     <Form.Label>Mobile Number:</Form.Label>
                     <Form.Control
                       type="number"
+                      className="input-group"
                       placeholder="Enter mobile number"
                     />
                   </Form.Group>

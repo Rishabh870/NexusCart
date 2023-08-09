@@ -9,7 +9,7 @@ import { MdClose } from "react-icons/md";
 import { userRequest } from "../requestMethods";
 import AddressForm from "../Components/AddressForm";
 import { useNavigate } from "react-router-dom";
-const { vibrate } = navigator;
+import { toast } from "react-toastify";
 
 const Row = styled.div`
   display: flex;
@@ -146,41 +146,48 @@ const DropdownItem = styled.option`
 `;
 
 const Cart = () => {
+  const totalPrice = useSelector((state) => state.cart.totalPrice);
+  const formattedTotalPrice = totalPrice.toFixed(2);
+  const [update, setUpdate] = useState(false);
+  const [selectedMethod, setSelectedMethod] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(false);
   const userId = localStorage.getItem("userId"); // Retrieve the userId from localStorage
-
-  const navigate = useNavigate();
-
   const cartProduct = useSelector((state) => state.cart.products);
   const [deliveryData, setDeliveryData] = useState("");
+
   useEffect(() => {
     const getUserData = async () => {
+      setLoading(true);
       try {
         const response = await userRequest.get(`/delivery/address/${userId}`);
         setDeliveryData(response.data);
         // Handle the response data
+        setLoading(false);
       } catch (error) {
         console.log(error);
-        // Handle the error
+        setLoading(false);
       }
       // console.log(deliveryData);
     };
 
     getUserData();
-  }, []);
-
-  const totalPrice = useSelector((state) => state.cart.totalPrice);
-  const formattedTotalPrice = totalPrice.toFixed(2);
-
-  const [selectedMethod, setSelectedMethod] = useState("");
+  }, [update, userId]);
 
   const handleCheckout = async () => {
     if (selectedMethod === "") {
-      return; // Stop the checkout process if the dropdown is not selected
+      return toast.error("Please select a payment method");
+    }
+
+    if (!deliveryData.deliveryAddress || !deliveryData.deliveryTo) {
+      return toast.error("Please add a delivery address");
+    }
+
+    if (cartProduct.length <= 0) {
+      return toast.error("Please add products to cart");
     }
 
     try {
-      console.log(cartProduct);
       const response = await userRequest.post(`/order/addorder/${userId}`, {
         userId,
         cartProduct,
@@ -194,7 +201,7 @@ const Cart = () => {
       window.location.href = `/order/${response.data.orders._id}`;
     } catch (error) {
       // Handle errors during the request
-      console.log("Error during checkout:", error);
+      toast.error(error.response.data.message);
       // Show an error message to the user or perform other error handling logic
     }
   };
@@ -214,86 +221,101 @@ const Cart = () => {
   return (
     <>
       <Header />
-      <Container className="cart text-center">
-        <DeliveryInfoWrapper className="px-4">
-          <div className=" w-100 ">
-            <DeliveryTo>Delivery to: {deliveryData.deliveryTo}</DeliveryTo>
-            <DeliveryAddress>
-              Delivery Address: {deliveryData.deliveryAddress}
-            </DeliveryAddress>
+      {loading ? (
+        <div
+          style={{ height: "80vh" }}
+          className="w-100 d-flex justify-content-center align-items-center"
+        >
+          <div className=" spinner-border" role="status">
+            <span className="sr-only">Loading...</span>
           </div>
-          <ChangeAddressButton onClick={handleAddressChange}>
-            Change Address
-          </ChangeAddressButton>
-        </DeliveryInfoWrapper>
-        <Row className=" mx-0 row px-0">
-          <ItemCart className="col-md-8 px-0 pr-2 col-12 m-lg-0">
-            <Carts className="card">
-              <CardHeader className="card-header">Cart</CardHeader>
-              <CartBody className="card-body card-body-scroll p-2">
-                {cartProduct.map((products, index) => {
-                  return <CartCard key={index} data={products} show={true} />;
-                })}
-              </CartBody>
-            </Carts>
-          </ItemCart>
+        </div>
+      ) : (
+        <Container style={{ minHeight: "80vh" }} className="cart text-center">
+          <DeliveryInfoWrapper className="px-4">
+            <div className=" w-100 ">
+              <DeliveryTo>Delivery to: {deliveryData.deliveryTo}</DeliveryTo>
+              <DeliveryAddress>
+                Delivery Address: {deliveryData.deliveryAddress}
+              </DeliveryAddress>
+            </div>
+            <ChangeAddressButton onClick={handleAddressChange}>
+              Change Address
+            </ChangeAddressButton>
+          </DeliveryInfoWrapper>
+          <Row className=" mx-0 row px-0">
+            <ItemCart className="col-md-8 px-0 pr-2 col-12 m-lg-0">
+              <Carts className="card">
+                <CardHeader className="card-header">Cart</CardHeader>
+                <CartBody className="card-body card-body-scroll p-2">
+                  {cartProduct.map((products, index) => {
+                    return <CartCard key={index} data={products} show={true} />;
+                  })}
+                </CartBody>
+              </Carts>
+            </ItemCart>
 
-          <div className="col-sm-4 p-0">
-            <Payment className="d-flex px-0 pl-2 col-12 flex-column m-lg-0 ">
-              <Carts className="border">
-                <CardHeader className="card-header">Payment Method</CardHeader>
-                <CardBody className="card-body">
-                  <DropdownWrapper>
-                    <DropdownButton
-                      selected={selectedMethod !== ""}
-                      onChange={handleMethodSelect}
-                      value={selectedMethod}
+            <div className="col-sm-4 p-0">
+              <Payment className="d-flex px-0 pl-2 col-12 flex-column m-lg-0 ">
+                <Carts className="border">
+                  <CardHeader className="card-header">
+                    Payment Method
+                  </CardHeader>
+                  <CardBody className="card-body">
+                    <DropdownWrapper>
+                      <DropdownButton
+                        selected={selectedMethod !== ""}
+                        onChange={handleMethodSelect}
+                        value={selectedMethod}
+                      >
+                        <option value="" disabled>
+                          Select Payment Method
+                        </option>
+                        <DropdownItem value="Paypal">Paypal</DropdownItem>
+                      </DropdownButton>
+                    </DropdownWrapper>
+                  </CardBody>
+                </Carts>
+              </Payment>
+              <Summary className="d-flex px-0 pl-2 col-12  flex-column m-lg-0 ">
+                <Carts className="border">
+                  <CardHeader className="card-header">Summary</CardHeader>
+                  <CardBody className="card-body">
+                    <SummaryDetails className="mb-3">
+                      <span>Product price:</span>
+                      <span className="float-end"> ${formattedTotalPrice}</span>
+                    </SummaryDetails>
+                    <SummaryDetails className="mb-3">
+                      <span>Shipping:</span>
+                      <span className="float-end">$5</span>
+                    </SummaryDetails>
+                    <SummaryDetails className="mb-3">
+                      <span>Discount:</span>
+                      <span className="float-end">-$5</span>
+                    </SummaryDetails>
+                    <SummaryTotal className="mb-3">
+                      <span>Total:</span>
+                      <span className="float-end">${formattedTotalPrice}</span>
+                    </SummaryTotal>
+                    <CheckoutButton
+                      className="submitBtn btn-block"
+                      onClick={handleCheckout}
                     >
-                      <option value="" disabled>
-                        Select Payment Method
-                      </option>
-                      <DropdownItem value="Paypal">Paypal</DropdownItem>
-                    </DropdownButton>
-                  </DropdownWrapper>
-                </CardBody>
-              </Carts>
-            </Payment>
-            <Summary className="d-flex px-0 pl-2 col-12  flex-column m-lg-0 ">
-              <Carts className="border">
-                <CardHeader className="card-header">Summary</CardHeader>
-                <CardBody className="card-body">
-                  <SummaryDetails className="mb-3">
-                    <span>Product price:</span>
-                    <span className="float-end"> ${formattedTotalPrice}</span>
-                  </SummaryDetails>
-                  <SummaryDetails className="mb-3">
-                    <span>Shipping:</span>
-                    <span className="float-end">$5</span>
-                  </SummaryDetails>
-                  <SummaryDetails className="mb-3">
-                    <span>Discount:</span>
-                    <span className="float-end">-$5</span>
-                  </SummaryDetails>
-                  <SummaryTotal className="mb-3">
-                    <span>Total:</span>
-                    <span className="float-end">${formattedTotalPrice}</span>
-                  </SummaryTotal>
-                  <CheckoutButton
-                    className="submitBtn btn-block"
-                    onClick={handleCheckout}
-                  >
-                    Checkout
-                  </CheckoutButton>
-                </CardBody>
-              </Carts>
-            </Summary>
-          </div>
-        </Row>
-        <AddressForm
-          showModal={showModal}
-          handleCloseModal={handleCloseModal}
-        />
-      </Container>
+                      Checkout
+                    </CheckoutButton>
+                  </CardBody>
+                </Carts>
+              </Summary>
+            </div>
+          </Row>
+          <AddressForm
+            showModal={showModal}
+            update={update}
+            setUpdate={setUpdate}
+            handleCloseModal={handleCloseModal}
+          />
+        </Container>
+      )}
       <Footer />
     </>
   );

@@ -68,27 +68,28 @@ const Data = styled.span`
 const Dashboard = () => {
   const [User, setUser] = useState([]);
   const [Orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
   const totalAmount = Orders.reduce((total, order) => total + order.total, 0);
   // Assuming your Orders array is in the format mentioned in the previous prompt
 
   const liveChartData = [];
 
-  // Step 1: Get the earliest order date from the Orders array
+  // Get the earliest order date from the Orders array
   const earliestDate = new Date(
     Math.min(...Orders.map((order) => new Date(order.date)))
   );
 
-  // Step 2: Get the month before the earliest order
+  // Get the month before the earliest order
   const previousMonth = new Date(earliestDate);
   previousMonth.setMonth(previousMonth.getMonth() - 1);
 
-  // Step 3: Initialize liveChartData with the month before the earliest order
+  //  Initialize liveChartData with the month before the earliest order
   liveChartData.push({
     month: previousMonth.toLocaleString("default", { month: "long" }),
     value: 0,
   });
 
-  // Step 4: Loop through the Orders array and update liveChartData
+  //Loop through the Orders array and update liveChartData
   Orders.forEach((order) => {
     const orderDate = new Date(order.date);
     const month = orderDate.toLocaleString("default", { month: "long" });
@@ -110,11 +111,11 @@ const Dashboard = () => {
     }
   });
 
-  // Step 1: Create objects to keep track of total sales for each category and brand
+  // Create objects to keep track of total sales for each category and brand
   const categorySales = {};
   const brandSales = {};
 
-  // Step 2: Loop through the Orders array and update the total sales for categories and brands
+  //  Loop through the Orders array and update the total sales for categories and brands
   Orders.forEach((order) => {
     order.products.forEach((product) => {
       const { category, brandName, price } = product.productId;
@@ -140,13 +141,13 @@ const Dashboard = () => {
 
   console.log(categorySales, brandSales);
 
-  // Step 3: Create the pieChartData array with data from categorySales
+  //Create the pieChartData array with data from categorySales
   const pieChartDataCategory = Object.keys(categorySales).map((category) => ({
     name: category,
     value: categorySales[category],
   }));
 
-  // Step 4: Create the pieChartData array with data from brandSales
+  //  Create the pieChartData array with data from brandSales
   const pieChartDataBrand = Object.keys(brandSales).map((brand) => ({
     name: brand,
     value: brandSales[brand],
@@ -179,11 +180,13 @@ const Dashboard = () => {
 
   useEffect(() => {
     const getData = async () => {
+      setLoading(true);
       try {
         const user = await userRequest.get("/user/users/all");
         const orders = await userRequest.get("/order/all");
         setUser(user.data);
         setOrders(orders.data);
+        setLoading(false);
       } catch (error) {}
     };
     getData();
@@ -192,98 +195,117 @@ const Dashboard = () => {
   return (
     <div>
       <Header />
-      <Container>
-        <Title>Dashboard</Title>
-
-        <BoxContainer className="row mt-4 mx-auto">
-          <Link
-            to="/admin/users"
-            className="col-4 m-0 p-0 text-decoration-none text-dark d-flex justify-content-around w-100 "
-          >
-            <Box className=" text-center">
-              <Heading>User</Heading>
-              <Data>{User ? User.length : 0}</Data>
-            </Box>
-          </Link>
-          <Link
-            to="/admin/history"
-            className="col-4 m-0 p-0 text-decoration-none text-dark d-flex justify-content-around w-100"
-          >
-            <Box className="text-center">
-              <Heading>Order</Heading>
-              <Data>{Orders ? Orders.length : 0}</Data>
-            </Box>
-          </Link>
-          <NavLink className="col-4 m-0 p-0 text-decoration-none text-dark d-flex justify-content-around w-100">
-            <Box className="text-center">
-              <Heading>Sales</Heading>
-              <Data>${totalAmount ? totalAmount : 0}</Data>
-            </Box>
-          </NavLink>
-        </BoxContainer>
-        <AreaGraphContainer className="w-100 m-0 mt-4">
-          <Title>Sales</Title>
-
-          <AreaChart
-            className=" pt-4 pr-5 me-5 me-md-0"
-            width={850}
-            height={400}
-            data={liveChartData ? liveChartData : 0}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="month" />
-            <YAxis />
-            <Tooltip />
-            <Area
-              type="monotone"
-              dataKey="value"
-              stroke="#5782e0"
-              fill="#84c7d8"
-            />
-          </AreaChart>
-        </AreaGraphContainer>
-        <PieGraphContainer className="mt-5 pt-3">
-          <Title>Categories And Brands</Title>
-          <div className="d-flex mx-auto">
-            <PieChart width={400} height={300}>
-              <Pie
-                data={pieChartDataCategory}
-                cx="50%"
-                cy="50%"
-                outerRadius={80}
-                fill="#dddddd"
-                dataKey="value"
-              >
-                {pieChartDataCategory.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS_CATEGORY[index % COLORS_CATEGORY.length]}
-                  />
-                ))}
-              </Pie>
-              <Legend layout="vertical" align="right" verticalAlign="middle" />
-            </PieChart>
-            <PieChart width={400} height={300}>
-              <Pie
-                data={pieChartDataBrand}
-                cx="50%"
-                cy="50%"
-                outerRadius={80}
-                fill="#8884d8"
-                dataKey="value"
-              >
-                {pieChartDataBrand.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS_BRAND[index % COLORS_BRAND.length]}
-                  />
-                ))}
-              </Pie>
-              <Legend layout="vertical" align="right" verticalAlign="middle" />
-            </PieChart>
+      {loading ? (
+        <div
+          style={{ height: "80vh" }}
+          className="w-100 d-flex justify-content-center align-items-center"
+        >
+          <div className=" spinner-border" role="status">
+            <span className="sr-only">Loading...</span>
           </div>
-        </PieGraphContainer>
-      </Container>
+        </div>
+      ) : (
+        <Container>
+          <Title>Dashboard</Title>
+
+          <BoxContainer className="row mt-4 mx-auto">
+            <Link
+              to="/admin/users"
+              className="col-4 m-0 p-0 text-decoration-none text-dark d-flex justify-content-around w-100 "
+            >
+              <Box className=" text-center">
+                <Heading>User</Heading>
+                <Data>{User ? User.length : 0}</Data>
+              </Box>
+            </Link>
+            <Link
+              to="/admin/history"
+              className="col-4 m-0 p-0 text-decoration-none text-dark d-flex justify-content-around w-100"
+            >
+              <Box className="text-center">
+                <Heading>Order</Heading>
+                <Data>{Orders ? Orders.length : 0}</Data>
+              </Box>
+            </Link>
+            <NavLink className="col-4 m-0 p-0 text-decoration-none text-dark d-flex justify-content-around w-100">
+              <Box className="text-center">
+                <Heading>Sales</Heading>
+                <Data>${totalAmount ? totalAmount : 0}</Data>
+              </Box>
+            </NavLink>
+          </BoxContainer>
+          <AreaGraphContainer className="w-100 m-0 mt-4">
+            <Title>Sales</Title>
+
+            <AreaChart
+              className=" pt-4 pr-5 me-5 me-md-0"
+              width={850}
+              height={400}
+              data={liveChartData ? liveChartData : 0}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="month" />
+              <YAxis />
+              <Tooltip />
+              <Area
+                type="monotone"
+                dataKey="value"
+                stroke="#5782e0"
+                fill="#84c7d8"
+              />
+            </AreaChart>
+          </AreaGraphContainer>
+          <PieGraphContainer className="mt-5 pt-3">
+            <Title>Categories And Brands</Title>
+            <div className="d-flex mx-auto">
+              <PieChart width={400} height={300}>
+                <Pie
+                  data={pieChartDataCategory}
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={80}
+                  fill="#dddddd"
+                  dataKey="value"
+                >
+                  {pieChartDataCategory.map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COLORS_CATEGORY[index % COLORS_CATEGORY.length]}
+                    />
+                  ))}
+                </Pie>
+                <Legend
+                  layout="vertical"
+                  align="right"
+                  verticalAlign="middle"
+                />
+              </PieChart>
+              <PieChart width={400} height={300}>
+                <Pie
+                  data={pieChartDataBrand}
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
+                >
+                  {pieChartDataBrand.map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COLORS_BRAND[index % COLORS_BRAND.length]}
+                    />
+                  ))}
+                </Pie>
+                <Legend
+                  layout="vertical"
+                  align="right"
+                  verticalAlign="middle"
+                />
+              </PieChart>
+            </div>
+          </PieGraphContainer>
+        </Container>
+      )}
     </div>
   );
 };
