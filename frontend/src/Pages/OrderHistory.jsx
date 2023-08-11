@@ -70,7 +70,7 @@ const OrderHistory = () => {
       <Header />
       {loading ? (
         <div
-          style={{ height: "80vh" }}
+          style={{ minHeight: "82vh" }}
           className="w-100 d-flex justify-content-center align-items-center"
         >
           <div className=" spinner-border" role="status">

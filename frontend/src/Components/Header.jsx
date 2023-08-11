@@ -92,6 +92,26 @@ const SidebarContainer = styled.div`
   transition: transform 0.3s ease-in-out;
   padding: 0.9rem 2rem;
   overflow-y: auto; /* Enable vertical scrolling */
+
+  /* Scrollbar Styles */
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #f8f9fa #dee2e6; /* Firefox */
+  -ms-overflow-style: none; /* Hide scrollbar in IE and Edge */
+  &::-webkit-scrollbar {
+    width: 8px; /* Chrome, Safari, and Opera */
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #adb5bd; /* Color of the thumb */
+    border-radius: 4px; /* Border radius of the thumb */
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: #6c757d; /* Color of the thumb on hover */
+  }
+  &::-webkit-scrollbar-track {
+    background-color: #dee2e6; /* Color of the track */
+    border-radius: 4px; /* Border radius of the track */
+    margin-right: -8px; /* Adjust for the border width */
+  }
 `;
 
 const SidebarHeading = styled.p`
@@ -112,7 +132,7 @@ const SidebarLink = styled(Link)`
   text-decoration: none;
   font-family: "Josefin Sans regular";
   font-size: 16px;
-  &:visited {
+  &:hover {
     color: black; /* Set the desired color for visited links */
     text-decoration: none;
   }
@@ -128,7 +148,8 @@ const LogoutButton = styled(Button)`
   border: none;
   margin: 10px auto;
 `;
-const Header = () => {
+
+const Header = ({ update }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
   const quantity = useSelector((state) => state.cart.quantity);
@@ -144,18 +165,20 @@ const Header = () => {
 
   const handleDropdownToggle = () => {
     setIsOpen(!isOpen);
+    setIsAdminOpen(false);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    navigate(
-      searchQuery ? `/allproducts/?searchQuery=${searchQuery}` : `/allproducts`
-    );
+    window.location.href = searchQuery
+      ? `/allproducts/?searchQuery=${searchQuery}`
+      : `/allproducts`;
   };
 
   const handleAdminDropdownToggle = () => {
     setIsAdminOpen(!isAdminOpen);
+    setIsOpen(false);
   };
 
   const handleLogout = () => {
@@ -169,6 +192,8 @@ const Header = () => {
   };
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setSearchQuery(params.get("searchQuery"));
     const getCategorysAndBrands = async () => {
       try {
         const categories = await userRequest.get("/category/categories");
@@ -196,7 +221,7 @@ const Header = () => {
       document.removeEventListener("click", handleClickOutside);
       document.removeEventListener("scroll", handleClickOutside);
     };
-  }, []);
+  }, [isLoggedIn, update]);
 
   const [side, setSide] = useState(false);
 
@@ -208,8 +233,6 @@ const Header = () => {
     }
   };
 
-  // remove token from localstorage, navigate to login
-
   return (
     <div
       style={{
@@ -217,8 +240,7 @@ const Header = () => {
         backgroundColor: "white",
       }}
     >
-      <DealAnnouncement />
-      <div>
+      <div style={{ padding: ".3rem 0" }}>
         <Sections id="Sections" className="row p-0 py-2 m-0 ">
           <IconContainer
             ref={menus}
@@ -227,9 +249,8 @@ const Header = () => {
             <HiOutlineMenuAlt1 onClick={handleToggleSidebar} />
             <SidebarContainer className="p-0" open={side}>
               <h3
-                style={{ backgroundColor: "black" }}
-                className=" m-0 text-white
-                py-4"
+                style={{ backgroundColor: "black", padding: "1.08rem 0" }}
+                className=" m-0 text-white"
               >
                 Hello, {name}
               </h3>
@@ -253,11 +274,13 @@ const Header = () => {
                 Categories
               </SidebarHeading>
               <div className="px-5 text-left ">
-                {MenuCategories.map((category) => {
+                {MenuCategories.slice(0, 5).map((category) => {
+                  const encodedCategoryName = encodeURIComponent(category.name);
+
                   return (
                     <SidebarItem>
                       <SidebarLink
-                        to={`/allproducts/?category=${category.name}`}
+                        to={`/allproducts/?category=${encodedCategoryName}`}
                       >
                         {category.name}
                       </SidebarLink>
@@ -267,10 +290,13 @@ const Header = () => {
               </div>
               <SidebarHeading className="text-left px-4">Brand</SidebarHeading>
               <div className="px-5 text-left ">
-                {MenuBrands.map((brand) => {
+                {MenuBrands.slice(0, 5).map((brand) => {
+                  const encodedBrandName = encodeURIComponent(brand.name);
                   return (
                     <SidebarItem>
-                      <SidebarLink to={`/allproducts/?brand=${brand.name}`}>
+                      <SidebarLink
+                        to={`/allproducts/?brand=${encodedBrandName}`}
+                      >
                         {brand.name}
                       </SidebarLink>
                     </SidebarItem>
@@ -279,13 +305,17 @@ const Header = () => {
               </div>
               <div style={{ flexGrow: 1 }}></div>
 
-              <LogoutButton
-                style={{ marginTop: "auto" }}
-                onClick={handleLogout}
-                className="w-75 btn-dark mx-3"
-              >
-                Log Out
-              </LogoutButton>
+              {isLoggedIn ? (
+                <LogoutButton
+                  style={{ marginTop: "auto" }}
+                  onClick={handleLogout}
+                  className="w-75 btn-dark mx-3"
+                >
+                  Log Out
+                </LogoutButton>
+              ) : (
+                ""
+              )}
             </SidebarContainer>
           </IconContainer>
           <LogoContainer id="Logo" className="col-6 py-1 p-0">

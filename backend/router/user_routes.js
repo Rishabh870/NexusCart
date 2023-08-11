@@ -131,7 +131,7 @@ const updatePasswordByEmail = async (email, newPassword) => {
 
 // Use the updatePasswordByEmail method in your router
 router.put("/updatePassword", async (req, res) => {
-  console.log(req.body);
+  // console.log(req.body);
   const { email, password } = req.body;
 
   try {
@@ -178,7 +178,7 @@ router.post("/send-verification-code", async (req, res) => {
       console.log(error);
       res.status(500).json({ error: "Internal server error" });
     } else {
-      console.log("Email sent: " + info.response);
+      // console.log("Email sent: " + info.response);
       res.status(200).json({ message: "Email sent" });
     }
   });
@@ -186,7 +186,7 @@ router.post("/send-verification-code", async (req, res) => {
 
 router.post("/verify-otp", async (req, res) => {
   const { email, otp } = req.body;
-  console.log(email, otp, verificationCode[email]);
+  // console.log(email, otp, verificationCode[email]);
   if (verificationCode[email] === parseInt(otp)) {
     res.status(200).json({ message: "OTP verified" });
   } else {
@@ -247,7 +247,7 @@ router.put("/:userId", verifyTokenAdmin, async (req, res) => {
     updatedFields.isAdmin = isAdmin;
   }
 
-  console.log(updatedFields);
+  // console.log(updatedFields);
 
   UserModel.findByIdAndUpdate(userId, updatedFields, { new: true })
     .then((user) => {

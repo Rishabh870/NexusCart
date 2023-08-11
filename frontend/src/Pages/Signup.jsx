@@ -5,6 +5,7 @@ import Header from "../Components/Header";
 import { publicRequest, userRequest } from "../requestMethods";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const SignupPageContainer = styled.div`
   height: 80vh;
@@ -68,6 +69,9 @@ const Signup = () => {
   }, []);
 
   const handleVerifyEmailClick = async () => {
+    if (emailValue === "") {
+      return toast.error("Please enter your email");
+    }
     setShowOtpField(true);
     try {
       const response = await userRequest.post("/user/send-verification-code", {
@@ -82,7 +86,7 @@ const Signup = () => {
   const handleSignup = async (e) => {
     e.preventDefault();
     if (!showOtpField) {
-      return alert("Please verify your email");
+      return toast.error("Please verify your email");
     }
     setLoading(true);
     const fullName = e.target.formFullName.value;
@@ -153,7 +157,7 @@ const Signup = () => {
         localStorage.setItem("name", firstName);
         navigate("/");
       } else {
-        alert(verify.data.message);
+        toast.error(verify.data.message);
       }
     } catch (error) {
       if (error.response && error.response.status === 409) {
@@ -245,7 +249,9 @@ const Signup = () => {
                   </Form.Group>
 
                   {loading ? (
-                    <Button>Loading</Button>
+                    <Button className="bg-dark text-white border-dark" disabled>
+                      Loading
+                    </Button>
                   ) : (
                     <Button type="submit">Sign Up</Button>
                   )}

@@ -92,8 +92,11 @@ const EditProductModal = ({ show, onHide, productData }) => {
     const img = [];
     let image = false;
     for (const file of product.img) {
-      if (file.startsWith("uploads\\")) {
+      console.log(file);
+      if (file.startsWith("uploads" || "uploads/" || "uploads\\")) {
         // Store the file path in the imagePreview array
+        console.log(image);
+
         img.push(file);
       } else {
         // Convert base64 image data to a Blob
@@ -106,6 +109,7 @@ const EditProductModal = ({ show, onHide, productData }) => {
         form.append("myImages", blob, fileName);
         image = true;
       }
+      // console.log(image);
     }
     try {
       if (image) {
@@ -137,12 +141,12 @@ const EditProductModal = ({ show, onHide, productData }) => {
 
       await userRequest
         .put(`/product/products/${productData._id}`, {
-          productName: formData.productName,
-          brandName: formData.brandName,
-          desc: formData.desc,
+          productName: formData.productName.toUpperCase(),
+          brandName: formData.brandName.toUpperCase(),
+          desc: formData.desc.toUpperCase(),
           price: formData.price,
           inStock: formData.inStock,
-          category: formData.category,
+          category: formData.category.toUpperCase(),
           sizes,
           img,
         })
@@ -164,30 +168,37 @@ const EditProductModal = ({ show, onHide, productData }) => {
   };
 
   const handleImageChange = (e) => {
+    // Get the selected files from the input element
     const files = Array.from(e.target.files);
-
+    // Check if adding the selected files will exceed the maximum allowed number of images
     if (product.img.length + files.length > 4) return;
-
+    // Create a new array to store the updated image previews
     const newPreviews = [...product.img];
-
+    // Process each selected file
     files.forEach((file) => {
+      // Create a new FileReader instance
       const reader = new FileReader();
+      // Define an event listener for the "loadend" event of the FileReader
       reader.onloadend = () => {
+        // Push the result of the FileReader to the newPreviews array
         newPreviews.push(reader.result);
+        // Update the product state by setting the "img" property to the newPreviews array
         setProduct((prev) => ({ ...prev, img: newPreviews }));
       };
+      // Read the file as a data URL
       if (file) reader.readAsDataURL(file);
     });
-
-    // If productData is not available (creating a product), use the image URLs directly
   };
 
   const handleDeleteImage = (index) => {
+    // Create a new array of image previews using the spread operator
     const newPreviews = [...product.img];
+    // Remove the image at the specified index from the new array
     newPreviews.splice(index, 1);
+    // Update the product state by replacing the image previews with the new array
     setProduct((prev) => ({ ...prev, img: newPreviews }));
   };
-
+  console.log(formData.category);
   return (
     <Modal show={show} onHide={onHide}>
       <Modal.Header>
@@ -275,8 +286,8 @@ const EditProductModal = ({ show, onHide, productData }) => {
               >
                 <option value="">Select Brand</option>
                 {formData?.dropBrands?.map((brand, index) => (
-                  <option key={index} value={brand.name}>
-                    {brand?.name}
+                  <option key={index} value={brand.name.toUpperCase()}>
+                    {brand?.name.toUpperCase()}
                   </option>
                 ))}
               </Form.Control>
@@ -291,8 +302,8 @@ const EditProductModal = ({ show, onHide, productData }) => {
               >
                 <option value="">Select Category</option>
                 {formData.dropCategories?.map((category, index) => (
-                  <option key={index} value={category.name}>
-                    {category.name}
+                  <option key={index} value={category.name.toUpperCase()}>
+                    {category.name.toUpperCase()}
                   </option>
                 ))}
               </Form.Control>

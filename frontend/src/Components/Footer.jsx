@@ -20,7 +20,7 @@ const Footer = () => {
       <hr className="mb-0" />
       <FooterContainer className="mt-0 mx-auto ">
         <Container className=" text-center ">
-          <FooterText>&copy; 2023 E-Commerce. All Rights Reserved.</FooterText>
+          <FooterText>&copy; 2023 NexusCart. All Rights Reserved.</FooterText>
         </Container>
       </FooterContainer>
     </>

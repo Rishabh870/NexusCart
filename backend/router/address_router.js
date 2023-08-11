@@ -21,7 +21,7 @@ router.post("/addaddress/:userId", verifyTokenAuth, async (req, res) => {
 
     // Get the user ID from the authenticated user's request
     const userId = req.user.userId;
-    console.log(userId); // Log the user ID
+    // console.log(userId); // Log the user ID
 
     // Check if the address already exists for the user
     const existingAddress = await AddressModel.findOne({ userId });

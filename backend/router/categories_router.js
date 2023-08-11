@@ -2,11 +2,11 @@ const express = require("express");
 const router = express.Router();
 const { CategoryModel } = require("../models/category_model");
 
-// Endpoint to add categories via POST request
+// Route to add categories via POST request
 router.post("/add", async (req, res) => {
   try {
     const categoriesToAdd = req.body; // Array of category objects
-    console.log(req.body); // Log the received request body
+    // console.log(req.body); // Log the received request body
 
     const addedCategories = [];
 
@@ -17,7 +17,7 @@ router.post("/add", async (req, res) => {
       // Check if the category already exists in the database
       const existingCategory = await CategoryModel.findOne({ name });
       if (existingCategory) {
-        console.log(`Category '${name}' already exists. Skipping...`);
+        // console.log(`Category '${name}' already exists. Skipping...`);
         continue; // Skip to the next iteration if category exists
       }
 

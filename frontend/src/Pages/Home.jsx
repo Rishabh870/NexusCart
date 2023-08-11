@@ -26,7 +26,7 @@ const Home = () => {
         const categories = await userRequest.get("/category/categories");
         const latestCategories = categories.data
           .slice(-3)
-          .map((category) => category.name);
+          .map((category) => category.name.toUpperCase());
         setSection(latestCategories);
         setLoading(false);
       } catch (error) {
@@ -36,12 +36,13 @@ const Home = () => {
 
     getCategorys();
   }, []);
+
   return (
     <div>
       <Header />
       {loading ? (
         <div
-          style={{ height: "80vh" }}
+          style={{ minHeight: "82vh" }}
           className="w-100 d-flex justify-content-center align-items-center"
         >
           <div className=" spinner-border" role="status">
@@ -49,7 +50,7 @@ const Home = () => {
           </div>
         </div>
       ) : (
-        <Container className="mb-2">
+        <Container style={{ minHeight: "82vh" }} className="mb-2">
           <HeroSection />
           {section.map((section) => (
             <Sections filter={section} />

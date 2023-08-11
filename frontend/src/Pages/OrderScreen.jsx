@@ -47,7 +47,28 @@ const CartBody = styled.div`
   padding: 0.5rem;
   overflow: hidden;
   height: 500px;
-  overflow-y: scroll;
+
+  overflow-y: auto; /* Enable vertical scrolling */
+
+  /* Scrollbar Styles */
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #f8f9fa #dee2e6; /* Firefox */
+  -ms-overflow-style: none; /* Hide scrollbar in IE and Edge */
+  &::-webkit-scrollbar {
+    width: 8px; /* Chrome, Safari, and Opera */
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #adb5bd; /* Color of the thumb */
+    border-radius: 4px; /* Border radius of the thumb */
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: #6c757d; /* Color of the thumb on hover */
+  }
+  &::-webkit-scrollbar-track {
+    background-color: #dee2e6; /* Color of the track */
+    border-radius: 4px; /* Border radius of the track */
+    margin-right: -8px; /* Adjust for the border width */
+  }
 `;
 
 const SummaryDetails = styled.div`
@@ -190,7 +211,7 @@ const Orderpreview = () => {
       <Header />
       {loading ? (
         <div
-          style={{ height: "80vh" }}
+          style={{ minHeight: "82vh" }}
           className="w-100 d-flex justify-content-center align-items-center"
         >
           <div className=" spinner-border" role="status">
@@ -198,7 +219,7 @@ const Orderpreview = () => {
           </div>
         </div>
       ) : (
-        <Container style={{ minHeight: "80vh" }} className="cart text-center">
+        <Container style={{ minHeight: "82vh" }} className="cart text-center">
           <DeliveryInfoWrapper className="px-4">
             <div className=" w-75 ">
               <DeliveryTo>
@@ -227,7 +248,7 @@ const Orderpreview = () => {
                 <CardHeader className="card-header">Cart</CardHeader>
                 <CartBody className="card-body card-body-scroll p-2">
                   {deliveryData.products?.map((products, index) => {
-                    const { selectedSize, quantity } = products;
+                    const { selectedSize, quantity, price } = products;
                     const product = products.productId;
                     const data = {
                       brandName: product.brandName,
@@ -235,7 +256,7 @@ const Orderpreview = () => {
                       desc: product.desc,
                       img: product.img,
                       inStock: product.inStock,
-                      price: product.price,
+                      price: price,
                       productName: product.productName,
                       quantity: quantity,
                       review: product.review,
@@ -249,7 +270,7 @@ const Orderpreview = () => {
               </Carts>
             </ItemCart>
 
-            <div className="col-sm-4 ">
+            <div className="col-sm-4 p-0">
               <Summary className="d-flex px-0 pl-2 col-12  flex-column m-lg-0 ">
                 <Carts className="border">
                   <CardHeader className="card-header">Summary</CardHeader>

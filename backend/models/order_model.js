@@ -1,9 +1,9 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const orderSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'UserModel',
+    ref: "UserModel",
     required: true,
   },
   orders: [
@@ -19,19 +19,19 @@ const orderSchema = new mongoose.Schema({
       },
       paid: {
         type: String,
-        default: 'No',
+        default: "No",
         required: true,
       },
       delivery: {
         type: String,
-        default: 'No',
+        default: "No",
         required: true,
       },
       products: [
         {
           productId: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'ProductModel',
+            ref: "ProductModel",
           },
           selectedSize: {
             type: String,
@@ -39,6 +39,10 @@ const orderSchema = new mongoose.Schema({
           },
           quantity: {
             type: Number,
+            required: true,
+          },
+          price: {
+            type: String,
             required: true,
           },
         },
@@ -57,6 +61,6 @@ const orderSchema = new mongoose.Schema({
   ],
 });
 
-const OrderModel = mongoose.model('OrderModel', orderSchema);
+const OrderModel = mongoose.model("OrderModel", orderSchema);
 
 module.exports = OrderModel;

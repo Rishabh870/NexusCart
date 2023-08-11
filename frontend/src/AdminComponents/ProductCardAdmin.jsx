@@ -113,10 +113,10 @@ const ProductCardAdmin = ({ product, setUpdate, update }) => {
         `/product/products/${product._id}`
       );
       toast.success("Product Deleted");
-      setUpdate(!update);
     } catch (error) {
       toast.error(error.response.data.message);
     }
+    setUpdate(!update);
   };
 
   const responsive = {

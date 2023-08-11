@@ -21,7 +21,22 @@ const OrderInfoItem = styled.div`
   font-family: "Josefin Sans regular";
   text-align: center;
 `;
-
+const Details = styled(Link)`
+  background-color: white;
+  padding: 0;
+  text-decoration: none;
+  margin-right: 0.5rem;
+  color: black;
+  border: 2px solid black;
+  font-size: small;
+  padding: 0.3rem 1rem;
+  cursor: pointer;
+  &:hover {
+    background-color: black;
+    color: white;
+    text-decoration: none;
+  }
+`;
 const OrderCard = ({ orderId, date, total, paid, delivery, itemDetails }) => {
   const formattedDate = date.split("T")[0]; // Extract the date portion
 
@@ -33,7 +48,7 @@ const OrderCard = ({ orderId, date, total, paid, delivery, itemDetails }) => {
       <OrderInfoItem className="col-md-2"> {paid}</OrderInfoItem>
       <OrderInfoItem className="col-md-1"> {delivery}</OrderInfoItem>
       <OrderInfoItem className="col-md-2">
-        <Link to={`/order/${orderId}`}>Details</Link>
+        <Details to={`/order/${orderId}`}>Details</Details>
       </OrderInfoItem>
     </OrderCardContainer>
   );

@@ -13,6 +13,7 @@ import { toast } from "react-toastify";
 
 const CardContainer = styled.div`
   border: 1px solid #dee2e6;
+  font-family: "Playfair ", serif !important;
   padding: 15px;
 `;
 
@@ -37,17 +38,14 @@ const ProductName = styled.p`
   margin: 0;
   font-weight: 600;
   font-size: 1.2rem;
-
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-family: "Josefin Sans Regular";
 `;
 
 const DropTitle = styled.span`
   font-weight: bold;
   font-size: 1rem;
-  font-family: "Josefin Sans", sans-serif;
 `;
 
 const Dropdown = styled.select`
@@ -76,7 +74,6 @@ const FreeDelivery = styled.p`
   margin: 0;
   font-size: 1rem;
   font-weight: bold;
-  font-family: "Josefin Sans Regular";
 `;
 
 const CartCard = ({ data, show }) => {

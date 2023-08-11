@@ -6,10 +6,16 @@ const {
   verifyTokenAdmin,
 } = require("../middleware/verifyToken");
 const OrderModel = mongoose.model("OrderModel");
+
+// Route to add an order for a specific user
 router.post("/addorder/:userId", verifyTokenAuth, (req, res) => {
+  // Extract data from the request body
   const { userId, cartProduct, formattedTotalPrice, deliveryData } = req.body;
   const delivery = "No";
   const paid = "No";
+  // console.log(cartProduct);
+
+  // Create an array of orders containing the provided data
   const orders = [
     {
       delivery,
@@ -20,14 +26,17 @@ router.post("/addorder/:userId", verifyTokenAuth, (req, res) => {
         productId: product._id,
         selectedSize: product.selectedSize,
         quantity: product.quantity,
+        price: product.price,
       })),
     },
   ];
+
   // Validate that userId and orders are present in the request body
   if (!userId || !orders || !Array.isArray(orders)) {
     return res.status(400).json({ error: "Invalid request body" });
   }
 
+  // Find the existing order for the user or create a new one
   OrderModel.findOne({ userId })
     .then((order) => {
       if (order) {
@@ -52,7 +61,7 @@ router.post("/addorder/:userId", verifyTokenAuth, (req, res) => {
           orders,
         });
 
-        console.log(newOrder.orders[0]);
+        // console.log(newOrder.orders[0]);
 
         newOrder
           .save()
@@ -73,9 +82,11 @@ router.post("/addorder/:userId", verifyTokenAuth, (req, res) => {
     });
 });
 
+// Route to get orders for a specific user
 router.get("/orders/:userId", verifyTokenAuth, (req, res) => {
   const userId = req.params.userId;
 
+  // Find the order for the user
   OrderModel.findOne({ userId })
     .then((order) => {
       if (!order) {
@@ -95,10 +106,9 @@ router.get("/orders/:userId", verifyTokenAuth, (req, res) => {
 router.put("/editorder/:orderId/:userId", verifyTokenAuth, (req, res) => {
   const orderId = req.params.orderId;
   const userId = req.params.userId;
-  console.log(orderId, userId);
+  // console.log(orderId, userId);
   const paid = "Yes";
 
-  // Find the order with the specified orderId and update the delivery and paid fields
   // Find the main order by its userId
   OrderModel.findOne({ userId })
     .populate("orders.products.productId")
@@ -113,7 +123,6 @@ router.put("/editorder/:orderId/:userId", verifyTokenAuth, (req, res) => {
       if (!order) {
         return res.status(404).json({ error: "Order not found" });
       }
-      console.log(order);
       order.paid = paid;
       // Save the main order with the updated 'paid' field
       mainOrder

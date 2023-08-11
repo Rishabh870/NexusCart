@@ -27,14 +27,15 @@ const CardContent = styled.div`
   padding: 16px;
 `;
 const Brand = styled.h3`
-  font-size: 12px;
+  font-size: 15px;
+  color: black;
+  font-weight: bold;
   margin-bottom: 0.3rem;
   font-family: "Playfair Display", sans-serif;
-  color: #666;
 `;
 const ProductName = styled.h4`
-  font-size: 16px;
-  font-weight: bold;
+  font-size: 12px;
+  color: gray;
   margin: 8px 0;
   font-family: "Josefin Sans ";
 `;

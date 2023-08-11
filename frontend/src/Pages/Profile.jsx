@@ -111,7 +111,7 @@ const Profile = () => {
       <Header />
       {loading ? (
         <div
-          style={{ height: "80vh" }}
+          style={{ minHeight: "82vh" }}
           className="w-100 d-flex justify-content-center align-items-center"
         >
           <div className=" spinner-border" role="status">
@@ -119,7 +119,7 @@ const Profile = () => {
           </div>
         </div>
       ) : (
-        <Container style={{ minHeight: "80vh" }}>
+        <Container style={{ minHeight: "82vh" }}>
           <ProfileContainer>
             <h2 className=" text-center text-decoration-underline">
               Profile Details

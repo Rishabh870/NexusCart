@@ -10,26 +10,27 @@ const upload = require("../multer");
 
 router.post(
   "/addproduct",
-  verifyTokenAdmin,
-  upload.array("myImages", 4),
+  verifyTokenAdmin, // Middleware to verify admin token
+  upload.array("myImages", 4), // Multer middleware for handling image uploads
   (req, res) => {
-    // Assuming your product model is imported as ProductModel
+    // Create a new product instance using the request body
     const newProduct = new ProductModel(req.body);
-    console.log(req.body);
 
-    // If there are uploaded files, you can access them through req.files array
+    // Check if there are uploaded files (images)
     if (req.files) {
+      // Extract image paths from uploaded files and store in 'images' array
       const images = req.files.map((file) => file.destination + file.filename);
-      newProduct.img = images; // Assuming you have an "images" field in your product schema to store the image paths
+      newProduct.img = images; // Assign image paths to the 'img' field in the product schema
     }
 
+    // Save the new product to the database
     newProduct
       .save()
       .then((newProduct) => {
         res.status(201).json({ result: "Product added successfully" });
       })
       .catch((error) => {
-        console.log(error);
+        console.log(error); // Log any errors for debugging
         res.status(500).json({ error: "Internal server error" });
       });
   }
@@ -66,23 +67,32 @@ router.get("/product/:id", (req, res) => {
     });
 });
 
+// Define a route to handle GET requests for fetching products
 router.get("/products", async (req, res) => {
+  // Extract query parameters from the request
   const searchQuery = req.query.searchQuery;
   const categories = req.query.category;
   const brands = req.query.brand;
 
   try {
+    // Initialize an empty query object to build the MongoDB query
     let query = {};
 
+    // Check if a search query parameter is provided
     if (searchQuery) {
+      // Build a text search query using the provided search query
       query.$text = { $search: searchQuery };
     }
 
+    // Check if brand filter parameters are provided
     if (brands) {
+      // Create a regex pattern for each brand and match case-insensitively
       query.brandName = { $in: brands.map((brand) => new RegExp(brand, "i")) };
     }
 
+    // Check if category filter parameters are provided
     if (categories) {
+      // Create a regex pattern for each category and match case-insensitively
       query.category = {
         $in: categories.map((category) => new RegExp(category, "i")),
       };
@@ -90,6 +100,7 @@ router.get("/products", async (req, res) => {
 
     let products;
 
+    // Check if there are any query parameters
     if (Object.keys(query).length === 0) {
       // If no query parameters, return all products
       products = await ProductModel.find();
@@ -98,8 +109,10 @@ router.get("/products", async (req, res) => {
       products = await ProductModel.find(query);
     }
 
+    // Respond with the fetched products in JSON format
     res.status(200).json(products);
   } catch (error) {
+    // Handle errors by logging them and sending an internal server error response
     console.log(error);
     res.status(500).json({ error: "Internal server error" });
   }
@@ -110,7 +123,7 @@ router.put("/updatereview/:id", async (req, res) => {
   const productId = req.params.id;
   const totalReview = req.body.total; // Assuming the new review number is passed in the request body
   const averageRating = req.body.averageRating; // Assuming the new review number is passed in the request body
-  console.log(totalReview, averageRating);
+
   try {
     // Find the product by ID and update the review number
     const product = await ProductModel.findByIdAndUpdate(
@@ -160,7 +173,6 @@ router.put(
 
   async (req, res) => {
     const productId = req.params.productId;
-    console.log(req.body);
     const {
       productName,
       brandName,

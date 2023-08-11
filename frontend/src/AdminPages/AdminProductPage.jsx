@@ -7,7 +7,7 @@ import { userRequest } from "../requestMethods";
 import AddProductModal from "../AdminComponents/AddProductModal";
 import { styled } from "styled-components";
 import { Button, Modal, Form } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const FormContainer = styled.div`
@@ -78,8 +78,8 @@ const AdminProductPage = () => {
   const [categories, setCategories] = useState("");
   const [brands, setBrands] = useState("");
   const [loading, setLoading] = useState(false);
-
-  const handleFormSubmit = (e) => {
+  const navigate = useNavigate();
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
 
     if (categories === "" && brands === "") {
@@ -88,14 +88,22 @@ const AdminProductPage = () => {
 
     const categoriesArray = categories
       .split(",")
-      .map((category) => ({ name: category.trim() }));
+
+      .map((category) => ({
+        name:
+          category.trim().charAt(0).toUpperCase() + category.trim().slice(1),
+      }))
+      .filter((category) => category.name !== "");
 
     const brandsArray = brands
       .split(",")
-      .map((brand) => ({ name: brand.trim() }));
+      .map((brand) => ({
+        name: brand.trim().charAt(0).toUpperCase() + brand.trim().slice(1),
+      }))
+      .filter((brand) => brand.name !== "");
 
     if (categoriesArray.length > 0) {
-      const response = userRequest.post("/category/add", categoriesArray);
+      const response = await userRequest.post("/category/add", categoriesArray);
       toast.success("Category added successfully");
     }
 
@@ -108,17 +116,21 @@ const AdminProductPage = () => {
   };
 
   const handleCloseModal = () => {
+    setShowModal(false);
+    setShow(false);
     setBrands("");
     setCategories("");
-    setShowModal(false);
+    setUpdate(!update);
+    navigate("/admin/products");
   };
 
-  const handleShowModal = (product) => {
+  const handleShowModal = () => {
     setShowModal(true);
   };
 
   useEffect(() => {
     setLoading(true);
+    console.log("updated");
     const fetchAllProducts = async () => {
       try {
         const params = {};
@@ -126,6 +138,7 @@ const AdminProductPage = () => {
           params,
         });
         setLoading(false);
+        console.log(response.data);
 
         setProducts(response.data);
       } catch (error) {
@@ -135,15 +148,11 @@ const AdminProductPage = () => {
     };
 
     fetchAllProducts();
-  }, [showModal, update]);
+  }, [showModal, brands, categories, show, update]);
 
   return (
-    <div
-      style={{
-        fontFamily: "Playfair Display, serif",
-      }}
-    >
-      <Header />
+    <div>
+      <Header setUpdate={setUpdate} update={update} />
       {loading ? (
         <div
           style={{ height: "100vh" }}
@@ -157,7 +166,7 @@ const AdminProductPage = () => {
         <Container
           fluid
           className=" px-5 mx-auto"
-          style={{ minHeight: "90vh" }}
+          style={{ minHeight: "90vh", fontFamily: "Playfair Display, serif" }}
         >
           <div className="d-flex justify-content-between mb-4">
             <HeadingWrapper>Products</HeadingWrapper>
@@ -191,7 +200,13 @@ const AdminProductPage = () => {
         update={update}
         onHide={handleCloseModal}
       />
-      <Modal show={show} onHide={() => setShow(false)}>
+      <Modal
+        style={{
+          fontFamily: "Playfair Display, serif",
+        }}
+        show={show}
+        onHide={() => setShow(false)}
+      >
         <Modal.Header>
           <Modal.Title>Add Categories and Brands</Modal.Title>
         </Modal.Header>

@@ -10,7 +10,7 @@ const ProductModel = mongoose.model("ProductModel");
 router.post("/addcart/:userId", verifyTokenAuth, async (req, res) => {
   const { products } = req.body;
   const userId = req.params.userId;
-  console.log(req.user); // Log the authenticated user
+  // console.log(req.user); // Log the authenticated user
 
   // Find the cart for the specified user
   CartModel.findOne({ userId })
@@ -80,7 +80,7 @@ router.get("/products/:userId", verifyTokenAuth, async (req, res) => {
   try {
     // Find the cart associated with the user
     const cart = await CartModel.findOne({ userId });
-    console.log(userId);
+    // console.log(userId);
 
     // If cart doesn't exist, return a 404 error
     if (!cart) {
@@ -132,7 +132,7 @@ router.put(
   async (req, res) => {
     const { productId } = req.params; // Get productId from URL params
     const { quantity, selectedSize } = req.body; // Extract quantity and selectedSize from request body
-    console.log(req.body); // Log the request body for debugging
+    // console.log(req.body); // Log the request body for debugging
 
     try {
       const userId = req.user.userId; // Get userId from authenticated user

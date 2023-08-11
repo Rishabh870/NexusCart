@@ -10,7 +10,6 @@ const verifyToken = (req, res, next) => {
     // Split the 'Bearer <token>' format to get just the token
     const token = authorization.split(" ")[1];
     // Log the authorization token for debugging purposes
-    console.log(`Auth ${authorization}`);
 
     // Verify the token using the secret key
     jwt.verify(token, JWT_SECRET, (err, user) => {

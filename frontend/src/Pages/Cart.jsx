@@ -40,6 +40,7 @@ const CardHeader = styled.h1`
   font-size: 1.5rem;
   font-family: "Playfair ", serif;
   font-weight: bolder;
+  /* background-color: #d2d2d3; */
 `;
 
 const CardBody = styled.div`
@@ -48,14 +49,36 @@ const CardBody = styled.div`
   flex-direction: column;
 `;
 const CartBody = styled.div`
+  font-family: "Playfair ", serif !important;
   padding: 0.5rem;
   overflow: hidden;
   height: 500px;
-  overflow-y: scroll;
+  overflow-y: auto; /* Enable vertical scrolling */
+
+  /* Scrollbar Styles */
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #f8f9fa #dee2e6; /* Firefox */
+  -ms-overflow-style: none; /* Hide scrollbar in IE and Edge */
+  &::-webkit-scrollbar {
+    width: 8px; /* Chrome, Safari, and Opera */
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #adb5bd; /* Color of the thumb */
+    border-radius: 4px; /* Border radius of the thumb */
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: #6c757d; /* Color of the thumb on hover */
+  }
+  &::-webkit-scrollbar-track {
+    background-color: #dee2e6; /* Color of the track */
+    border-radius: 4px; /* Border radius of the track */
+    margin-right: -8px; /* Adjust for the border width */
+  }
 `;
 
 const SummaryDetails = styled.div`
   margin-bottom: 1rem;
+  font-family: "Playfair ", serif !important;
   display: flex;
   justify-content: space-between;
 `;
@@ -74,6 +97,7 @@ const CheckoutButton = styled.button`
   padding: 0.5rem 0.9rem;
   background-color: black;
   color: white;
+  font-family: "Playfair ", serif !important;
   border: 1px solid black;
   &:hover {
     background-color: white;
@@ -95,7 +119,7 @@ const DeliveryTo = styled.p`
   margin-top: 0.5rem;
   text-align: start;
   font-weight: bold;
-  font-family: "Playfair Display", serif;
+  font-family: "Josefin Sans Regular";
 `;
 
 const DeliveryAddress = styled.p`
@@ -109,6 +133,7 @@ const DeliveryAddress = styled.p`
 const ChangeAddressButton = styled.button`
   padding: 5px 10px;
   width: 20%;
+  font-family: "Playfair ", serif !important;
   color: white;
   background-color: #000000;
   border: 1px solid #000000;
@@ -121,6 +146,7 @@ const ChangeAddressButton = styled.button`
 
 const DropdownWrapper = styled.div`
   position: relative;
+  font-family: "Playfair ", serif !important;
   /* border: 1px solid black; */
 `;
 
@@ -223,7 +249,7 @@ const Cart = () => {
       <Header />
       {loading ? (
         <div
-          style={{ height: "80vh" }}
+          style={{ minHeight: "82vh" }}
           className="w-100 d-flex justify-content-center align-items-center"
         >
           <div className=" spinner-border" role="status">
@@ -231,7 +257,7 @@ const Cart = () => {
           </div>
         </div>
       ) : (
-        <Container style={{ minHeight: "80vh" }} className="cart text-center">
+        <Container style={{ minHeight: "82vh" }} className="cart text-center">
           <DeliveryInfoWrapper className="px-4">
             <div className=" w-100 ">
               <DeliveryTo>Delivery to: {deliveryData.deliveryTo}</DeliveryTo>
@@ -239,9 +265,13 @@ const Cart = () => {
                 Delivery Address: {deliveryData.deliveryAddress}
               </DeliveryAddress>
             </div>
-            <ChangeAddressButton onClick={handleAddressChange}>
-              Change Address
-            </ChangeAddressButton>
+            {userId ? (
+              <ChangeAddressButton onClick={handleAddressChange}>
+                Change Address
+              </ChangeAddressButton>
+            ) : (
+              ""
+            )}
           </DeliveryInfoWrapper>
           <Row className=" mx-0 row px-0">
             <ItemCart className="col-md-8 px-0 pr-2 col-12 m-lg-0">
@@ -297,12 +327,16 @@ const Cart = () => {
                       <span>Total:</span>
                       <span className="float-end">${formattedTotalPrice}</span>
                     </SummaryTotal>
-                    <CheckoutButton
-                      className="submitBtn btn-block"
-                      onClick={handleCheckout}
-                    >
-                      Checkout
-                    </CheckoutButton>
+                    {userId ? (
+                      <CheckoutButton
+                        className="submitBtn btn-block"
+                        onClick={handleCheckout}
+                      >
+                        Checkout
+                      </CheckoutButton>
+                    ) : (
+                      ""
+                    )}
                   </CardBody>
                 </Carts>
               </Summary>

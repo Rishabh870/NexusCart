@@ -35,32 +35,11 @@ const Container = styled.div`
   flex-direction: column;
 `;
 
-const Checkbox = styled.div`
-  display: flex;
-  align-items: center;
-  margin-bottom: 8px;
-  input {
-    width: 15px;
-    height: 15px;
-  }
-  &:checked + input::after {
-    background-color: #000000; /* Change the color here */
-  }
-`;
-
-const Label = styled.label`
-  margin-left: 8px;
-  font-family: "Josefin Sans Regular";
-  margin-bottom: 0%;
-`;
-
-const Filters = ({ setIsChecked, isChecked }) => {
-  const [filters, setFilters] = useState([]);
+const Filters = ({ update, setUpdate }) => {
   const navigate = useNavigate();
-  const location = useLocation();
+
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
-  const search = new URLSearchParams(location.search).get("searchQuery");
 
   const [selectedFilters, setSelectedFilters] = useState({
     brand: [],
@@ -86,73 +65,21 @@ const Filters = ({ setIsChecked, isChecked }) => {
       .catch((error) => {
         console.error("Error fetching brands:", error);
       });
-  }, []);
+  }, [selectedFilters, brands, categories]);
 
-  const handleCheckboxChange = (e, checkBoxLabel, checkBoxFilterName) => {
-    const currentUrl = new URL(window.location.href);
-    const searchParams = new URLSearchParams(currentUrl.search);
-    setIsChecked(!isChecked);
-    if (e.target.checked) {
-      // Checkbox is checked, add the value to the filtered array
-      const existingFilters = searchParams.get(checkBoxFilterName) || "";
-      const filterArray = existingFilters.split(",").filter(Boolean);
-      filterArray.push(checkBoxLabel);
-      searchParams.set(checkBoxFilterName, filterArray.join(","));
-    } else {
-      // Checkbox is unchecked, remove the value from the filtered array
-      const existingFilters = searchParams.get(checkBoxFilterName) || "";
-      const filterArray = existingFilters.split(",").filter(Boolean);
-      const updatedFilterArray = filterArray.filter(
-        (item) => item !== checkBoxLabel
-      );
-      searchParams.set(checkBoxFilterName, updatedFilterArray.join(","));
-    }
-
-    // Remove the query parameter if the resulting filtered array is empty
-    const resultingFilters = searchParams.get(checkBoxFilterName);
-    if (!resultingFilters) {
-      searchParams.delete(checkBoxFilterName);
-    }
-
-    currentUrl.search = searchParams.toString();
-    window.history.pushState({ path: currentUrl.href }, "", currentUrl.href);
-
-    // Update the selectedFilters state after modifying the URL
-    const newSelectedFilters = {
-      ...selectedFilters,
-      [checkBoxFilterName]:
-        searchParams.get(checkBoxFilterName)?.split(",") || [],
-    };
-    setSelectedFilters(newSelectedFilters);
-  };
   const handleClearAll = () => {
     setSelectedFilters({
       brand: [],
       category: [],
-      color: [],
     });
     // Uncheck all the checkboxes
     const checkboxes = document.querySelectorAll('input[type="checkbox"]');
     checkboxes.forEach((checkbox) => {
       checkbox.checked = false;
     });
+    setUpdate(selectedFilters);
     navigate("/allproducts");
   };
-
-  useEffect(() => {
-    // Get the search query parameters from the URL
-    const params = new URLSearchParams(location.search);
-
-    // Get the values for 'brand' and 'category' from the URL query parameters
-    const brandFilters = params.get("brand");
-    const categoryFilters = params.get("category");
-
-    // Update the selectedFilters state based on the URL values
-    setSelectedFilters({
-      brand: brandFilters ? brandFilters.split(",") : [],
-      category: categoryFilters ? categoryFilters.split(",") : [],
-    });
-  }, [location.search]);
 
   return (
     <div className="" style={{ maxWidth: "300px", overflow: "none" }}>
@@ -170,10 +97,11 @@ const Filters = ({ setIsChecked, isChecked }) => {
                 key={index}
                 id={checkbox.id}
                 label={checkbox.name}
-                checked={selectedFilters.category.includes(checkbox.name)}
-                onChange={(e) => {
-                  handleCheckboxChange(e, checkbox.name, "category");
-                }}
+                setSelectedFilters={setSelectedFilters}
+                selectedFilters={selectedFilters}
+                headLabel={"category"}
+                setUpdate={setUpdate}
+                update={update}
               />
             ))}
           </Container>
@@ -189,10 +117,11 @@ const Filters = ({ setIsChecked, isChecked }) => {
                 key={index}
                 id={checkbox.id}
                 label={checkbox.name}
-                checked={selectedFilters.brand.includes(checkbox.name)}
-                onChange={(e) =>
-                  handleCheckboxChange(e, checkbox.name, "brand")
-                }
+                setSelectedFilters={setSelectedFilters}
+                selectedFilters={selectedFilters}
+                headLabel={"brand"}
+                update={update}
+                setUpdate={setUpdate}
               />
             ))}
           </Container>

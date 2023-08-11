@@ -182,7 +182,7 @@ const PassReset = () => {
                   </Form.Group>
 
                   {loading ? (
-                    <Button>Loading</Button>
+                    <Button disabled>Loading</Button>
                   ) : (
                     <Button type="submit">Reset</Button>
                   )}

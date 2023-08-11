@@ -21,9 +21,12 @@ import { MdOutlineStar } from "react-icons/md";
 import { BASE_URL } from "../requestMethods";
 import { toast } from "react-toastify";
 
-const ProductInfo = styled.div``;
+const ProductInfo = styled.div`
+  font-family: "Playfair ", serif !important;
+`;
 const Review = styled.div`
   margin-top: 2rem;
+  font-family: "Playfair ", serif !important;
 `;
 const TopSection = styled.div``;
 const BottomSection = styled.div``;
@@ -59,7 +62,10 @@ const SizeButton = styled.div`
 const Brand = styled.h5`
   font-weight: bold;
 `;
-const ProductName = styled.h6``;
+const ProductName = styled.p`
+  color: gray;
+  font-size: 14px;
+`;
 const SizeHeader = styled.h6`
   font-weight: bold;
 `;
@@ -234,7 +240,7 @@ const Product = () => {
       <Header count={cartItemCount} />
       {loading ? (
         <div
-          style={{ height: "80vh" }}
+          style={{ minHeight: "82vh" }}
           className="w-100 d-flex justify-content-center align-items-center"
         >
           <div className=" spinner-border" role="status">
@@ -242,7 +248,7 @@ const Product = () => {
           </div>
         </div>
       ) : (
-        <Container>
+        <Container style={{ minHeight: "82vh" }}>
           <ProductInfo className="row">
             <div id="left" className="col-5">
               <div
@@ -292,7 +298,7 @@ const Product = () => {
               <hr />
               <div>
                 <div>
-                  <SizeHeader className="fw-bolder">SELECT SIZE </SizeHeader>
+                  <SizeHeader className="fw-bolder">SELECT SIZES: </SizeHeader>
                   <SizeContainer>
                     {product.sizes.map((size, index) => (
                       <SizeButton
@@ -340,7 +346,7 @@ const Product = () => {
               </div>
               <hr />
               <BottomSection>
-                <ReviewDetailsHeading>Product Rating</ReviewDetailsHeading>
+                <ReviewDetailsHeading>PRODUCT RATINGS:</ReviewDetailsHeading>
                 <div className="row m-0">
                   <StarRating
                     className=" col border-left"

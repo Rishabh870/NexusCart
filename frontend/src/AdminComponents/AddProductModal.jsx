@@ -67,16 +67,23 @@ const AddProductModal = ({ show, onHide, update, setUpdate }) => {
   useEffect(() => {
     const getCategorysAndBrands = async () => {
       try {
+        // Fetch categories from the server
         const categories = await userRequest.get("/category/categories");
+        // Set the state with the fetched categories
         setDropCategories(categories.data);
+        // Fetch brands from the server
         const brands = await userRequest.get("/brand/brands");
+        // Set the state with the fetched brands
         setDropBrands(brands.data);
-      } catch (error) {}
+      } catch (error) {
+        // Handle any errors that occur during the API calls
+        console.log(error);
+      }
     };
     getCategorysAndBrands();
-  }, []);
+  }, [update]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     try {
       const formData = new FormData();
       // Split the sizeInput string by commas and trim spaces from each word
@@ -85,27 +92,26 @@ const AddProductModal = ({ show, onHide, update, setUpdate }) => {
       // Convert each word to uppercase
       const sizesArrayUppercase = sizeArray.map((size) => size.toUpperCase());
       // Append each form field to the formData
-      formData.append("productName", productName);
-      formData.append("brandName", brandName);
-      formData.append("desc", desc);
+      formData.append("productName", productName.toUpperCase());
+      formData.append("brandName", brandName.toUpperCase());
+      formData.append("desc", desc.toUpperCase());
       formData.append("price", price);
       formData.append("inStock", inStock);
       sizesArrayUppercase.forEach((size) => {
-        formData.append("sizes", size);
+        formData.append("sizes", size.toUpperCase());
       }); // Convert array of sizes to comma-separated string
-      formData.append("category", category);
+      formData.append("category", category.toUpperCase());
 
       // Append each image to the formData
       imagePreviews.forEach((file, index) => {
         formData.append("myImages", file); // Use the correct field name 'images'
       });
 
-      userRequest
+      await userRequest
         .post("/product/addproduct", formData)
         .then((response) => {
           // Handle the response if needed
           toast.success("Product added successfully!");
-          setUpdate(!update);
         })
         .catch((error) => {
           // Handle errors if the request fails
@@ -113,7 +119,7 @@ const AddProductModal = ({ show, onHide, update, setUpdate }) => {
           toast.error(error.response.data.message);
         });
 
-      setUpdate(!update);
+      // setUpdate(!update);
       setBrandName("");
       setCategory("");
       setSizeInput("");
@@ -127,7 +133,8 @@ const AddProductModal = ({ show, onHide, update, setUpdate }) => {
       console.log(error);
       toast.error(error.response.data.message);
     }
-    // Make a POST request to the '/addproduct' route using userRequest
+    console.log("object");
+    setUpdate(!update);
   };
 
   const handleImageChange = (e) => {
@@ -137,9 +144,21 @@ const AddProductModal = ({ show, onHide, update, setUpdate }) => {
     // Limit the number of selected images to 4
     const maxAllowed = Math.min(4, files.length);
 
+    // Valid image extensions
+    const validExtensions = [".jpg", ".jpeg", ".png"];
+
     for (let i = 0; i < maxAllowed; i++) {
       const file = files[i];
-      newPreviews.push(file);
+      const fileExtension = file.name
+        .substring(file.name.lastIndexOf("."))
+        .toLowerCase();
+
+      // Check if the file extension is valid
+      if (validExtensions.includes(fileExtension)) {
+        newPreviews.push(file);
+      } else {
+        toast.error("Only .jpg, .jpeg, and .png are allowed.");
+      }
     }
 
     // If productData is not available (creating a product), use the image URLs directly

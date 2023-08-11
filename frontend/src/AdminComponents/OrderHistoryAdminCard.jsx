@@ -40,12 +40,17 @@ const Button = styled.button`
 const Details = styled(Link)`
   background-color: white;
   padding: 0;
+  text-decoration: none;
   margin-right: 0.5rem;
   color: black;
   border: 2px solid black;
   font-size: small;
   padding: 0.3rem 1rem;
   cursor: pointer;
+  &:hover {
+    text-decoration: none;
+    color: black;
+  }
 `;
 const OrderHistoryAdminCard = ({
   orderId,

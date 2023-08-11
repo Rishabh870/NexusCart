@@ -68,6 +68,21 @@ const Login = () => {
     setLoading(true);
     const email = e.target.formEmail.value;
     const password = e.target.formPassword.value;
+    if (!email || !password) {
+      // Highlight empty fields in red
+      if (!email) {
+        e.target.formEmail.classList.add("invalid-field");
+      } else {
+        e.target.formEmail.classList.remove("invalid-field");
+      }
+
+      if (!password) {
+        e.target.form.classList.add("invalid-field");
+      } else {
+        e.target.formPassword.classList.remove("invalid-field");
+      }
+      return; // Stop form submission if any field is empty
+    }
 
     try {
       const response = await publicRequest.post("/user/login", {
@@ -88,6 +103,7 @@ const Login = () => {
       console.log(error);
       // Handle error cases, such as displaying an error message
     }
+    setLoading(false);
   };
 
   return (
@@ -116,7 +132,9 @@ const Login = () => {
                   </Form.Group>
 
                   {loading ? (
-                    <Button>Loading</Button>
+                    <Button className="bg-dark text-white border-dark" disabled>
+                      Loading
+                    </Button>
                   ) : (
                     <Button type="submit">Login</Button>
                   )}

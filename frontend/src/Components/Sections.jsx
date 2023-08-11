@@ -28,8 +28,9 @@ const Section = styled.div`
   }
 `;
 
-const Title = styled.h2`
+const Title = styled.h3`
   font-family: "Josefin Sans regular";
+  text-decoration: underline;
 `;
 
 const DealsSection = ({ filter }) => {
@@ -58,7 +59,7 @@ const DealsSection = ({ filter }) => {
   return (
     <>
       <Section className="mt-4 mb-3">
-        <Title>{filter}</Title>
+        <Title>{filter}:</Title>
         <div className="row my-4">
           {limitedProducts.map((product, index) => (
             <div

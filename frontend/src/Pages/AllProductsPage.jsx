@@ -34,8 +34,8 @@ const PaginationContainer = styled.div`
         color: #000000;
         text-decoration: none;
         &:hover {
-          background-color: #f3f3f3;
-          color: #000000;
+          background-color: #000000;
+          color: #ffffff;
         }
       }
     }
@@ -51,22 +51,21 @@ const PaginationContainer = styled.div`
 `;
 
 const AllProducts = () => {
-  const [isDropdownOpen, setDropdownOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState("Sort By");
   const [loading, setLoading] = useState(false);
-
   const [currentPage, setCurrentPage] = useState(0);
-  const productsPerPage = 16; // Set the number of products to display per page
+  const productsPerPage = 8; // Set the number of products to display per page
 
-  const urlSearch = new URLSearchParams(window.location.search);
   const [products, setProducts] = useState([]);
-  const [isChecked, setIsChecked] = useState(false);
-  const searchQuery = urlSearch.get("searchQuery");
-  const category = urlSearch.get("category");
-  const brand = urlSearch.get("brand");
+  const [update, setUpdate] = useState("");
+  const location = useLocation();
+  const brand = new URLSearchParams(location.search).get("brand");
+  const category = new URLSearchParams(location.search).get("category");
 
   useEffect(() => {
-    console.log(brand);
+    const urlSearch = new URLSearchParams(window.location.search);
+    const searchQuery = urlSearch.get("searchQuery");
+    const category = urlSearch.get("category");
+    const brand = urlSearch.get("brand");
     setLoading(true);
     const fetchAllProducts = async () => {
       try {
@@ -85,16 +84,10 @@ const AllProducts = () => {
           params.brand = brand.split(",");
         }
 
-        if (searchQuery) {
-          response = await userRequest.get("/product/products", {
-            params,
-          });
-        } else {
-          response = await userRequest.get("/product/products", {
-            params,
-          });
-          console.log(params);
-        }
+        console.log(params);
+        response = await userRequest.get("/product/products", {
+          params,
+        });
 
         setProducts(response.data);
         setLoading(false);
@@ -104,7 +97,7 @@ const AllProducts = () => {
     };
 
     fetchAllProducts();
-  }, [brand, category, searchQuery]);
+  }, [update, category, brand]);
 
   const pageCount = Math.ceil(products.length / productsPerPage);
   const offset = currentPage * productsPerPage;
@@ -114,25 +107,12 @@ const AllProducts = () => {
     setCurrentPage(selected);
   };
 
-  const handleDropdownToggle = () => {
-    setDropdownOpen(!isDropdownOpen);
-  };
-
-  const handleOptionSelect = (option) => {
-    setSelectedOption(option);
-    setDropdownOpen(false);
-  };
-
-  // const handleFilterProducts = (filteredProducts) => {
-  //   setProducts(filteredProducts);
-  // };
-  console.log(products);
   return (
     <>
       <Header />
       {loading ? (
         <div
-          style={{ height: "80vh" }}
+          style={{ minHeight: "82vh" }}
           className="w-100 d-flex justify-content-center align-items-center"
         >
           <div className=" spinner-border" role="status">
@@ -140,15 +120,14 @@ const AllProducts = () => {
           </div>
         </div>
       ) : (
-        <Container>
+        <Container style={{ minHeight: "82vh" }}>
           <ProductContainer className="row">
             <div id="left" className="col-3 pr-4">
-              <Filter setIsChecked={setIsChecked} isChecked={isChecked} />
+              <Filter setUpdate={setUpdate} update={update} />
             </div>
             <div id="right" className="col-9 pl-4 ">
               <Product className="row mt-5">
                 {currentProducts.map((product, index) => {
-                  console.log(product);
                   return (
                     <div
                       className="col-lg-4 col-sm-6 col-xl-3 p-0 px-xl-1 px-md-3"
