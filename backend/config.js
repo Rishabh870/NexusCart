@@ -1,4 +1,5 @@
 module.exports = {
+  // MONGODB_URL: "mongodb://127.0.0.1:27017/ecommerce",
   MONGODB_URL:
     "mongodb+srv://admin:admin@nexuscart.zunp6tk.mongodb.net/?retryWrites=true&w=majority",
   JWT_SECRET: "aasagasuguwehuhnsehiuwhriwbeiuuihjewirh",
