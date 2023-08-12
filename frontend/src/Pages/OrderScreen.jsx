@@ -143,7 +143,7 @@ const Orderpreview = () => {
         setLoading(false);
       } catch (error) {
         setLoading(false);
-        toast.error(error.response.data.message);
+        toast.error(error.response.data.error);
         // Handle the error
       }
     };
@@ -197,7 +197,7 @@ const Orderpreview = () => {
         toast.success("Payment Successful!");
         setUpdate(!update);
       } catch (error) {
-        toast.error(error.response.data.message);
+        toast.error(error.response.data.error);
       }
     });
   };

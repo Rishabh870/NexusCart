@@ -105,7 +105,7 @@ const DeliveryScreen = ({ showModal, handleCloseModal, setUpdate, update }) => {
     } catch (error) {
       console.error(error);
       // Handle the error
-      toast.error(error.response.data.message);
+      toast.error(error.response.data.error);
     }
   };
 

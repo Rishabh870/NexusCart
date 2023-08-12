@@ -90,7 +90,7 @@ router.get("/orders/:userId", verifyTokenAuth, (req, res) => {
   OrderModel.findOne({ userId })
     .then((order) => {
       if (!order) {
-        return res.status(404).json({ message: "No orders found" });
+        return res.status(404).json({ error: "No orders found" });
       }
 
       const orders = order.orders;
@@ -198,7 +198,7 @@ router.delete("/delete/:orderId/:userId", verifyTokenAuth, async (req, res) => {
 
     if (!order) {
       // Order does not exist for the user
-      return res.status(404).json({ message: "Order not found" });
+      return res.status(404).json({ error: "Order not found" });
     }
 
     // Find the index of the order with the provided ID in the "orders" array
@@ -208,7 +208,7 @@ router.delete("/delete/:orderId/:userId", verifyTokenAuth, async (req, res) => {
 
     if (orderIndex === -1) {
       // Order with the provided ID does not exist
-      return res.status(404).json({ message: "Order not found" });
+      return res.status(404).json({ error: "Order not found" });
     }
 
     // Remove the order from the "orders" array
@@ -230,7 +230,7 @@ router.get("/orders", verifyTokenAuth, async (req, res) => {
     const orders = await OrderModel.find().populate("userId");
 
     if (orders.length === 0) {
-      return res.status(404).json({ message: "No orders found" });
+      return res.status(404).json({ error: "No orders found" });
     }
 
     res.status(200).json(orders);

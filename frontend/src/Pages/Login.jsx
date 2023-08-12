@@ -5,6 +5,7 @@ import Header from "../Components/Header";
 import { publicRequest } from "../requestMethods";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const LoginPageContainer = styled.div`
   height: 80vh;
@@ -100,7 +101,7 @@ const Login = () => {
 
       window.location.href = "/";
     } catch (error) {
-      console.log(error);
+      toast.error(error.response.data.error);
       // Handle error cases, such as displaying an error message
     }
     setLoading(false);

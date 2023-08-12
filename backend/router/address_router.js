@@ -87,7 +87,7 @@ router.get("/address/:userId", verifyTokenAuth, (req, res) => {
     .then((address) => {
       // If address not found, return a 404 response
       if (!address) {
-        res.status(404).json({ message: "Address not found" });
+        res.status(404).json({ error: "Address not found" });
       } else {
         // Extract address details
         const {

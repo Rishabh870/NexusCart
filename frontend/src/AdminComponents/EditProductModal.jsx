@@ -79,7 +79,7 @@ const EditProductModal = ({ show, onHide, productData }) => {
         };
         setFormData(mergedFormData);
       } catch (error) {
-        toast.error(error.response.data.message);
+        toast.error(error.response.data.error);
       }
     };
     getCategorysAndBrands();
@@ -152,12 +152,12 @@ const EditProductModal = ({ show, onHide, productData }) => {
         .catch((error) => {
           // Handle errors if the request fails
           console.error(error);
-          toast.error(error.response.data.message);
+          toast.error(error.response.data.error);
         });
 
       onHide();
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response.data.error);
     }
     // Make a POST request to the '/addproduct' route using userRequest
   };

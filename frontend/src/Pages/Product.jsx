@@ -197,7 +197,7 @@ const Product = () => {
         setProduct(response.data);
         setLoading(false);
       } catch (error) {
-        toast.error(error.response.data.message);
+        toast.error(error.response.data.error);
         setLoading(false);
       }
     };

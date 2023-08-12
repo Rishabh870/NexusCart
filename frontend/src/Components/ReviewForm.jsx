@@ -100,7 +100,7 @@ const RatingForm = ({ update, setUpdate }) => {
       setUpdate(!update);
       toast.success("Review Added");
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response.data.error);
     }
 
     setSubmited(!submited);

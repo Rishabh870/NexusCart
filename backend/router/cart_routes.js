@@ -84,7 +84,7 @@ router.get("/products/:userId", verifyTokenAuth, async (req, res) => {
 
     // If cart doesn't exist, return a 404 error
     if (!cart) {
-      return res.status(404).json({ message: "Cart not found" });
+      return res.status(404).json({ error: "Cart not found" });
     }
 
     // Extract the products array from the cart
@@ -139,7 +139,7 @@ router.put(
       const cart = await CartModel.findOne({ userId }); // Find the cart associated with the user
 
       if (!cart) {
-        return res.status(404).json({ message: "Cart not found" }); // Respond with error if cart is not found
+        return res.status(404).json({ error: "Cart not found" }); // Respond with error if cart is not found
       }
 
       // Find the product in the cart based on productId
@@ -148,7 +148,7 @@ router.put(
       );
 
       if (!product) {
-        return res.status(404).json({ message: "Product not found in cart" }); // Respond with error if product is not found in the cart
+        return res.status(404).json({ error: "Product not found in cart" }); // Respond with error if product is not found in the cart
       }
 
       // Update product quantity and selected size
@@ -179,7 +179,7 @@ router.delete("/products/:userId/:id", verifyTokenAuth, async (req, res) => {
 
     if (!cart) {
       // If cart does not exist for the user, return a 404 error
-      return res.status(404).json({ message: "Cart not found" });
+      return res.status(404).json({ error: "Cart not found" });
     }
 
     // Get the array of products in the cart
@@ -192,7 +192,7 @@ router.delete("/products/:userId/:id", verifyTokenAuth, async (req, res) => {
 
     if (itemIndex === -1) {
       // If cart item with the provided ID does not exist, return a 404 error
-      return res.status(404).json({ message: "Cart item not found" });
+      return res.status(404).json({ error: "Cart item not found" });
     }
 
     // Remove the cart item from the cart products array
@@ -220,7 +220,7 @@ router.delete("/products/:userId", verifyTokenAuth, async (req, res) => {
 
     if (!cart) {
       // If cart doesn't exist for the user, return a 404 response
-      return res.status(404).json({ message: "Cart not found" });
+      return res.status(404).json({ error: "Cart not found" });
     }
 
     // Clear the products array in the cart

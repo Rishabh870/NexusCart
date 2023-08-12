@@ -82,7 +82,7 @@ router.post("/login", (req, res) => {
   UserModel.findOne({ email: email })
     .then((userInDB) => {
       if (!userInDB) {
-        return res.status(202).json({ error: "User not found, Sign Up" });
+        return res.status(404).json({ error: "User not found: Sign Up" });
       }
 
       bcryptjs
@@ -98,7 +98,7 @@ router.post("/login", (req, res) => {
               .status(200)
               .json({ message: "Login successful", ...userDetails, token });
           } else {
-            res.status(201).json({ error: "Invalid password" });
+            res.status(401).json({ error: "Invalid password" });
           }
         })
         .catch((error) => {
@@ -138,7 +138,7 @@ router.put("/updatePassword", async (req, res) => {
     if (updatedUser) {
       res.status(200).json("user pass reseted");
     } else {
-      res.status(404).json({ message: "User not found" });
+      res.status(404).json({ error: "User not found" });
     }
   } catch (error) {
     console.log(error);
@@ -202,7 +202,7 @@ router.get("/:userId", verifyTokenAuth, (req, res) => {
       if (user) {
         res.status(200).json({ user });
       } else {
-        res.status(404).json({ message: "User not found" });
+        res.status(404).json({ error: "User not found" });
       }
     })
     .catch((error) => {
@@ -253,7 +253,7 @@ router.put("/:userId", verifyTokenAuth, async (req, res) => {
       if (user) {
         res.status(200).json({ user });
       } else {
-        res.status(404).json({ message: "User not found" });
+        res.status(404).json({ error: "User not found" });
       }
     })
     .catch((error) => {

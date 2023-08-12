@@ -58,7 +58,7 @@ router.get("/product/:id", (req, res) => {
       if (product) {
         res.status(200).json(product);
       } else {
-        res.status(404).json({ message: "Product not found" });
+        res.status(404).json({ error: "Product not found" });
       }
     })
     .catch((error) => {
@@ -135,7 +135,7 @@ router.put("/updatereview/:id", async (req, res) => {
     if (product) {
       res.status(200).json({ message: "Product review updated successfully" });
     } else {
-      res.status(404).json({ message: "Product not found" });
+      res.status(404).json({ error: "Product not found" });
     }
   } catch (error) {
     console.log(error);
@@ -153,7 +153,7 @@ router.delete("/products/:productId", async (req, res) => {
       const deletedProduct = await ProductModel.findByIdAndDelete(productId);
 
       if (!deletedProduct) {
-        return res.status(404).json({ message: "Product not found" });
+        return res.status(404).json({ error: "Product not found" });
       }
 
       res.status(200).json({ message: "Product deleted successfully" });
@@ -189,7 +189,7 @@ router.put(
       const product = await ProductModel.findById(productId);
 
       if (!product) {
-        return res.status(404).json({ message: "Product not found" });
+        return res.status(404).json({ error: "Product not found" });
       }
 
       // Update product fields other than images

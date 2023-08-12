@@ -116,7 +116,7 @@ const AddProductModal = ({ show, onHide, update, setUpdate }) => {
         .catch((error) => {
           // Handle errors if the request fails
           console.error(error);
-          toast.error(error.response.data.message);
+          toast.error(error.response.data.error);
         });
 
       // setUpdate(!update);
@@ -131,7 +131,7 @@ const AddProductModal = ({ show, onHide, update, setUpdate }) => {
       onHide();
     } catch (error) {
       console.log(error);
-      toast.error(error.response.data.message);
+      toast.error(error.response.data.error);
     }
     setUpdate(!update);
   };

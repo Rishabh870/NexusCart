@@ -79,7 +79,7 @@ const UserCard = ({
       setUpdate(!update);
       toast.success("User Updated");
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error.response.data.error);
     }
     handleCloseModal(); // Close the modal after submitting the form
   };

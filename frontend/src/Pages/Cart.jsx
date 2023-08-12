@@ -225,7 +225,7 @@ const Cart = () => {
       navigate(`/order/${response.data.orders._id}`);
     } catch (error) {
       // Handle errors during the request
-      toast.error(error.response.data.message);
+      toast.error(error.response.data.error);
       // Show an error message to the user or perform other error handling logic
     }
   };

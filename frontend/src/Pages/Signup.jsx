@@ -78,7 +78,7 @@ const Signup = () => {
         email: emailValue,
       });
     } catch (error) {
-      console.log(error);
+      toast.success(error.response.data.error);
     }
   };
 
@@ -159,7 +159,7 @@ const Signup = () => {
         // User already exists, display a prompt
         toast.success("User already exists. Please log in instead.");
       } else {
-        console.log(error);
+        toast.success(error.response.data.error);
 
         // Handle other error cases, such as displaying an error message
       }
