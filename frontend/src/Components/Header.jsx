@@ -188,7 +188,7 @@ const Header = ({ update }) => {
     setIsOpen(false);
     // Perform logout logic and redirect here
 
-    window.location.href = "/login";
+    navigate("/login", { replace: true });
   };
 
   useEffect(() => {

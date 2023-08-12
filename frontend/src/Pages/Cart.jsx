@@ -181,7 +181,7 @@ const Cart = () => {
   const userId = localStorage.getItem("userId"); // Retrieve the userId from localStorage
   const cartProduct = useSelector((state) => state.cart.products);
   const [deliveryData, setDeliveryData] = useState("");
-
+  const navigate = useNavigate();
   useEffect(() => {
     const getUserData = async () => {
       setLoading(true);
@@ -224,7 +224,7 @@ const Cart = () => {
       const deleteProduct = await userRequest.delete(
         `/cart/products/${userId}`
       );
-      window.location.href = `/order/${response.data.orders._id}`;
+      navigate(`/order/${response.data.orders._id}`);
     } catch (error) {
       // Handle errors during the request
       toast.error(error.response.data.message);

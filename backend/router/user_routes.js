@@ -195,7 +195,7 @@ router.post("/verify-otp", async (req, res) => {
 });
 
 // GET route to retrieve user data by userId
-router.get("/:userId", verifyTokenAuth, (req, res) => {
+router.get("/:userId", (req, res) => {
   const { userId } = req.params;
 
   UserModel.findById(userId)
