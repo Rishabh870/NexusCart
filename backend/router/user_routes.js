@@ -79,7 +79,7 @@ router.post("/signup", (req, res) => {
 
 router.post("/login", (req, res) => {
   const { email, password } = req.body;
-
+  console.log(email, password);
   UserModel.findOne({ email: email })
     .then((userInDB) => {
       if (!userInDB) {
@@ -195,7 +195,7 @@ router.post("/verify-otp", async (req, res) => {
 });
 
 // GET route to retrieve user data by userId
-router.get("/:userId", (req, res) => {
+router.get("/:userId", verifyTokenAuth, (req, res) => {
   const { userId } = req.params;
 
   UserModel.findById(userId)
@@ -213,7 +213,7 @@ router.get("/:userId", (req, res) => {
 });
 
 // PUT route to update user data by userId
-router.put("/:userId", verifyTokenAdmin, async (req, res) => {
+router.put("/:userId", verifyTokenAuth, async (req, res) => {
   const { userId } = req.params;
   const { fullName, email, mobileNumber, password, isAdmin } = req.body;
   // Create an object to store the fields that need to be updated

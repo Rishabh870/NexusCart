@@ -484,12 +484,6 @@ const Header = ({ update }) => {
                     >
                       Order History
                     </DropdownItem>
-                    <DropdownItem
-                      className=" text-decoration-none"
-                      onClick={handleLogout}
-                    >
-                      Logout
-                    </DropdownItem>
                   </div>
                 </IconContainer>
               ) : null}
