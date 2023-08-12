@@ -49,7 +49,6 @@ const OrderHistory = () => {
     try {
       const response = await userRequest.get(`order/orders/${userId}`);
       const ordersData = response.data;
-      console.log(ordersData);
       setOrders(ordersData);
       setLoading(false);
     } catch (error) {

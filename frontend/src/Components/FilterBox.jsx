@@ -29,21 +29,21 @@ const Filterbox = ({
   update,
 }) => {
   const [isChecked, setIsChecked] = useState(false);
+  const params = new URLSearchParams(window.location.search);
+
+  // Get the values for 'brand' and 'category' from the URL query parameters
+  const brandFilters = params.get("brand");
+  const categoryFilters = params.get("category");
 
   useEffect(() => {
     // Get the search query parameters from the URL
-    const params = new URLSearchParams(window.location.search);
-
-    // Get the values for 'brand' and 'category' from the URL query parameters
-    const brandFilters = params.get("brand");
-    const categoryFilters = params.get("category");
     // Update the selectedFilters state based on the URL values
 
     setSelectedFilters({
       brand: brandFilters ? brandFilters.split(",") : [],
       category: categoryFilters ? categoryFilters.split(",") : [],
     });
-  }, [setSelectedFilters]);
+  }, [setSelectedFilters, brandFilters, categoryFilters]);
 
   useEffect(() => {
     if (headLabel === "category") {

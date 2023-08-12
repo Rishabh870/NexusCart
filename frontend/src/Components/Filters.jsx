@@ -47,25 +47,28 @@ const Filters = ({ update, setUpdate }) => {
   });
 
   useEffect(() => {
-    publicRequest
-      .get("/category/categories")
-      .then((response) => {
-        setCategories(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching categories:", error);
-      });
+    const getData = async () => {
+      await publicRequest
+        .get("/category/categories")
+        .then((response) => {
+          setCategories(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching categories:", error);
+        });
 
-    // Fetch brands
-    publicRequest
-      .get("/brand/brands")
-      .then((response) => {
-        setBrands(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching brands:", error);
-      });
-  }, [selectedFilters, brands, categories]);
+      // Fetch brands
+      await publicRequest
+        .get("/brand/brands")
+        .then((response) => {
+          setBrands(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching brands:", error);
+        });
+    };
+    getData();
+  }, [selectedFilters]);
 
   const handleClearAll = () => {
     setSelectedFilters({

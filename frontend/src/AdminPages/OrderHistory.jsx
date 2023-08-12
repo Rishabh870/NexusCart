@@ -49,7 +49,7 @@ const OrderHistory = () => {
     try {
       const response = await userRequest.get(`order/orders`);
       const ordersData = response.data;
-      console.log(ordersData);
+
       setOrders(ordersData);
       setLoading(false);
     } catch (error) {

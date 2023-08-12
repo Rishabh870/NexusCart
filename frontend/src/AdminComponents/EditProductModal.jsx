@@ -92,10 +92,8 @@ const EditProductModal = ({ show, onHide, productData }) => {
     const img = [];
     let image = false;
     for (const file of product.img) {
-      console.log(file);
       if (file.startsWith("uploads" || "uploads/" || "uploads\\")) {
         // Store the file path in the imagePreview array
-        console.log(image);
 
         img.push(file);
       } else {
@@ -109,11 +107,9 @@ const EditProductModal = ({ show, onHide, productData }) => {
         form.append("myImages", blob, fileName);
         image = true;
       }
-      // console.log(image);
     }
     try {
       if (image) {
-        console.log("inside");
         const response = await userRequest.post("/product/imagesupload", form, {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -128,7 +124,6 @@ const EditProductModal = ({ show, onHide, productData }) => {
           }
         });
 
-        // console.log("image");
         image = false;
       }
       // Update the formData state with the imagePreviews array
@@ -198,7 +193,6 @@ const EditProductModal = ({ show, onHide, productData }) => {
     // Update the product state by replacing the image previews with the new array
     setProduct((prev) => ({ ...prev, img: newPreviews }));
   };
-  console.log(formData.category);
   return (
     <Modal show={show} onHide={onHide}>
       <Modal.Header>

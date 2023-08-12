@@ -133,7 +133,6 @@ const AddProductModal = ({ show, onHide, update, setUpdate }) => {
       console.log(error);
       toast.error(error.response.data.message);
     }
-    console.log("object");
     setUpdate(!update);
   };
 

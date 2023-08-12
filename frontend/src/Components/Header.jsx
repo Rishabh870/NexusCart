@@ -171,9 +171,9 @@ const Header = ({ update }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    window.location.href = searchQuery
-      ? `/allproducts/?searchQuery=${searchQuery}`
-      : `/allproducts`;
+    navigate(
+      searchQuery ? `/allproducts/?searchQuery=${searchQuery}` : `/allproducts`
+    );
   };
 
   const handleAdminDropdownToggle = () => {

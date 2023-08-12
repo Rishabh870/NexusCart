@@ -77,7 +77,6 @@ const Signup = () => {
       const response = await userRequest.post("/user/send-verification-code", {
         email: emailValue,
       });
-      console.log(response.data);
     } catch (error) {
       console.log(error);
     }
@@ -94,8 +93,6 @@ const Signup = () => {
     const mobileNumber = e.target.formMobileNumber.value;
     const password = e.target.formPassword.value;
     const otp = e.target.formOTP.value;
-
-    console.log(fullName);
 
     // Check if any field is empty
     if (!fullName || !email || !mobileNumber || !password || !otp) {
@@ -138,7 +135,6 @@ const Signup = () => {
         email: email,
         otp: otp,
       });
-      console.log(verify);
 
       if (verify.status === 200) {
         const response = await publicRequest.post("/user/signup", {
@@ -147,7 +143,6 @@ const Signup = () => {
           mobileNumber,
           password,
         });
-        console.log(response.data);
         const { _id, token, name } = response.data;
 
         // Store the userId and token in local storage
@@ -162,7 +157,7 @@ const Signup = () => {
     } catch (error) {
       if (error.response && error.response.status === 409) {
         // User already exists, display a prompt
-        alert("User already exists. Please log in instead.");
+        toast.success("User already exists. Please log in instead.");
       } else {
         console.log(error);
 

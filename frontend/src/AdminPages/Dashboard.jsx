@@ -122,7 +122,6 @@ const Dashboard = () => {
       const { quantity } = product;
       const total = quantity; // Calculate the total sales for the product
 
-      console.log(quantity, price);
       // Update category sales
       if (category in categorySales) {
         categorySales[category] += total;
@@ -139,8 +138,6 @@ const Dashboard = () => {
     });
   });
 
-  console.log(categorySales, brandSales);
-
   //Create the pieChartData array with data from categorySales
   const pieChartDataCategory = Object.keys(categorySales).map((category) => ({
     name: category,
@@ -152,7 +149,6 @@ const Dashboard = () => {
     name: brand,
     value: brandSales[brand],
   }));
-  console.log(pieChartDataBrand, pieChartDataCategory);
 
   // Generate random unique colors for both pie charts
   const uniqueColorsCategory = new Set();

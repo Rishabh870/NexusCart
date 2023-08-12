@@ -79,11 +79,10 @@ router.post("/signup", (req, res) => {
 
 router.post("/login", (req, res) => {
   const { email, password } = req.body;
-  console.log(email, password);
   UserModel.findOne({ email: email })
     .then((userInDB) => {
       if (!userInDB) {
-        return res.status(404).json({ error: "User not found" });
+        return res.status(202).json({ error: "User not found, Sign Up" });
       }
 
       bcryptjs
@@ -99,7 +98,7 @@ router.post("/login", (req, res) => {
               .status(200)
               .json({ message: "Login successful", ...userDetails, token });
           } else {
-            res.status(401).json({ error: "Invalid password" });
+            res.status(201).json({ error: "Invalid password" });
           }
         })
         .catch((error) => {

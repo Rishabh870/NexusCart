@@ -58,14 +58,12 @@ const AllProducts = () => {
   const [products, setProducts] = useState([]);
   const [update, setUpdate] = useState("");
   const location = useLocation();
-  const brand = new URLSearchParams(location.search).get("brand");
-  const category = new URLSearchParams(location.search).get("category");
+  const urlSearch = new URLSearchParams(window.location.search);
+  const searchQuery = urlSearch.get("searchQuery");
+  const category = urlSearch.get("category");
+  const brand = urlSearch.get("brand");
 
   useEffect(() => {
-    const urlSearch = new URLSearchParams(window.location.search);
-    const searchQuery = urlSearch.get("searchQuery");
-    const category = urlSearch.get("category");
-    const brand = urlSearch.get("brand");
     setLoading(true);
     const fetchAllProducts = async () => {
       try {
@@ -84,7 +82,6 @@ const AllProducts = () => {
           params.brand = brand.split(",");
         }
 
-        console.log(params);
         response = await userRequest.get("/product/products", {
           params,
         });
@@ -97,7 +94,7 @@ const AllProducts = () => {
     };
 
     fetchAllProducts();
-  }, [update, category, brand]);
+  }, [update, brand, category, searchQuery]);
 
   const pageCount = Math.ceil(products.length / productsPerPage);
   const offset = currentPage * productsPerPage;

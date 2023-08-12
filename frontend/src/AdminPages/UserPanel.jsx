@@ -29,7 +29,6 @@ const UserPanel = () => {
       setLoading(true);
       try {
         const response = await userRequest.get("/user/users/all");
-        console.log(response.data); // Access the data inside the resolved Promise
         setUsers(response.data);
         setLoading(false);
       } catch (error) {

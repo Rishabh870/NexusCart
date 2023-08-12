@@ -116,7 +116,6 @@ const PassReset = () => {
       const response = await userRequest.post("/user/send-verification-code", {
         email: emailValue,
       });
-      console.log(response.data);
     } catch (error) {
       console.log(error);
     }

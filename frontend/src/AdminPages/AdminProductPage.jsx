@@ -130,7 +130,7 @@ const AdminProductPage = () => {
 
   useEffect(() => {
     setLoading(true);
-    console.log("updated");
+
     const fetchAllProducts = async () => {
       try {
         const params = {};
@@ -138,7 +138,6 @@ const AdminProductPage = () => {
           params,
         });
         setLoading(false);
-        console.log(response.data);
 
         setProducts(response.data);
       } catch (error) {

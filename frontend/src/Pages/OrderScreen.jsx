@@ -146,7 +146,6 @@ const Orderpreview = () => {
         toast.error(error.response.data.message);
         // Handle the error
       }
-      // console.log(deliveryData);
     };
 
     const loadPaypalScript = async () => {

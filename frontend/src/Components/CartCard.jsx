@@ -111,7 +111,6 @@ const CartCard = ({ data, show }) => {
     dispatch(deleteCartItem(data.cartId));
   };
 
-  console.log(data);
   return (
     <CardContainer className="row border p-2 px-0 mb-2 mx-1">
       <div className="col-3 px-1">

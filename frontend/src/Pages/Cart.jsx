@@ -194,7 +194,6 @@ const Cart = () => {
         console.log(error);
         setLoading(false);
       }
-      // console.log(deliveryData);
     };
 
     getUserData();
@@ -220,7 +219,6 @@ const Cart = () => {
         formattedTotalPrice,
         deliveryData,
       });
-      // console.log(response.data.orders._id);
       const deleteProduct = await userRequest.delete(
         `/cart/products/${userId}`
       );

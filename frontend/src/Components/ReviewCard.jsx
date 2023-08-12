@@ -1,5 +1,5 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from "react";
+import styled from "styled-components";
 
 const ReviewCardContainer = styled.div`
   border-bottom: 1px solid #ccc;
@@ -49,10 +49,9 @@ const StarContainer = styled.div`
 const Star = styled.span`
   cursor: pointer;
   height: fit-content;
-  color: ${({ filled }) => (filled ? 'gold' : 'grey')};
+  color: ${({ filled }) => (filled ? "gold" : "grey")};
 `;
 const ReviewCard = ({ userName, reviewText, stars }) => {
-  // console.log(reviewText);
   return (
     <ReviewCardContainer>
       <TopSection>
@@ -68,7 +67,7 @@ const ReviewCard = ({ userName, reviewText, stars }) => {
         </ReviewText>
       </TopSection>
       <BottomSection>
-        <UserReview className='m-0'>{reviewText}</UserReview>
+        <UserReview className="m-0">{reviewText}</UserReview>
       </BottomSection>
     </ReviewCardContainer>
   );
