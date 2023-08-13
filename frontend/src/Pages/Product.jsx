@@ -14,7 +14,7 @@ import {
   getCartProduct,
 } from "../Redux/cartReducer";
 import { publicRequest, userRequest } from "../requestMethods";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ReviewCard from "../Components/ReviewCard";
 import ReviewForm from "../Components/ReviewForm";
 import { MdOutlineStar } from "react-icons/md";
@@ -179,6 +179,7 @@ const ProductReview = ({ review }) => {
 
 const Product = () => {
   const { productId } = useParams();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [product, setProduct] = useState(null);
   const [cartItemCount, setCartItemCount] = useState(0);
@@ -328,15 +329,23 @@ const Product = () => {
                     </Button>
                   ) : (
                     <>
-                      <Button>
+                      <Button
+                        onClick={() => {
+                          navigate("/login", { replace: true });
+                        }}
+                      >
                         <Icon>
                           <FaShoppingCart />
                         </Icon>
                         Login
                       </Button>
-                      <SignupBtn>
+                      <SignupBtn
+                        onClick={() => {
+                          navigate("/signup", { replace: true });
+                        }}
+                      >
                         <WishIcon>
-                          <BiSolidHeart />
+                          <MdOutlineStar style={{ fontSize: "1.5rem" }} />
                         </WishIcon>
                         Sign Up
                       </SignupBtn>

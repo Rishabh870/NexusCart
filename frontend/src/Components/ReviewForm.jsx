@@ -50,10 +50,12 @@ const SubmitButton = styled.button`
 const RatingForm = ({ update, setUpdate }) => {
   const { productId } = useParams(); // Get the productId from the URL params
   const [rating, setRating] = useState(0);
-  const [comment, setComment] = useState("");
+  const [comment, setComment] = useState(" ");
   const [submited, setSubmited] = useState(false);
   const [averageRating, setAverageRating] = useState(0.0);
   const [reviews, setReviews] = useState([]);
+  const token = localStorage.getItem("token");
+  const [logged, setLogged] = useState(false);
 
   const handleStarClick = (starRating) => {
     setRating(starRating);
@@ -62,6 +64,9 @@ const RatingForm = ({ update, setUpdate }) => {
   // Function to calculate the average rating
 
   useEffect(() => {
+    if (token) {
+      setLogged(true);
+    }
     // Function to fetch reviews and update average rating
 
     const fetchReviews = async () => {
@@ -82,7 +87,7 @@ const RatingForm = ({ update, setUpdate }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (rating === 0 || comment.trim() === "") {
-      return;
+      return toast.error("Please fill the star and input fields");
     }
     const userId = localStorage.getItem("userId");
 
@@ -126,16 +131,22 @@ const RatingForm = ({ update, setUpdate }) => {
           onChange={(e) => setComment(e.target.value)}
           placeholder="Enter your comment"
         />
-        <SubmitButton type="submit">Submit</SubmitButton>
+        {logged ? (
+          <SubmitButton type="submit">Submit</SubmitButton>
+        ) : (
+          <SubmitButton disabled> Submit</SubmitButton>
+        )}
       </FormContainer>
-      {reviews.map((review) => (
-        <ReviewCard
-          key={review.id}
-          userName={review.userId?.fullName}
-          reviewText={review.review}
-          stars={review.stars}
-        />
-      ))}
+      {reviews
+        ? reviews.map((review, index) => (
+            <ReviewCard
+              key={index}
+              userName={review.userId?.fullName}
+              reviewText={review.review}
+              stars={review.stars}
+            />
+          ))
+        : null}
     </Container>
   );
 };

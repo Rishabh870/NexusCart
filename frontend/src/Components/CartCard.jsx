@@ -128,7 +128,9 @@ const CartCard = ({ data, show }) => {
               disabled={!show}
               onChange={handleSizeChange}
             >
-              <option value="">Select size</option>
+              <option value="" disabled>
+                Select size
+              </option>
               {data?.sizes.map((size) => (
                 <option value={size} key={size}>
                   {size}

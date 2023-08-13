@@ -40,6 +40,7 @@ const Button = styled.button`
 const Profile = () => {
   const userId = localStorage.getItem("userId"); // Retrieve the userId from localStorage
   const [loading, setLoading] = useState(false);
+  const [editing, setEditing] = useState(false);
 
   const [userData, setUserData] = useState({
     fullName: "",
@@ -57,6 +58,7 @@ const Profile = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsEditMode(false);
+    setEditing(true);
     const { fullName, mobileNumber, email, password, confirmPassword } =
       userData;
     const data = {
@@ -78,6 +80,7 @@ const Profile = () => {
     } catch (error) {
       toast.error(error.response.data.error);
     }
+    setEditing(false);
   };
 
   useEffect(() => {
@@ -197,7 +200,9 @@ const Profile = () => {
                 )}
               </ProfileField>
 
-              {isEditMode ? (
+              {editing ? (
+                <Button disabled>Loading</Button>
+              ) : isEditMode ? (
                 <Button type="submit" onClick={(e) => handleSubmit(e)}>
                   Save
                 </Button>

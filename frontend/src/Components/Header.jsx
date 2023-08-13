@@ -4,11 +4,11 @@ import { AiOutlineSearch, AiOutlineShoppingCart } from "react-icons/ai";
 import { HiOutlineUser } from "react-icons/hi2";
 import { HiOutlineMenuAlt1 } from "react-icons/hi";
 import { MdOutlineAdminPanelSettings } from "react-icons/md";
-import DealAnnouncement from "./DealAnnouncement";
 import styled from "styled-components";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Button } from "react-bootstrap";
 import { userRequest } from "../requestMethods";
+import { clearCart } from "../Redux/cartReducer";
 
 const Sections = styled.div`
   display: flex;
@@ -85,7 +85,7 @@ const SidebarContainer = styled.div`
   display: flex;
   flex-direction: column;
   top: 0;
-  left: ${({ open }) => (open ? "0" : "-100%")};
+  left: -5px;
   transform: ${({ open }) => (open ? "translateX(0)" : "translateX(-100%)")};
   width: 250px;
   background-color: #ffffff;
@@ -180,9 +180,10 @@ const Header = ({ update }) => {
     setIsAdminOpen(!isAdminOpen);
     setIsOpen(false);
   };
-
+  const dispatch = useDispatch();
   const handleLogout = () => {
     localStorage.clear();
+    dispatch(clearCart());
     // Then redirect to the login page
     setIsAdminOpen(false);
     setIsOpen(false);
@@ -278,7 +279,7 @@ const Header = ({ update }) => {
                   const encodedCategoryName = encodeURIComponent(category.name);
 
                   return (
-                    <SidebarItem>
+                    <SidebarItem key={category._id}>
                       <SidebarLink
                         to={`/allproducts/?category=${encodedCategoryName}`}
                       >
@@ -293,7 +294,7 @@ const Header = ({ update }) => {
                 {MenuBrands.slice(0, 5).map((brand) => {
                   const encodedBrandName = encodeURIComponent(brand.name);
                   return (
-                    <SidebarItem>
+                    <SidebarItem key={brand._id}>
                       <SidebarLink
                         to={`/allproducts/?brand=${encodedBrandName}`}
                       >

@@ -55,9 +55,11 @@ router.get("/getreviews/:productId", async (req, res) => {
       return res.status(404).json({ error: "Product not found" });
     }
 
-    const reviews = await ReviewModel.find({ productId })
+    const reviews = await ReviewModel.find({ productId: productId })
       .populate("reviews.userId", "fullName")
       .select("reviews");
+
+    console.log(reviews);
 
     res.status(200).json(reviews[0].reviews);
   } catch (error) {

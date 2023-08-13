@@ -56,7 +56,7 @@ const UserCard = ({
   const [password, setPassword] = useState("");
   const [editIsAdmin, setIsAdmin] = useState(false);
   const [showModal, setShowModal] = useState(false);
-
+  const [loading, setLoading] = useState(false);
   const handleShowModal = () => {
     setShowModal(true);
   };
@@ -67,6 +67,7 @@ const UserCard = ({
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const data = {
         password,
@@ -78,10 +79,11 @@ const UserCard = ({
       const response = await userRequest.put(`/user/${userId}`, data);
       setUpdate(!update);
       toast.success("User Updated");
+      handleCloseModal();
     } catch (error) {
       toast.error(error.response.data.error);
+      handleCloseModal(); // Close the modal after submitting the form
     }
-    handleCloseModal(); // Close the modal after submitting the form
   };
 
   const handleDelete = async () => {
@@ -169,7 +171,17 @@ const UserCard = ({
             </Form.Group>
 
             <div className="d-flex  justify-content-between">
-              <div></div>
+              <div>
+                {loading ? (
+                  <div className="">
+                    <div className=" spinner-border" role="status">
+                      <span className="sr-only">Loading...</span>
+                    </div>
+                  </div>
+                ) : (
+                  ""
+                )}
+              </div>
               <div style={{ width: "fit-content" }}>
                 <CloseButton onClick={handleCloseModal}>Close</CloseButton>
                 <StyledButton type="submit">Submit</StyledButton>

@@ -52,8 +52,8 @@ const Home = () => {
       ) : (
         <Container style={{ minHeight: "82vh" }} className="mb-2">
           <HeroSection />
-          {section.map((section) => (
-            <Sections filter={section} />
+          {section.map((section, index) => (
+            <Sections key={index} filter={section} />
           ))}
         </Container>
       )}

@@ -77,9 +77,9 @@ const OrderHistoryAdminCard = ({
     }
   };
 
-  const fullName = userId.fullName;
+  const fullName = userId?.fullName;
   const truncatedName =
-    fullName.length > 8 ? fullName.substring(0, 7) + "..." : fullName;
+    fullName?.length > 8 ? fullName?.substring(0, 7) + "..." : fullName;
 
   return (
     <>

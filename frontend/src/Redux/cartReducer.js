@@ -4,9 +4,9 @@ import { BASE_URL, userRequest } from "../requestMethods";
 export const addCartProduct = createAsyncThunk("addCart", async (data) => {
   try {
     const userId = localStorage.getItem("userId"); // Retrieve the userId from localStorage
-    console.log(userId);
+    // console.log(userId);
     const response = await userRequest.post(`/cart/addcart/${userId}`, data);
-    console.log(response.data);
+    // console.log(response.data);
     return response.data.products;
   } catch (error) {
     console.log(error);
@@ -28,14 +28,14 @@ export const getCartProduct = createAsyncThunk("getCart", async () => {
 export const updateCartItem = createAsyncThunk(
   "updateCartItem",
   async (data) => {
-    console.log(data);
+    // console.log(data);
     try {
       const userId = localStorage.getItem("userId"); // Retrieve the userId from localStorage
       const response = await userRequest.put(
         `/cart/products/${userId}/${data?.id}`,
         data
       );
-      console.log(response.data.product);
+      // console.log(response.data.product);
       return response.data.product;
     } catch (error) {
       console.log(error);
@@ -81,6 +81,15 @@ const cardSlice = createSlice({
     quantity: 0,
     totalPrice: 0,
   },
+  reducers: {
+    clearCart: (state) => {
+      state.products = [];
+      state.quantity = 0;
+      state.totalPrice = 0;
+      state.loading = false;
+      state.error = null;
+    },
+  },
   extraReducers: {
     [addCartProduct.pending]: (state) => {
       state.loading = true;
@@ -116,13 +125,13 @@ const cardSlice = createSlice({
       state.loading = false;
       state.products = state.products.map((product) => {
         if (product.cartId === action.payload._id) {
-          console.log(action.payload);
+          // console.log(action.payload);
           const updateProduct = product;
           updateProduct.quantity = action.payload.quantity;
           updateProduct.selectedSize = action.payload.selectedSize;
           return updateProduct;
         }
-        console.log(product);
+        // console.log(product);
         return product;
       });
       state.totalPrice = calculateTotalPrice(state.products);
@@ -139,7 +148,7 @@ const cardSlice = createSlice({
       state.loading = false;
       state.quantity -= 1;
       state.products = state.products.filter((product) => {
-        console.log(action.payload);
+        // console.log(action.payload);
         return product.cartId !== action.payload;
       });
       state.totalPrice = calculateTotalPrice(state.products);
@@ -151,5 +160,5 @@ const cardSlice = createSlice({
   },
 });
 
-export const { addProduct } = cardSlice.actions;
+export const { addProduct, clearCart } = cardSlice.actions;
 export default cardSlice.reducer;

@@ -4,13 +4,13 @@ import styled from "styled-components";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import CartCard from "../Components/CartCard";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { MdClose } from "react-icons/md";
 import { userRequest } from "../requestMethods";
 import AddressForm from "../Components/AddressForm";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-
+import { clearCart } from "../Redux/cartReducer";
 const Row = styled.div`
   display: flex;
   align-items: stretch;
@@ -171,6 +171,21 @@ const DropdownItem = styled.option`
   cursor: pointer;
 `;
 
+const StyledButton = styled(Button)`
+  background-color: black !important;
+  border-color: #000000 !important;
+  color: white;
+  border-radius: 0%;
+`;
+
+const CloseButton = styled(Button)`
+  background-color: white !important;
+  border-color: black !important;
+  color: black !important;
+  margin-right: 5px;
+  border-radius: 0%;
+`;
+
 const Cart = () => {
   const totalPrice = useSelector((state) => state.cart.totalPrice);
   const formattedTotalPrice = totalPrice.toFixed(2);
@@ -181,7 +196,24 @@ const Cart = () => {
   const userId = localStorage.getItem("userId"); // Retrieve the userId from localStorage
   const cartProduct = useSelector((state) => state.cart.products);
   const [deliveryData, setDeliveryData] = useState("");
+  const [show, setShow] = useState(false);
   const navigate = useNavigate();
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => {
+    if (selectedMethod === "") {
+      return toast.error("Please select a payment method");
+    }
+
+    if (!deliveryData.deliveryAddress || !deliveryData.deliveryTo) {
+      return toast.error("Please add a delivery address");
+    }
+
+    if (cartProduct.length <= 0) {
+      return toast.error("Please add products to cart");
+    }
+    setShow(true);
+  };
   useEffect(() => {
     const getUserData = async () => {
       setLoading(true);
@@ -198,20 +230,8 @@ const Cart = () => {
 
     getUserData();
   }, [update, userId]);
-
+  const dispatch = useDispatch();
   const handleCheckout = async () => {
-    if (selectedMethod === "") {
-      return toast.error("Please select a payment method");
-    }
-
-    if (!deliveryData.deliveryAddress || !deliveryData.deliveryTo) {
-      return toast.error("Please add a delivery address");
-    }
-
-    if (cartProduct.length <= 0) {
-      return toast.error("Please add products to cart");
-    }
-
     try {
       const response = await userRequest.post(`/order/addorder/${userId}`, {
         userId,
@@ -222,6 +242,7 @@ const Cart = () => {
       const deleteProduct = await userRequest.delete(
         `/cart/products/${userId}`
       );
+      dispatch(clearCart());
       navigate(`/order/${response.data.orders._id}`);
     } catch (error) {
       // Handle errors during the request
@@ -328,7 +349,7 @@ const Cart = () => {
                     {userId ? (
                       <CheckoutButton
                         className="submitBtn btn-block"
-                        onClick={handleCheckout}
+                        onClick={handleShow}
                       >
                         Checkout
                       </CheckoutButton>
@@ -348,6 +369,27 @@ const Cart = () => {
           />
         </Container>
       )}
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header>
+          <Modal.Title>Delivery Address Confirmation</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="w-100">
+            <DeliveryTo>Delivery to: {deliveryData.deliveryTo}</DeliveryTo>
+            <DeliveryAddress>
+              Delivery Address: {deliveryData.deliveryAddress}
+            </DeliveryAddress>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <CloseButton variant="secondary" onClick={handleClose}>
+            Close
+          </CloseButton>
+          <StyledButton variant="primary" onClick={handleCheckout}>
+            Confirm
+          </StyledButton>
+        </Modal.Footer>
+      </Modal>
       <Footer />
     </>
   );
