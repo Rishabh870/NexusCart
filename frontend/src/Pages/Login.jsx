@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { Container, Row, Col, Form } from "react-bootstrap";
 import Header from "../Components/Header";
 import { publicRequest } from "../requestMethods";
-import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -78,10 +77,11 @@ const Login = () => {
       }
 
       if (!password) {
-        e.target.form.classList.add("invalid-field");
+        e.target.formPassword.classList.add("invalid-field");
       } else {
         e.target.formPassword.classList.remove("invalid-field");
       }
+      setLoading(false);
       return; // Stop form submission if any field is empty
     }
 

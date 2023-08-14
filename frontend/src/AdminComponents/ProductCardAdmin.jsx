@@ -157,7 +157,7 @@ const ProductCardAdmin = ({ product, setUpdate, update }) => {
               return (
                 <div style={{ borderRadius: "30px" }}>
                   <img
-                    src={`${BASE_URL}/` + src}
+                    src={src}
                     alt=""
                     style={{
                       width: "100%",

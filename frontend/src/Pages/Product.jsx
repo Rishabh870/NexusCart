@@ -274,15 +274,20 @@ const Product = () => {
                   itemClass="carousel-item-padding-40-px"
                   showDots="true"
                 >
-                  {product.img.map((slide, index) => (
-                    <div key={index} style={{ borderRadius: "30px" }}>
-                      <img
-                        src={`${BASE_URL}/` + slide}
-                        alt={slide}
-                        style={{ width: "100%", height: "610px" }}
-                      />
-                    </div>
-                  ))}
+                  {product.img.map(
+                    (slide, index) => (
+                      console.log(slide),
+                      (
+                        <div key={index} style={{ borderRadius: "30px" }}>
+                          <img
+                            src={slide}
+                            alt={slide}
+                            style={{ width: "100%", height: "610px" }}
+                          />
+                        </div>
+                      )
+                    )
+                  )}
                 </Carousel>
               </div>
             </div>

@@ -23,8 +23,11 @@ const orderRouter = require("./router/order_router");
 const categoryRouter = require("./router/categories_router");
 const brandRouter = require("./router/brand_router");
 const reviewRouter = require("./router/review_router");
-const { MONGODB_URL, PAYPAL_CLIENT_ID } = require("./config");
+const dotenv = require("dotenv");
+dotenv.config();
+const { MONGODB_URL, PAYPAL_CLIENT_ID } = process.env;
 const { verifyTokenAuth } = require("./middleware/verifyToken");
+const cloudinary = require("cloudinary").v2;
 
 app.use(cors());
 app.use(express.json());

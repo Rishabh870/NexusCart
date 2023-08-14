@@ -19,7 +19,7 @@ router.post(
     // Check if there are uploaded files (images)
     if (req.files) {
       // Extract image paths from uploaded files and store in 'images' array
-      const images = req.files.map((file) => file.destination + file.filename);
+      const images = req.files.map((file) => file.path);
       newProduct.img = images; // Assign image paths to the 'img' field in the product schema
     }
 

@@ -56,6 +56,7 @@ const AddProductModal = ({ show, onHide, update, setUpdate }) => {
   const [sizeInput, setSizeInput] = useState("");
   const [dropBrands, setDropBrands] = useState([]);
   const [dropCategories, setDropCategories] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const handleSizeInputChange = (e) => {
     const input = e.target.value;
@@ -84,7 +85,19 @@ const AddProductModal = ({ show, onHide, update, setUpdate }) => {
   }, [update]);
 
   const handleSubmit = async () => {
+    setLoading(true);
     try {
+      if (
+        productName === "" ||
+        brandName === "" ||
+        desc === "" ||
+        price === "" ||
+        category === "" ||
+        sizeInput === "" ||
+        imagePreviews.length === 0
+      ) {
+        return toast.error("Please fill all the fields");
+      }
       const formData = new FormData();
       // Split the sizeInput string by commas and trim spaces from each word
       const sizeArray = sizeInput.split(",").map((size) => size.trim());
@@ -134,6 +147,7 @@ const AddProductModal = ({ show, onHide, update, setUpdate }) => {
       toast.error(error.response.data.error);
     }
     setUpdate(!update);
+    setLoading(false);
   };
 
   const handleImageChange = (e) => {
@@ -276,7 +290,7 @@ const AddProductModal = ({ show, onHide, update, setUpdate }) => {
           </Form.Group>
           <Form.Group className="mb-2">
             <Form.Control
-              type="text"
+              type="number"
               value={price}
               onChange={(e) => setPrice(e.target.value)}
               placeholder="Price"
@@ -305,7 +319,11 @@ const AddProductModal = ({ show, onHide, update, setUpdate }) => {
       </Modal.Body>
       <Modal.Footer>
         <CloseButton onClick={onHide}>Close</CloseButton>
-        <StyledButton onClick={handleSubmit}>Save Changes</StyledButton>
+        {loading ? (
+          <StyledButton disabled>Loading</StyledButton>
+        ) : (
+          <StyledButton onClick={handleSubmit}>Save Changes</StyledButton>
+        )}
       </Modal.Footer>
     </Modal>
   );

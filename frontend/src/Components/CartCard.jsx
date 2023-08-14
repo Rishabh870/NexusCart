@@ -114,7 +114,7 @@ const CartCard = ({ data, show }) => {
   return (
     <CardContainer className="row border p-2 px-0 mb-2 mx-1">
       <div className="col-3 px-1">
-        <Image src={`${BASE_URL}/` + data.img[0]} alt={data.productName} />
+        <Image src={data.img[0]} alt={data.productName} />
       </div>
       <div className="col-8 px-2 d-flex flex-column justify-content-center">
         <ProductName>{data._id && data.productName}</ProductName>

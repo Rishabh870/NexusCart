@@ -122,6 +122,7 @@ const Signup = () => {
       } else {
         e.target.formOTP.classList.remove("invalid-field");
       }
+      setLoading(false);
       return; // Stop form submission if any field is empty
     }
 
@@ -157,9 +158,9 @@ const Signup = () => {
     } catch (error) {
       if (error.response && error.response.status === 409) {
         // User already exists, display a prompt
-        toast.success("User already exists. Please log in instead.");
+        toast.error("User already exists. Please log in instead.");
       } else {
-        toast.success(error.response.data.error);
+        toast.error(error.response.data.error);
 
         // Handle other error cases, such as displaying an error message
       }

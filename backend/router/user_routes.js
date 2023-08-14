@@ -2,9 +2,11 @@ const express = require("express");
 const router = express.Router();
 const bcryptjs = require("bcryptjs");
 const nodemailer = require("nodemailer");
+const dotenv = require("dotenv");
+dotenv.config();
+const { JWT_SECRET } = process.env;
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
-const { JWT_SECRET } = require("../config");
 const {
   verifyTokenAuth,
   verifyTokenAdmin,

@@ -129,7 +129,7 @@ const ProductCard = ({ product }) => {
       onMouseLeave={() => setCartHovered(false)}
     >
       <ProductImageSliderContainer className="card-img-top">
-        <ProductImage src={`${BASE_URL}/` + product.img[0]} />
+        <ProductImage src={product.img[0]} />
       </ProductImageSliderContainer>
 
       <CardContent className="card-body pt-2 px-3">

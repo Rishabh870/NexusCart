@@ -1,0 +1,56 @@
+Firstly, This is the link to the Live Ibsite Hosted on Netlify: https://venerable-froyo-f76d75.netlify.app/
+
+I have made a default admin profile: 
+    gmail: admin@gmail.com
+    password: admin
+
+If you want to login as an admin use above gmail and password. This is to ensure that the user can't become an admin
+
+There might be some i have Forgot to mention since there are too many things.
+Here's a summary of the various features I successfully implemented:
+
+Node.JS Server Creation: My backend infrastructure was built using Node.JS. This server facilitated communication betIen the frontend and the database, enabling a smooth data flow.
+
+MongoDB Database Connection: Using Mongoose, I established a connection with a MongoDB database, ensuring efficient data storage and retrieval.
+
+Authentication APIs: Backend APIs for sign-in and sign-up Ire created, implementing authentication mechanisms for user security.
+ 
+Listing Products and Adding Images: I began by integrating the ability to showcase products on my platform. Products Ire displayed along with their respective images, creating an engaging shopping experience for users.
+
+Fetching Products from Backend: Utilizing Axios, I established a connection betIen the frontend and backend. This enabled us to retrieve product information stored on the server and display it to users.
+
+Rendering and Styling: The presentation of products was enhanced through meticulous styling. This ensured that my users enjoyed a visually appealing and user-friendly interface.
+
+Page Routing: I implemented seamless navigation within the app using the react-router-dom library. This alloId users to explore different sections of the app effortlessly.
+
+State Management with Reducer Hook: To manage complex application states, I incorporated the reducer hook. This streamlined state management and ensured efficient updates.
+
+Bootstrap UI Framework: By integrating Bootstrap, I achieved consistent and responsive UI design, enhancing the overall user experience.
+
+Search Functionality: I added a search box and search screen, enabling users to quickly find desired products.
+
+Product Details Screen: Users could access comprehensive details about each product, fostering informed decision-making.
+
+Product and Rating Components: I designed dedicated components for products and ratings, ensuring a structured and modular codebase.
+
+Loading and Message Component: I incorporated loading indicators and informative messages to enhance user feedback during various interactions.
+
+React Context for Cart: Utilizing React context, I empoIred users to conveniently add items to their shopping cart from different parts of the app.
+
+Cart Screen: The cart screen was developed, enabling users to review their selected items, make modifications, and proceed to checkout.
+
+Sign-In Screen: I implemented a secure sign-in screen, safeguarding user accounts and data.
+
+Shipping and Payment Screens: Users could specify shipping details and select preferred payment methods, facilitating a seamless checkout process.
+
+Order Placement and History: The app alloId users to place orders and view their order history, enhancing transparency and user engagement.
+
+PayPal Integration: I integrated PayPal for secure payment processing, offering users a trusted payment gateway.
+
+React-Paypal-JS Integration: Further enhancing PayPal integration, I employed the react-paypal-js library for smoother payment interactions.
+
+Profile Screen: A personalized profile screen was developed, enabling users to manage their account information and preferences.
+
+Netlify Deployment: The application was successfully deployed on Netlify, making it accessible to a wider audience.
+
+Admin Functionality: An admin menu and dashboard screen Ire implemented, empoIring administrators to manage products efficiently.

@@ -212,7 +212,17 @@ const Header = ({ update }) => {
 
     if (isLoggedIn) {
       const storedName = localStorage.getItem("name");
-      setName(storedName ? storedName.split(" ")[0] : "Guest");
+      let firstName = "Guest";
+
+      if (storedName) {
+        const words = storedName.split(" ");
+        if (words.length <= 7) {
+          firstName = storedName;
+        } else {
+          firstName = words.slice(0, 7).join(" ") + " ...";
+        }
+      }
+      setName(firstName);
     }
 
     document.addEventListener("click", handleClickOutside);
@@ -249,12 +259,12 @@ const Header = ({ update }) => {
           >
             <HiOutlineMenuAlt1 onClick={handleToggleSidebar} />
             <SidebarContainer className="p-0" open={side}>
-              <h3
-                style={{ backgroundColor: "black", padding: "1.08rem 0" }}
+              <h4
+                style={{ backgroundColor: "black", padding: "1.23rem 0" }}
                 className=" m-0 text-white"
               >
                 Hello, {name}
-              </h3>
+              </h4>
               <hr className="mt-0" />
               <SidebarHeading className="text-left px-4">Menu</SidebarHeading>
               <div className="px-5 text-left ">

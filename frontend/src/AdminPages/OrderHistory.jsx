@@ -44,22 +44,22 @@ const OrderHistory = () => {
   const [orders, setOrders] = useState([]);
   const [update, setUpdate] = useState(false);
   const [loading, setLoading] = useState(false);
-  const getUserOrders = async () => {
-    setLoading(true);
-    try {
-      const response = await userRequest.get(`order/orders`);
-      const ordersData = response.data;
-
-      setOrders(ordersData);
-      setLoading(false);
-    } catch (error) {
-      // Handle the error
-      console.log(error);
-      toast.error(error.response.data.error);
-    }
-  };
 
   useEffect(() => {
+    const getUserOrders = async () => {
+      setLoading(true);
+      try {
+        const response = await userRequest.get(`order/orders`);
+        const ordersData = response.data;
+
+        setOrders(ordersData);
+      } catch (error) {
+        // Handle the error
+        console.log(error);
+        toast.error(error.response.data.error);
+      }
+      setLoading(false);
+    };
     getUserOrders();
   }, [update]);
 

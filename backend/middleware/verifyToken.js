@@ -1,7 +1,8 @@
 // Import required modules
 const jwt = require("jsonwebtoken");
-const { JWT_SECRET } = require("../config");
-
+const dotenv = require("dotenv");
+dotenv.config();
+const { JWT_SECRET } = process.env;
 // Middleware to verify the token in the request headers
 const verifyToken = (req, res, next) => {
   // Extract token from the 'token' header

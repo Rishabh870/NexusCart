@@ -1,33 +1,38 @@
 const multer = require("multer");
+const cloudinary = require("cloudinary").v2;
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
 
+cloudinary.config({
+  cloud_name: "dsefier2u",
+  api_key: "828854711416964",
+  api_secret: "TT2YEdcsUWe28puwZVKcN9YEtKs",
+});
 // Define the storage for uploaded files
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/"); // Uploads directory where files will be saved
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    const originalExtension = file.originalname.split(".").pop();
-    cb(null, file.fieldname + "-" + uniqueSuffix + "." + originalExtension);
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, "uploads/"); // Uploads directory where files will be saved
+//   },
+//   filename: function (req, file, cb) {
+//     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+//     const originalExtension = file.originalname.split(".").pop();
+//     cb(null, file.fieldname + "-" + uniqueSuffix + "." + originalExtension);
+//   },
+// });
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "nexuscart/images",
+    format: async (req, file) => "png",
+    allowedformat: ["jpg", "jpeg,png,gif"],
+    public_id: (req, file) => {
+      file.filename;
+    },
   },
 });
 
-// Define the file filter to accept only image files
-const fileFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith("image/")) {
-    cb(null, true);
-  } else {
-    cb(
-      new Error("Only image files .jpg, .jpeg, and .png files are allowed !"),
-      false
-    );
-  }
-};
-
 // Initialize multer with the storage and file filter options
 const upload = multer({
-  storage: storage,
-  fileFilter: fileFilter,
+  storage,
   limits: {
     fileSize: 1024 * 1024 * 5, // Limit the file size to 5MB
   },

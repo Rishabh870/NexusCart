@@ -42,11 +42,14 @@ const CloseButton = styled(Button)`
   background-color: white !important;
   border-color: black !important;
   color: black !important;
+  margin-right: 0.3rem;
   border-radius: 0%;
 `;
 
 const EditProductModal = ({ show, onHide, productData }) => {
   const [product, setProduct] = useState(productData);
+  const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     productName: "",
     brandName: "",
@@ -86,6 +89,18 @@ const EditProductModal = ({ show, onHide, productData }) => {
   }, [productData]);
 
   const handleSubmit = async () => {
+    setLoading(true);
+    if (
+      formData.productName === "" ||
+      formData.brandName === "" ||
+      formData.desc === "" ||
+      formData.price === "" ||
+      formData.category === "" ||
+      formData.sizeInput === "" ||
+      product.img.length === 0
+    ) {
+      return toast.error("Please fill all the fields");
+    }
     const form = new FormData();
     // Split the sizeInput string by commas and trim spaces from each word
 
@@ -159,6 +174,7 @@ const EditProductModal = ({ show, onHide, productData }) => {
     } catch (error) {
       toast.error(error.response.data.error);
     }
+    setLoading(false);
     // Make a POST request to the '/addproduct' route using userRequest
   };
 
@@ -218,7 +234,7 @@ const EditProductModal = ({ show, onHide, productData }) => {
                     />
                   ) : (
                     <img
-                      src={`${BASE_URL}/` + file}
+                      src={file}
                       alt=""
                       style={{
                         width: "100px",
@@ -315,7 +331,7 @@ const EditProductModal = ({ show, onHide, productData }) => {
           </Form.Group>
           <Form.Group className="mb-2">
             <Form.Control
-              type="text"
+              type="number"
               value={formData.price}
               onChange={(e) =>
                 setFormData({ ...formData, price: e.target.value })
@@ -350,7 +366,11 @@ const EditProductModal = ({ show, onHide, productData }) => {
       </Modal.Body>
       <Modal.Footer>
         <CloseButton onClick={onHide}>Close</CloseButton>
-        <StyledButton onClick={handleSubmit}>Save Changes</StyledButton>
+        {loading ? (
+          <StyledButton disabled>Loading</StyledButton>
+        ) : (
+          <StyledButton onClick={handleSubmit}>Save Changes</StyledButton>
+        )}
       </Modal.Footer>
     </Modal>
   );
