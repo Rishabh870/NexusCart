@@ -61,6 +61,9 @@ const DropdownItem = styled(Link)`
   color: black;
   font-family: "Playfair Display", serif;
   margin: 0.3rem 0;
+  &:hover {
+    color: grey;
+  }
 `;
 
 const CartBadge = styled.span`

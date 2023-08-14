@@ -94,7 +94,8 @@ router.get("/orders/:userId", verifyTokenAuth, (req, res) => {
       }
 
       const orders = order.orders;
-      res.status(200).json(orders);
+      const reversedOrders = orders.slice().reverse();
+      res.status(200).json(reversedOrders);
     })
     .catch((error) => {
       console.log(error);

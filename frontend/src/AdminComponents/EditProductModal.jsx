@@ -99,6 +99,8 @@ const EditProductModal = ({ show, onHide, productData }) => {
       formData.sizeInput === "" ||
       product.img.length === 0
     ) {
+      setLoading(false);
+
       return toast.error("Please fill all the fields");
     }
     const form = new FormData();

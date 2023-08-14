@@ -8,9 +8,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const SignupPageContainer = styled.div`
-  height: 80vh;
+  min-height: 80vh;
   display: flex;
   justify-content: center;
+  margin-bottom: 10rem;
   font-family: "Playfair Display", sans-serif !important;
   align-items: center;
 `;
@@ -216,7 +217,11 @@ const Signup = () => {
                   </Form.Group>
 
                   {showOtpField && (
-                    <Form.Group className="mt-3" controlId="formOTP">
+                    <Form.Group
+                      className="mt-3"
+                      style={{ fontFamily: "Playfair, serif" }}
+                      controlId="formOTP"
+                    >
                       <Form.Label>Enter OTP:</Form.Label>
                       <Form.Control
                         type="number"
@@ -227,7 +232,11 @@ const Signup = () => {
                     </Form.Group>
                   )}
 
-                  <Form.Group className="mt-3" controlId="formMobileNumber">
+                  <Form.Group
+                    style={{ fontFamily: "Playfair, serif" }}
+                    className="mt-3"
+                    controlId="formMobileNumber"
+                  >
                     <Form.Label>Mobile Number:</Form.Label>
                     <Form.Control
                       type="number"

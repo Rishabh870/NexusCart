@@ -29,7 +29,7 @@ const Section = styled.div`
 `;
 
 const Title = styled.h3`
-  font-family: "Josefin Sans regular";
+  font-family: "Playfair ", serif;
   text-decoration: underline;
 `;
 

@@ -135,7 +135,9 @@ const ProductCard = ({ product }) => {
       <CardContent className="card-body pt-2 px-3">
         <Brand className="card-text">{product.brandName}</Brand>
         <ProductName className="card-title my-1">
-          {product.productName}
+          {product.productName.length > 23
+            ? product.productName.substring(0, 23) + "..."
+            : product.productName}
         </ProductName>
         <Price className="card-text">${product.price}</Price>
         <RatingContainer className="mt-2">{stars}</RatingContainer>

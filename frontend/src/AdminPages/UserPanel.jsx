@@ -5,7 +5,7 @@ import Footer from "../Components/Footer";
 import { userRequest } from "../requestMethods";
 import { Container } from "react-bootstrap";
 import UserCard from "../AdminComponents/UserCard";
-import { Modal, Button, Form } from "react-bootstrap";
+import ReactPaginate from "react-paginate";
 
 const RowContainer = styled.div`
   padding: 10px 20px;
@@ -18,12 +18,54 @@ const HeaderCell = styled.div`
   flex: 1;
   text-align: center;
 `;
+const PaginationContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    list-style: none;
+    li {
+      margin: 0 5px;
+      a {
+        padding: 5px 10px;
+        border: 1px solid #ccc;
+        color: #000000;
+        text-decoration: none;
+        &:hover {
+          background-color: #000000;
+          color: #ffffff;
+        }
+      }
+    }
+    .active a {
+      background-color: #333;
+      color: #fff;
+    }
+    .disabled a {
+      pointer-events: none;
+      color: #ccc;
+    }
+  }
+`;
 
 const UserPanel = () => {
   const [users, setUsers] = useState([]);
   const [update, setUpdate] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
 
+  const productsPerPage = 11;
+  const pageCount = Math.ceil(users.length / productsPerPage);
+  const startIndex = currentPage * productsPerPage;
+  const endIndex = startIndex + productsPerPage;
+  const userToShow = users.slice(startIndex, endIndex);
+
+  const handlePageClick = ({ selected }) => {
+    setCurrentPage(selected);
+  };
   useEffect(() => {
     const getUser = async () => {
       setLoading(true);
@@ -51,7 +93,7 @@ const UserPanel = () => {
           </div>
         </div>
       ) : (
-        <Container style={{ minHeight: "50rem" }}>
+        <Container style={{ minHeight: "80vh" }}>
           <RowContainer className="row">
             <HeaderCell className="col-3">User ID</HeaderCell>
             <HeaderCell className="col-2">Name</HeaderCell>
@@ -60,7 +102,7 @@ const UserPanel = () => {
             <HeaderCell className="col-2 my-auto p-0">Action</HeaderCell>
           </RowContainer>
 
-          {users.map((user, index) => {
+          {userToShow.map((user, index) => {
             return (
               <div>
                 <UserCard
@@ -77,6 +119,19 @@ const UserPanel = () => {
           })}
         </Container>
       )}
+      <PaginationContainer>
+        <ReactPaginate
+          previousLabel={"Previous"}
+          nextLabel={"Next"}
+          pageCount={pageCount}
+          onPageChange={handlePageClick}
+          containerClassName={"pagination"}
+          previousLinkClassName={"page-link"}
+          nextLinkClassName={"page-link"}
+          disabledClassName={"disabled"}
+          activeClassName={"active"}
+        />
+      </PaginationContainer>
       <Footer />
     </div>
   );

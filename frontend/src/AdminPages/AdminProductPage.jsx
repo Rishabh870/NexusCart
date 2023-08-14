@@ -6,9 +6,10 @@ import { Container } from "react-bootstrap";
 import { userRequest } from "../requestMethods";
 import AddProductModal from "../AdminComponents/AddProductModal";
 import { styled } from "styled-components";
-import { Button, Modal, Form } from "react-bootstrap";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Button, Modal } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import ReactPaginate from "react-paginate";
 
 const FormContainer = styled.div`
   display: flex;
@@ -69,6 +70,42 @@ const AddBtn = styled.button`
     color: white;
   }
 `;
+const ProductContainer = styled.div`
+  min-height: 70vh;
+`;
+
+const PaginationContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    list-style: none;
+    li {
+      margin: 0 5px;
+      a {
+        padding: 5px 10px;
+        border: 1px solid #ccc;
+        color: #000000;
+        text-decoration: none;
+        &:hover {
+          background-color: #000000;
+          color: #ffffff;
+        }
+      }
+    }
+    .active a {
+      background-color: #333;
+      color: #fff;
+    }
+    .disabled a {
+      pointer-events: none;
+      color: #ccc;
+    }
+  }
+`;
 
 const AdminProductPage = () => {
   const [products, setProducts] = useState([]);
@@ -79,6 +116,17 @@ const AdminProductPage = () => {
   const [brands, setBrands] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [currentPage, setCurrentPage] = useState(0);
+
+  const productsPerPage = 9;
+  const pageCount = Math.ceil(products.length / productsPerPage);
+  const startIndex = currentPage * productsPerPage;
+  const endIndex = startIndex + productsPerPage;
+  const productsToDisplay = products.slice(startIndex, endIndex);
+
+  const handlePageClick = ({ selected }) => {
+    setCurrentPage(selected);
+  };
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
@@ -165,7 +213,7 @@ const AdminProductPage = () => {
         <Container
           fluid
           className=" px-5 mx-auto"
-          style={{ minHeight: "90vh", fontFamily: "Playfair Display, serif" }}
+          style={{ minHeight: "80vh", fontFamily: "Playfair Display, serif" }}
         >
           <div className="d-flex justify-content-between mb-4">
             <HeadingWrapper>Products</HeadingWrapper>
@@ -178,8 +226,8 @@ const AdminProductPage = () => {
             </AddBtn>
             <ProductBtn onClick={handleShowModal}>Add Product</ProductBtn>
           </div>
-          <div className="row" style={{ width: "100%" }}>
-            {products.map((product) => (
+          <div className="row mx-auto" style={{ width: "100%" }}>
+            {productsToDisplay.map((product) => (
               <div className="col-6 col-xl-4 mb-3">
                 <ProductCardAdmin
                   key={product.id}
@@ -192,6 +240,19 @@ const AdminProductPage = () => {
           </div>
         </Container>
       )}
+      <PaginationContainer>
+        <ReactPaginate
+          previousLabel={"Previous"}
+          nextLabel={"Next"}
+          pageCount={pageCount}
+          onPageChange={handlePageClick}
+          containerClassName={"pagination"}
+          previousLinkClassName={"page-link"}
+          nextLinkClassName={"page-link"}
+          disabledClassName={"disabled"}
+          activeClassName={"active"}
+        />
+      </PaginationContainer>
       <Footer />
       <AddProductModal
         show={showModal}

@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 const ProfileContainer = styled.div`
   max-width: 400px;
   margin: 0 auto;
+  font-family: "Playfair Display", serif !important;
 `;
 
 const ProfileField = styled.div`
@@ -16,6 +17,8 @@ const ProfileField = styled.div`
 
   label {
     font-weight: bold;
+    font-size: large;
+    font-family: "Playfair Display", sans-serif;
   }
 
   input,
@@ -57,10 +60,14 @@ const Profile = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsEditMode(false);
-    setEditing(true);
     const { fullName, mobileNumber, email, password, confirmPassword } =
       userData;
+    if (!fullName || !mobileNumber || !email) {
+      toast.error("Please fill all the fields. fullname, mobile, email");
+      return;
+    }
+    setIsEditMode(false);
+    setEditing(true);
     const data = {
       fullName,
       mobileNumber,
@@ -124,12 +131,15 @@ const Profile = () => {
       ) : (
         <Container style={{ minHeight: "82vh" }}>
           <ProfileContainer>
-            <h2 className=" text-center text-decoration-underline">
+            <h2
+              style={{ textDecoration: "underline" }}
+              className="text-center "
+            >
               Profile Details
             </h2>
             <div className="mt-4">
               <ProfileField>
-                <label>Full Name</label>
+                <label>Full Name:</label>
                 {isEditMode ? (
                   <input
                     type="text"
@@ -143,10 +153,10 @@ const Profile = () => {
                 )}
               </ProfileField>
               <ProfileField>
-                <label>Mobile Number</label>
+                <label>Mobile Number:</label>
                 {isEditMode ? (
                   <input
-                    type="text"
+                    type="number"
                     value={userData.mobileNumber}
                     onChange={(e) =>
                       setUserData({ ...userData, mobileNumber: e.target.value })
@@ -157,7 +167,7 @@ const Profile = () => {
                 )}
               </ProfileField>
               <ProfileField>
-                <label>Email ID</label>
+                <label>Email ID:</label>
                 {isEditMode ? (
                   <input
                     type="text"
@@ -171,7 +181,7 @@ const Profile = () => {
                 )}
               </ProfileField>
               <ProfileField>
-                <label>Password</label>
+                <label>Password:</label>
                 {isEditMode ? (
                   <input
                     type="text"
@@ -184,7 +194,7 @@ const Profile = () => {
                 )}
               </ProfileField>
               <ProfileField>
-                <label>Confirm Password</label>
+                <label>Confirm Password:</label>
                 {isEditMode ? (
                   <input
                     type="text"

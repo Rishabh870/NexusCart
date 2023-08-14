@@ -58,7 +58,7 @@ const PassReset = () => {
   const handleReset = async (e) => {
     e.preventDefault();
     if (!showOtpField) {
-      return alert("Please verify your email");
+      return toast.error("Please verify your email");
     }
     setLoading(true);
     const email = e.target.formEmail.value;
@@ -81,6 +81,7 @@ const PassReset = () => {
         } else {
           e.target.formOTP.classList.remove("invalid-field");
         }
+        setLoading(false);
         return;
       }
       const formFields = e.target.elements;
@@ -164,6 +165,9 @@ const PassReset = () => {
                     <Form.Group className="mt-3" controlId="formOTP">
                       <Form.Label>Enter OTP:</Form.Label>
                       <Form.Control
+                        style={{
+                          fontFamily: "Playfair Display, serif !important",
+                        }}
                         type="number"
                         maxLength="6"
                         pattern="[0-9]{6}"

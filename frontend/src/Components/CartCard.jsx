@@ -36,6 +36,7 @@ const Brand = styled.p`
 const ProductName = styled.p`
   text-align: start;
   margin: 0;
+  font-family: "Playfair Display", sans-serif;
   font-weight: 600;
   font-size: 1.2rem;
   white-space: nowrap;
@@ -46,6 +47,7 @@ const ProductName = styled.p`
 const DropTitle = styled.span`
   font-weight: bold;
   font-size: 1rem;
+  font-family: "Playfair ", serif;
 `;
 
 const Dropdown = styled.select`
@@ -53,7 +55,8 @@ const Dropdown = styled.select`
   font-size: 0.9rem;
   padding: 3px;
   border: none;
-  font-family: "Poppins", sans-serif;
+  font-family: "Playfair ", serif;
+
   font-weight: bold;
   &:focus {
     outline: none;
@@ -64,7 +67,8 @@ const Price = styled.p`
   margin-bottom: 0.5rem;
   text-align: start;
   font-size: 0.9rem;
-  font-family: "Poppins", sans-serif;
+  font-family: "Playfair ", serif;
+
   font-weight: bolder;
 `;
 

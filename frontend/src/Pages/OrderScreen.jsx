@@ -75,6 +75,7 @@ const SummaryDetails = styled.div`
   margin-bottom: 1rem;
   display: flex;
   justify-content: space-between;
+  font-family: "Playfair ", serif;
 `;
 
 const SummaryTotal = styled.div`

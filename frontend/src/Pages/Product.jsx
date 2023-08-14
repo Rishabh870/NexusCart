@@ -4,8 +4,7 @@ import Footer from "../Components/Footer";
 import { Container } from "react-bootstrap";
 import { styled } from "styled-components";
 import { FaShoppingCart } from "react-icons/fa";
-import { BiSolidHeart } from "react-icons/bi";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import {
@@ -13,12 +12,10 @@ import {
   addProduct,
   getCartProduct,
 } from "../Redux/cartReducer";
-import { publicRequest, userRequest } from "../requestMethods";
+import { userRequest } from "../requestMethods";
 import { useNavigate, useParams } from "react-router-dom";
-import ReviewCard from "../Components/ReviewCard";
 import ReviewForm from "../Components/ReviewForm";
 import { MdOutlineStar } from "react-icons/md";
-import { BASE_URL } from "../requestMethods";
 import { toast } from "react-toastify";
 
 const ProductInfo = styled.div`
@@ -30,16 +27,7 @@ const Review = styled.div`
 `;
 const TopSection = styled.div``;
 const BottomSection = styled.div``;
-const SpecificationsList = styled.ul`
-  list-style-type: none;
-  padding: 0;
-  font-size: small;
-`;
-const SpecificationItem = styled.li`
-  display: flex;
-  justify-content: space-between;
-  margin: 0.2rem 0;
-`;
+
 const SizeContainer = styled.div`
   display: flex;
   margin-top: 1rem;
@@ -196,11 +184,10 @@ const Product = () => {
       try {
         const response = await userRequest.get(`/product/product/${productId}`);
         setProduct(response.data);
-        setLoading(false);
       } catch (error) {
         toast.error(error.response.data.error);
-        setLoading(false);
       }
+      setLoading(false);
     };
 
     fetchProduct();
@@ -256,6 +243,7 @@ const Product = () => {
                 className="mx-auto"
                 style={{
                   maxWidth: "400px",
+                  minHeight: "610px",
                   height: "100%",
                 }}
               >
@@ -267,27 +255,31 @@ const Product = () => {
                   infinite={true}
                   autoPlaySpeed={1000}
                   keyBoardControl={true}
-                  className=""
+                  className="h-100"
                   transitionDuration={500}
                   containerClass="carousel-container"
                   removeArrowOnDeviceType={["Laptop", "mobile"]}
                   itemClass="carousel-item-padding-40-px"
                   showDots="true"
                 >
-                  {product.img.map(
-                    (slide, index) => (
-                      console.log(slide),
-                      (
-                        <div key={index} style={{ borderRadius: "30px" }}>
-                          <img
-                            src={slide}
-                            alt={slide}
-                            style={{ width: "100%", height: "610px" }}
-                          />
-                        </div>
-                      )
-                    )
-                  )}
+                  {product.img.map((slide, index) => (
+                    <div
+                      key={index}
+                      className="d-flex justify-content-center align-items-center"
+                      style={{ height: "100%", borderRadius: "30px" }}
+                    >
+                      <img
+                        src={slide}
+                        alt={slide}
+                        className="my-auto mx-auto"
+                        style={{
+                          width: "100%",
+                          objectFit: "contain",
+                          maxHeight: "610px",
+                        }}
+                      />
+                    </div>
+                  ))}
                 </Carousel>
               </div>
             </div>
@@ -371,7 +363,11 @@ const Product = () => {
                 </div>
                 <hr />
                 <ProductDetails>PRODUCT DETAILS:</ProductDetails>
-                <ProductDetailsText>{product.desc}</ProductDetailsText>
+                <ProductDetailsText>
+                  {product.desc.length > 400
+                    ? product.desc.substring(0, 400) + "..."
+                    : product.desc}
+                </ProductDetailsText>
               </BottomSection>
             </div>
           </ProductInfo>

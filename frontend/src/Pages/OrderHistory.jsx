@@ -34,9 +34,24 @@ const ScrollableContainer = styled.div`
   overflow-x: hidden; /* Hide horizontal scrollbar */
   overflow-y: auto; /* Enable vertical scrolling */
   scrollbar-width: none; /* Hide the default scrollbar for Firefox */
-  -ms-overflow-style: none; /* Hide the default scrollbar for IE and Edge */
-  ::-webkit-scrollbar {
-    width: 0; /* Hide the default scrollbar for Chrome, Safari, and Opera */
+  /* Scrollbar Styles */
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: #f8f9fa #dee2e6; /* Firefox */
+  -ms-overflow-style: none; /* Hide scrollbar in IE and Edge */
+  &::-webkit-scrollbar {
+    width: 8px; /* Chrome, Safari, and Opera */
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: #adb5bd; /* Color of the thumb */
+    border-radius: 4px; /* Border radius of the thumb */
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: #6c757d; /* Color of the thumb on hover */
+  }
+  &::-webkit-scrollbar-track {
+    background-color: #dee2e6; /* Color of the track */
+    border-radius: 4px; /* Border radius of the track */
+    margin-right: -8px; /* Adjust for the border width */
   }
 `;
 

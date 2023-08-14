@@ -96,6 +96,8 @@ const AddProductModal = ({ show, onHide, update, setUpdate }) => {
         sizeInput === "" ||
         imagePreviews.length === 0
       ) {
+        setLoading(false);
+
         return toast.error("Please fill all the fields");
       }
       const formData = new FormData();
@@ -146,12 +148,12 @@ const AddProductModal = ({ show, onHide, update, setUpdate }) => {
       console.log(error);
       toast.error(error.response.data.error);
     }
-    setUpdate(!update);
     setLoading(false);
+    setUpdate(!update);
   };
 
   const handleImageChange = (e) => {
-    const files = e.target.files;
+    const files = Array.from(e.target.files);
     const newPreviews = [];
 
     // Limit the number of selected images to 4
@@ -175,7 +177,7 @@ const AddProductModal = ({ show, onHide, update, setUpdate }) => {
     }
 
     // If productData is not available (creating a product), use the image URLs directly
-    setImagePreviews(newPreviews);
+    setImagePreviews([...imagePreviews, ...newPreviews]);
   };
 
   const handleDeleteImage = (index) => {

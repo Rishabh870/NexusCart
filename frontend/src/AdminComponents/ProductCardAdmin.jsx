@@ -172,7 +172,11 @@ const ProductCardAdmin = ({ product, setUpdate, update }) => {
         </CarouselContainer>
         <ProductInfo>
           <BrandName>{product.brandName} </BrandName>
-          <ProductName>{product.productName}</ProductName>
+          <ProductName>
+            {product.productName.length > 23
+              ? product.productName.substring(0, 23) + "..."
+              : product.productName}
+          </ProductName>
           <Price>${product.price}</Price>
           <Category>{product.category}</Category>
           <SizeContainer>

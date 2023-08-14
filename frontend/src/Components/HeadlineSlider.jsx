@@ -75,7 +75,9 @@ const HeroSection = () => {
           <CoverSection>
             <CoverLogo>
               <Title>NexusCart</Title>
-              <Slogan>Where shopping meets convenience.</Slogan>
+              <Slogan style={{ fontFamily: "Playfair Display, serif" }}>
+                Where shopping meets convenience.
+              </Slogan>
             </CoverLogo>
           </CoverSection>
         </TopImage>
