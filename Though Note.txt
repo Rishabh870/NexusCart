@@ -55,3 +55,5 @@ Profile Screen: A personalized profile screen was developed, enabling users to m
 Netlify Deployment: The application was successfully deployed on Netlify, making it accessible to a wider audience. The link to the website is above
 
 Admin Functionality: An admin menu and dashboard screen were implemented, empowering administrators to manage products and user efficiently and check the profit and sales data.
+
+Thank You.

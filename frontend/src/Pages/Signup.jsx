@@ -11,7 +11,7 @@ const SignupPageContainer = styled.div`
   min-height: 80vh;
   display: flex;
   justify-content: center;
-  margin-bottom: 10rem;
+  margin-bottom: 2rem;
   font-family: "Playfair Display", sans-serif !important;
   align-items: center;
 `;
