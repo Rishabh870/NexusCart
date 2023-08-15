@@ -14,104 +14,86 @@ const {
 const UserModel = mongoose.model("UserModel");
 const CartModel = mongoose.model("CartModel");
 
-router.post("/signup", (req, res) => {
+router.post("/signup", async (req, res) => {
   const { fullName, email, mobileNumber, password, isAdmin } = req.body;
-  UserModel.findOne({ email: email })
-    .then((userInDB) => {
-      if (userInDB) {
-        return res.status(409).json({ error: "User Already Exist" });
-      }
-      bcryptjs
-        .hash(password, 16)
-        .then((hashedPassword) => {
-          const user = new UserModel({
-            fullName,
-            email,
-            mobileNumber,
-            password: hashedPassword,
-            isAdmin,
-          });
-          user
-            .save()
-            .then((newUser) => {
-              const token = jwt.sign(
-                { userId: user._id, isAdmin: user.isAdmin },
-                JWT_SECRET // Replace JWT_SECRET with your own secret key for signing the token
-              );
 
-              const cart = new CartModel({ userId: newUser._id, products: [] });
-              cart
-                .save()
-                .then(() => {
-                  // Create the user object with the user details
-                  const userObject = {
-                    _id: newUser._id,
-                    name: newUser.fullName,
-                    email: newUser.email,
-                    mobileNumber: newUser.mobileNumber,
-                    isAdmin: newUser.isAdmin,
-                    token: token,
-                  };
+  try {
+    const userInDB = await UserModel.findOne({ email: email });
 
-                  // Send the response with the user details
-                  return res.status(201).json({
-                    result: "User Signed up Successfully!",
-                    ...userObject,
-                  });
-                })
-                .catch((err) => {
-                  console.log(err);
-                  return res
-                    .status(500)
-                    .json({ error: "Internal Server Error" });
-                });
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    })
-    .catch((err) => {
-      console.log(err);
+    if (userInDB) {
+      return res.status(409).json({ error: "User Already Exists" });
+    }
+
+    const hashedPassword = await bcryptjs.hash(password, 16);
+    const newUser = new UserModel({
+      fullName,
+      email,
+      mobileNumber,
+      password: hashedPassword,
+      isAdmin,
     });
+
+    await newUser.save();
+
+    const token = jwt.sign(
+      { userId: newUser._id, isAdmin: newUser.isAdmin },
+      JWT_SECRET // Replace JWT_SECRET with your own secret key for signing the token
+    );
+
+    const cart = new CartModel({ userId: newUser._id, products: [] });
+    await cart.save();
+
+    const userObject = {
+      _id: newUser._id,
+      name: newUser.fullName,
+      email: newUser.email,
+      mobileNumber: newUser.mobileNumber,
+      isAdmin: newUser.isAdmin,
+      token: token,
+    };
+
+    return res.status(201).json({
+      result: "User Signed up Successfully!",
+      ...userObject,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
 });
 
-router.post("/login", (req, res) => {
+router.post("/login", async (req, res) => {
   const { email, password } = req.body;
-  UserModel.findOne({ email: email })
-    .then((userInDB) => {
-      if (!userInDB) {
-        return res.status(404).json({ error: "User not found: Sign Up" });
-      }
 
-      bcryptjs
-        .compare(password, userInDB.password)
-        .then((isMatch) => {
-          if (isMatch) {
-            const token = jwt.sign(
-              { userId: userInDB._id, isAdmin: userInDB.isAdmin },
-              JWT_SECRET
-            );
-            const { password, ...userDetails } = userInDB._doc;
-            res
-              .status(200)
-              .json({ message: "Login successful", ...userDetails, token });
-          } else {
-            res.status(401).json({ error: "Invalid password" });
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          return res.status(500).json({ error: "Internal server error" });
-        });
-    })
-    .catch((error) => {
-      console.log(error);
-      return res.status(500).json({ error: "Internal server error" });
-    });
+  try {
+    const userInDB = await UserModel.findOne({ email: email });
+
+    if (!userInDB) {
+      return res.status(404).json({ error: "User not found: Sign Up" });
+    }
+
+    const isMatch = await bcryptjs.compare(password, userInDB.password);
+
+    if (isMatch) {
+      const token = jwt.sign(
+        { userId: userInDB._id, isAdmin: userInDB.isAdmin },
+        JWT_SECRET
+      );
+
+      const { password, ...userDetails } = userInDB._doc;
+
+      return res.status(200).json({
+        message: "Login successful",
+        ...userDetails,
+        token,
+      });
+    } else {
+      return res.status(401).json({ error: "Invalid password" });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
 });
 
 // Define the update method
